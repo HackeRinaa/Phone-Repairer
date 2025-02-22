@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Booking {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Device Info
+  brand       String
+  model       String
+  issues      String[]
+  
+  // Customer Info
+  name        String
+  email       String
+  phone       String
+  address     String?
+  notes       String?
+  
+  // Appointment
+  date        DateTime
+  timeSlot    String
+  
+  // Payment
+  totalAmount Float
+  paymentId   String?
+  paymentStatus String @default("pending") // pending, completed, failed
+  paymentMethod String // online, instore
+  
+  status      String @default("scheduled") // scheduled, in-progress, completed, cancelled
+}
+
+model Contact {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String
+  status    String @default("unread") // unread, read, responded
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  name          String?
+  role          String    @default("admin")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+} 

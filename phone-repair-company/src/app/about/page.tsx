@@ -4,32 +4,32 @@ import Navbar from "@/components/Navbar";
 export default function AboutPage() {
   const services = [
     {
-      title: "Expert Repairs",
-      description: "Professional repair service with certified technicians and genuine parts",
+      title: "Επαγγελματική Επισκευή",
+      description: "Υπηρεσίες επισκευής από πιστοποιημένους τεχνικούς με γνήσια ανταλλακτικά",
       icon: "🛠️"
     },
     {
-      title: "Quick Turnaround",
-      description: "Most repairs completed within 24 hours",
+      title: "Γρήγορη Εξυπηρέτηση",
+      description: "Οι περισσότερες επισκευές ολοκληρώνονται εντός 24 ωρών",
       icon: "⚡"
     },
     {
-      title: "Warranty Coverage",
-      description: "90-day warranty on all repairs and refurbished devices",
+      title: "Εγγύηση",
+      description: "90 ημέρες εγγύηση σε όλες τις επισκευές και τις ανακατασκευασμένες συσκευές",
       icon: "🛡️"
     },
     {
-      title: "Best Price",
-      description: "Competitive pricing with no hidden fees",
+      title: "Καλύτερες Τιμές",
+      description: "Ανταγωνιστικές τιμές χωρίς κρυφές χρεώσεις",
       icon: "💰"
     }
   ];
 
   const stats = [
-    { number: "10k+", label: "Repairs Completed" },
-    { number: "99%", label: "Satisfaction Rate" },
-    { number: "5+", label: "Years Experience" },
-    { number: "3", label: "Service Centers" }
+    { number: "10χιλ+", label: "Επισκευές" },
+    { number: "99%", label: "Ικανοποίηση Πελατών" },
+    { number: "5+", label: "Χρόνια Εμπειρίας" },
+    { number: "3", label: "Καταστήματα" }
   ];
 
   return (
@@ -40,11 +40,11 @@ export default function AboutPage() {
         {/* Hero Section */}
         <div className="text-center mb-20">
           <h1 className="text-4xl sm:text-5xl font-bold mb-6">
-            Your Trusted Phone Repair Partner
+            Ο Αξιόπιστος Συνεργάτης σας στην Επισκευή Κινητών
           </h1>
           <p className="text-gray-600 dark:text-gray-400 text-lg max-w-3xl mx-auto">
-            With over 5 years of experience, we&apos;ve helped thousands of customers
-            get their devices back to perfect working condition.
+            Με πάνω από 5 χρόνια εμπειρίας, έχουμε βοηθήσει χιλιάδες πελάτες
+            να επαναφέρουν τις συσκευές τους σε άριστη κατάσταση λειτουργίας.
           </p>
         </div>
 
@@ -67,7 +67,7 @@ export default function AboutPage() {
 
         {/* Services Grid */}
         <div className="mb-20">
-          <h2 className="text-3xl font-bold text-center mb-12">Our Services</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">Οι Υπηρεσίες μας</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {services.map((service, index) => (
               <div 
@@ -86,27 +86,27 @@ export default function AboutPage() {
 
         {/* Process Section */}
         <div className="mb-20">
-          <h2 className="text-3xl font-bold text-center mb-12">How It Works</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">Πώς Λειτουργούμε</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center p-6">
               <div className="text-4xl mb-4">📱</div>
-              <h3 className="text-xl font-semibold mb-3">Book a Repair</h3>
+              <h3 className="text-xl font-semibold mb-3">Κλείστε Ραντεβού</h3>
               <p className="text-gray-600 dark:text-gray-400">
-                Choose your device and tell us what needs fixing
+                Επιλέξτε τη συσκευή σας και πείτε μας τι χρειάζεται επισκευή
               </p>
             </div>
             <div className="text-center p-6">
               <div className="text-4xl mb-4">🔍</div>
-              <h3 className="text-xl font-semibold mb-3">Diagnostic</h3>
+              <h3 className="text-xl font-semibold mb-3">Διάγνωση</h3>
               <p className="text-gray-600 dark:text-gray-400">
-                Our experts will examine your device and provide a quote
+                Οι τεχνικοί μας θα εξετάσουν τη συσκευή σας και θα σας δώσουν προσφορά
               </p>
             </div>
             <div className="text-center p-6">
               <div className="text-4xl mb-4">✨</div>
-              <h3 className="text-xl font-semibold mb-3">Quick Fix</h3>
+              <h3 className="text-xl font-semibold mb-3">Γρήγορη Επισκευή</h3>
               <p className="text-gray-600 dark:text-gray-400">
-                Get your device back in perfect working condition
+                Παραλάβετε τη συσκευή σας σε άριστη κατάσταση λειτουργίας
               </p>
             </div>
           </div>
@@ -114,12 +114,12 @@ export default function AboutPage() {
 
         {/* CTA Section */}
         <div className="text-center bg-blue-600 text-white rounded-2xl p-12">
-          <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
+          <h2 className="text-3xl font-bold mb-4">Έτοιμοι να Ξεκινήσουμε;</h2>
           <p className="mb-8 text-lg">
-            Book your repair appointment today and get your device fixed in no time
+            Κλείστε το ραντεβού σας σήμερα και επισκευάστε τη συσκευή σας άμεσα
           </p>
           <button className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-            Book a Repair
+            Κλείστε Ραντεβού
           </button>
         </div>
       </main>

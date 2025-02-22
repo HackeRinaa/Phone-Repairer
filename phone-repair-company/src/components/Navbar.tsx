@@ -15,10 +15,10 @@ export default function Navbar() {
         <span className="text-xl font-bold">Fix & Go</span>
       </Link>
       <div className="hidden sm:flex gap-8">
-        <Link href="/about" className="hover:text-blue-600">Service</Link>
-        <Link href="/repair" className="hover:text-blue-600">Repair</Link>
-        <Link href="/purchase" className="hover:text-blue-600">Purchase</Link>
-        <Link href="/contact" className="hover:text-blue-600">Contact</Link>
+        <Link href="/about" className="hover:text-blue-600">Υπηρεσίες</Link>
+        <Link href="/repair" className="hover:text-blue-600">Επισκευή</Link>
+        <Link href="/purchase" className="hover:text-blue-600">Αγορά</Link>
+        <Link href="/contact" className="hover:text-blue-600">Επικοινωνία</Link>
       </div>
     </nav>
   );

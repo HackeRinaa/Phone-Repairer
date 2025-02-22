@@ -1,18 +1,29 @@
+"use client";
 import { useState } from 'react';
-import Calendar from 'react-calendar';
 import { loadStripe } from '@stripe/stripe-js';
+import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import {
+  Elements,
+  PaymentElement,
+  useStripe,
+  useElements,
+} from '@stripe/react-stripe-js';
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY!);
+
+interface PaymentFormProps {
+  clientSecret: string;
+  onSuccess: () => void;
+}
 
 interface PaymentSectionProps {
   totalAmount: number;
-  itemDetails: {
-    title: string;
-    price: number;
-  }[];
+  itemDetails: Array<{ title: string; price: number }>;
   onComplete: (data: BookingData) => void;
 }
 
-export interface BookingData {
+interface BookingData {
   date: Date | null;
   timeSlot: string;
   contactInfo: {
@@ -25,9 +36,52 @@ export interface BookingData {
   paymentMethod: 'online' | 'instore';
 }
 
+function PaymentForm({ clientSecret, onSuccess }: PaymentFormProps) {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [error, setError] = useState<string>('');
+  const [processing, setProcessing] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!stripe || !elements) return;
+
+    setProcessing(true);
+
+    const { error: submitError } = await stripe.confirmPayment({
+      elements,
+      confirmParams: {
+        return_url: `${window.location.origin}/payment/success`,
+      },
+    });
+
+    if (submitError) {
+      setError(submitError.message || 'Payment processing error');
+      setProcessing(false);
+    } else {
+      onSuccess();
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto bg-white dark:bg-gray-800 p-6 rounded-xl">
+      <PaymentElement />
+      {error && <div className="text-red-600 mt-2">{error}</div>}
+      <button
+        type="submit"
+        disabled={!stripe || processing}
+        className="w-full mt-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400"
+      >
+        {processing ? 'Processing...' : 'Pay Now'}
+      </button>
+    </form>
+  );
+}
+
 export function PaymentSection({ totalAmount, itemDetails, onComplete }: PaymentSectionProps) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string>('');
+  const [error, setError] = useState<string>('');
   const [bookingData, setBookingData] = useState<BookingData>({
     date: null,
     timeSlot: '',
@@ -41,69 +95,101 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete }: Payment
     paymentMethod: 'online'
   });
 
-  const handlePayment = async () => {
-    try {
-      const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY!);
-      if (!stripe) return;
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [showStripePayment, setShowStripePayment] = useState(false);
+  const [clientSecret, setClientSecret] = useState<string>('');
+  
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
+    const payload = {
+      items: itemDetails,
+      bookingData: bookingData
+    };
+
+    console.log('Sending payload:', payload); // Debugging
+
+    try {
       const response = await fetch('/api/create-payment-intent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: totalAmount }),
+        body: JSON.stringify(payload),
       });
 
-      const { clientSecret } = await response.json();
-
-      const result = await stripe.confirmPayment({
-        clientSecret,
-        confirmParams: {
-          return_url: `${window.location.origin}/confirmation`,
-        },
-      });
-
-      if (result.error) {
-        console.error(result.error);
-      } else {
-        onComplete(bookingData);
+      // Check if the response is ok
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error response:', errorData); // Log the error response
+        throw new Error(errorData.error || 'Failed to create payment intent');
       }
+
+      const data = await response.json();
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      setClientSecret(data.clientSecret);
+      setShowStripePayment(true);
     } catch (error) {
-      console.error('Payment failed:', error);
+      console.error('Error:', error);
+      setError(error instanceof Error ? error.message : 'An unexpected error occurred');
     }
   };
 
-  return (
-    <div className="max-w-4xl mx-auto mt-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Calendar Section */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl">
-          <h3 className="font-medium mb-4">Select Pickup Date</h3>
-          <Calendar
-            onChange={(value) => {
-              if (value instanceof Date) {
-                setSelectedDate(value);
-                setBookingData({ ...bookingData, date: value });
-              }
+ 
+  if (showStripePayment && clientSecret) {
+    return (
+      <div className="max-w-md mx-auto">
+        <button
+          onClick={() => setShowStripePayment(false)}
+          className="mb-4 text-blue-600 hover:text-blue-800"
+        >
+          ← Επιστροφή στην φόρμα κράτησης
+        </button>
+        <Elements stripe={stripePromise} options={{ clientSecret }}>
+          <PaymentForm
+            clientSecret={clientSecret}
+            onSuccess={() => {
+              onComplete({
+                ...bookingData,
+                date: selectedDate,
+                timeSlot: selectedTime
+              });
             }}
+          />
+        </Elements>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-7xl mx-auto space-y-8">
+      {/* Main Grid: Calendar and Contact Info */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Left Column - Calendar & Time Slots */}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
+          <h3 className="text-xl font-semibold mb-4">Επιλέξτε Ημερομηνία & Ώρα</h3>
+          <Calendar
+            onChange={(value) => setSelectedDate(value as Date)}
             value={selectedDate}
             minDate={new Date()}
-            className="w-full border-0 rounded-lg"
+            className="w-full border-0 rounded-lg mb-6"
           />
           
           {selectedDate && (
-            <div className="mt-4">
-              <h4 className="font-medium mb-2">Available Time Slots</h4>
-              <div className="grid grid-cols-2 gap-2">
-                {['09:00', '11:00', '13:00', '15:00', '17:00'].map((time) => (
+            <div className="mt-6">
+              <h4 className="font-medium mb-3">Διαθέσιμες Ώρες</h4>
+              <div className="grid grid-cols-3 gap-2">
+                {['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'].map((time) => (
                   <button
                     key={time}
-                    onClick={() => {
-                      setSelectedTime(time);
-                      setBookingData({ ...bookingData, timeSlot: time });
-                    }}
-                    className={`p-2 text-sm border rounded-lg transition-colors ${
+                    type="button"
+                    onClick={() => setSelectedTime(time)}
+                    className={`p-3 text-sm rounded-lg transition-colors ${
                       selectedTime === time 
-                        ? 'bg-blue-50 border-blue-500 dark:bg-blue-900' 
-                        : 'hover:bg-blue-50 dark:hover:bg-gray-700'
+                        ? 'bg-blue-100 dark:bg-blue-900 border-2 border-blue-500' 
+                        : 'bg-gray-50 dark:bg-gray-700 hover:bg-blue-50 dark:hover:bg-gray-600'
                     }`}
                   >
                     {time}
@@ -114,12 +200,12 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete }: Payment
           )}
         </div>
 
-        {/* Contact Form */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl">
-          <h3 className="font-medium mb-4">Contact Information</h3>
-          <form className="space-y-4">
+        {/* Right Column - Contact Information */}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
+          <h3 className="text-xl font-semibold mb-4">Στοιχεία Επικοινωνίας</h3>
+          <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Name</label>
+              <label className="block text-sm font-medium mb-1">Ονοματεπώνυμο</label>
               <input
                 type="text"
                 value={bookingData.contactInfo.name}
@@ -127,10 +213,11 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete }: Payment
                   ...bookingData,
                   contactInfo: { ...bookingData.contactInfo, name: e.target.value }
                 })}
-                className="w-full p-2 rounded-lg border dark:bg-gray-700"
+                className="w-full p-2 border rounded-lg dark:bg-gray-700"
                 required
               />
             </div>
+
             <div>
               <label className="block text-sm font-medium mb-1">Email</label>
               <input
@@ -140,12 +227,13 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete }: Payment
                   ...bookingData,
                   contactInfo: { ...bookingData.contactInfo, email: e.target.value }
                 })}
-                className="w-full p-2 rounded-lg border dark:bg-gray-700"
+                className="w-full p-2 border rounded-lg dark:bg-gray-700"
                 required
               />
             </div>
+
             <div>
-              <label className="block text-sm font-medium mb-1">Phone</label>
+              <label className="block text-sm font-medium mb-1">Τηλέφωνο</label>
               <input
                 type="tel"
                 value={bookingData.contactInfo.phone}
@@ -153,12 +241,13 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete }: Payment
                   ...bookingData,
                   contactInfo: { ...bookingData.contactInfo, phone: e.target.value }
                 })}
-                className="w-full p-2 rounded-lg border dark:bg-gray-700"
+                className="w-full p-2 border rounded-lg dark:bg-gray-700"
                 required
               />
             </div>
+
             <div>
-              <label className="block text-sm font-medium mb-1">Pickup Address</label>
+              <label className="block text-sm font-medium mb-1">Διεύθυνση</label>
               <input
                 type="text"
                 value={bookingData.contactInfo.address}
@@ -166,84 +255,108 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete }: Payment
                   ...bookingData,
                   contactInfo: { ...bookingData.contactInfo, address: e.target.value }
                 })}
-                className="w-full p-2 rounded-lg border dark:bg-gray-700"
+                className="w-full p-2 border rounded-lg dark:bg-gray-700"
                 required
               />
             </div>
+
             <div>
-              <label className="block text-sm font-medium mb-1">Additional Notes</label>
+              <label className="block text-sm font-medium mb-1">Σημειώσεις</label>
               <textarea
                 value={bookingData.contactInfo.notes}
                 onChange={(e) => setBookingData({
                   ...bookingData,
                   contactInfo: { ...bookingData.contactInfo, notes: e.target.value }
                 })}
-                className="w-full p-2 rounded-lg border dark:bg-gray-700"
+                className="w-full p-2 border rounded-lg dark:bg-gray-700"
                 rows={3}
               />
             </div>
-          </form>
+          </div>
         </div>
       </div>
 
-      {/* Payment Method & Summary */}
-      <div className="mt-8 bg-white dark:bg-gray-800 p-6 rounded-xl">
-        <h3 className="font-medium mb-4">Payment Method</h3>
-        <div className="space-y-4">
-          <div className="flex items-center space-x-4">
-            <input
-              type="radio"
-              id="online"
-              value="online"
-              checked={bookingData.paymentMethod === 'online'}
-              onChange={() => setBookingData({ ...bookingData, paymentMethod: 'online' })}
-              className="text-blue-600"
-            />
-            <label htmlFor="online">Pay Online Now (Secure payment with Stripe)</label>
-          </div>
-          <div className="flex items-center space-x-4">
-            <input
-              type="radio"
-              id="instore"
-              value="instore"
-              checked={bookingData.paymentMethod === 'instore'}
-              onChange={() => setBookingData({ ...bookingData, paymentMethod: 'instore' })}
-              className="text-blue-600"
-            />
-            <label htmlFor="instore">Pay In-Store</label>
-          </div>
-        </div>
+      {/* Bottom Section - Payment & Summary */}
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Payment Method Selection */}
+          <div className="md:col-span-1">
+            <h3 className="text-xl font-semibold mb-4">Τρόπος Πληρωμής</h3>
+            <div className="space-y-3">
+              <label className="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="online"
+                  checked={bookingData.paymentMethod === 'online'}
+                  onChange={() => setBookingData({ ...bookingData, paymentMethod: 'online' })}
+                  className="mr-3"
+                />
+                <div>
+                  <div className="font-medium">Online Πληρωμή</div>
+                  <div className="text-sm text-gray-500">Πληρώστε με κάρτα</div>
+                </div>
+              </label>
 
-        {/* Order Summary */}
-        <div className="mt-6 border-t pt-4">
-          <h4 className="font-medium mb-2">Order Summary</h4>
-          <div className="space-y-2">
-            {itemDetails.map((item, index) => (
-              <div key={index} className="flex justify-between text-sm">
-                <span>{item.title}</span>
-                <span>${item.price.toFixed(2)}</span>
-              </div>
-            ))}
-            <div className="flex justify-between font-medium text-base border-t pt-2">
-              <span>Total:</span>
-              <span>${totalAmount.toFixed(2)}</span>
+              <label className="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="instore"
+                  checked={bookingData.paymentMethod === 'instore'}
+                  onChange={() => setBookingData({ ...bookingData, paymentMethod: 'instore' })}
+                  className="mr-3"
+                />
+                <div>
+                  <div className="font-medium">Πληρωμή στο Κατάστημα</div>
+                  <div className="text-sm text-gray-500">Μετρητά ή κάρτα</div>
+                </div>
+              </label>
             </div>
           </div>
-        </div>
 
-        {/* Submit Button */}
-        <button
-          onClick={bookingData.paymentMethod === 'online' ? handlePayment : () => onComplete(bookingData)}
-          disabled={!selectedDate || !selectedTime || !bookingData.contactInfo.name || !bookingData.contactInfo.email}
-          className={`w-full mt-6 py-3 rounded-lg transition-colors ${
-            (!selectedDate || !selectedTime || !bookingData.contactInfo.name || !bookingData.contactInfo.email)
-              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              : 'bg-blue-600 text-white hover:bg-blue-700'
-          }`}
-        >
-          {bookingData.paymentMethod === 'online' ? 'Pay & Schedule Pickup' : 'Schedule Pickup'}
-        </button>
+          {/* Order Summary */}
+          <div className="md:col-span-2">
+            <h3 className="text-xl font-semibold mb-4">Σύνοψη Παραγγελίας</h3>
+            <div className="space-y-4">
+              {itemDetails.map((item, index) => (
+                <div key={index} className="flex justify-between py-2 border-b">
+                  <span>{item.title}</span>
+                  <span className="font-medium">{item.price}€</span>
+                </div>
+              ))}
+              <div className="flex justify-between pt-4 text-lg font-bold">
+                <span>Σύνολο</span>
+                <span>{totalAmount}€</span>
+              </div>
+            </div>
+
+            <button
+              onClick={handleSubmit}
+              disabled={!selectedDate || !selectedTime || !bookingData.contactInfo.name || isProcessing}
+              className="w-full mt-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400"
+            >
+              {isProcessing ? (
+                <span className="flex items-center justify-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Επεξεργασία...
+                </span>
+              ) : (
+                'Ολοκλήρωση Κράτησης'
+              )}
+            </button>
+          </div>
+        </div>
       </div>
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
+          {error}
+        </div>
+      )}
     </div>
   );
 } 

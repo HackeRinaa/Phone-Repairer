@@ -39,7 +39,7 @@ export default function PurchasePage() {
       year: 2021
     },
     {
-      id: "1",
+      id: "2",
       brand: "Apple",
       model: "iPhone 14 Pro",
       price: 899,
@@ -47,6 +47,17 @@ export default function PurchasePage() {
       storage: "128GB",
       color: "Graphite",
       image: "/phones/iphone-14-pro.jpg",
+      year: 2024
+    },
+    {
+      id: "3",
+      brand: "Apple",
+      model: "iPhone 12",
+      price: 699,
+      condition: "Excellent",
+      storage: "128GB",
+      color: "Graphite",
+      image: "/phones/iphone-12.jpg",
       year: 2024
     },
   ];
@@ -72,22 +83,22 @@ export default function PurchasePage() {
         {!showPayment ? (
           <>
             <div className="text-center mb-16">
-              <h1 className="text-4xl font-bold mb-4">Certified Refurbished Phones</h1>
+              <h1 className="text-4xl font-bold mb-4">Πιστοποιημένα Ανακατασκευασμένα Κινητά</h1>
               <p className="text-gray-600 dark:text-gray-400">
-                Quality tested and guaranteed devices at great prices
+                Ελεγμένες συσκευές με εγγύηση σε προσιτές τιμές
               </p>
             </div>
 
             {/* Horizontal Filters */}
             <div className="bg-white dark:bg-gray-800 p-6 rounded-xl mb-8 flex flex-wrap gap-4 items-end">
               <div className="flex-1 min-w-[200px]">
-                <label className="block text-sm font-medium mb-2">Brand</label>
+                <label className="block text-sm font-medium mb-2">Μάρκα</label>
                 <select
                   value={filters.brand}
                   onChange={(e) => setFilters({ ...filters, brand: e.target.value })}
                   className="w-full p-2 rounded border dark:bg-gray-700"
                 >
-                  <option value="all">All Brands</option>
+                  <option value="all">Όλες οι Μάρκες</option>
                   <option value="Apple">Apple</option>
                   <option value="Samsung">Samsung</option>
                   <option value="Google">Google</option>
@@ -95,7 +106,7 @@ export default function PurchasePage() {
               </div>
 
               <div className="flex-1 min-w-[200px]">
-                <label className="block text-sm font-medium mb-2">Price Range</label>
+                <label className="block text-sm font-medium mb-2">Εύρος Τιμής</label>
                 <div className="flex gap-2 items-center">
                   <input
                     type="number"
@@ -106,7 +117,7 @@ export default function PurchasePage() {
                     })}
                     className="w-full p-2 rounded border dark:bg-gray-700"
                   />
-                  <span>to</span>
+                  <span>έως</span>
                   <input
                     type="number"
                     value={filters.priceRange[1]}
@@ -120,16 +131,16 @@ export default function PurchasePage() {
               </div>
 
               <div className="flex-1 min-w-[200px]">
-                <label className="block text-sm font-medium mb-2">Condition</label>
+                <label className="block text-sm font-medium mb-2">Κατάσταση</label>
                 <select
                   value={filters.condition}
                   onChange={(e) => setFilters({ ...filters, condition: e.target.value })}
                   className="w-full p-2 rounded border dark:bg-gray-700"
                 >
-                  <option value="all">All Conditions</option>
-                  <option value="Excellent">Excellent</option>
-                  <option value="Very Good">Very Good</option>
-                  <option value="Good">Good</option>
+                  <option value="all">Όλες οι Καταστάσεις</option>
+                  <option value="Excellent">Άριστη</option>
+                  <option value="Very Good">Πολύ Καλή</option>
+                  <option value="Good">Καλή</option>
                 </select>
               </div>
 
@@ -142,7 +153,7 @@ export default function PurchasePage() {
                 })}
                 className="px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg"
               >
-                Reset Filters
+                Επαναφορά Φίλτρων
               </button>
             </div>
 
@@ -161,18 +172,18 @@ export default function PurchasePage() {
                   <div className="p-4">
                     <h3 className="font-semibold text-lg mb-2">{phone.brand} {phone.model}</h3>
                     <p className="text-blue-600 dark:text-blue-400 text-xl font-bold mb-2">
-                      ${phone.price}
+                      {phone.price}€
                     </p>
                     <div className="text-sm text-gray-600 dark:text-gray-400">
-                      <p>Condition: {phone.condition}</p>
-                      <p>Storage: {phone.storage}</p>
-                      <p>Color: {phone.color}</p>
+                      <p>Κατάσταση: {phone.condition}</p>
+                      <p>Αποθηκευτικός Χώρος: {phone.storage}</p>
+                      <p>Χρώμα: {phone.color}</p>
                     </div>
                     <button
                       onClick={() => handleBuyClick(phone)}
                       className="w-full mt-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                     >
-                      Buy Now
+                      Αγορά
                     </button>
                   </div>
                 </div>
@@ -189,7 +200,7 @@ export default function PurchasePage() {
               }
             ]}
             onComplete={(data) => {
-              console.log('Booking completed:', data);
+              console.log('Η παραγγελία ολοκληρώθηκε:', data);
               // Handle completion
             }}
           />

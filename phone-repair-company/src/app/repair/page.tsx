@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
-import Calendar from 'react-calendar';
+
 import { loadStripe } from '@stripe/stripe-js';
 import 'react-calendar/dist/Calendar.css';
 import { PaymentSection } from "@/components/PaymentSection";
@@ -23,6 +23,13 @@ interface BookingForm {
   paymentMethod: 'online' | 'instore';
 }
 
+const commonIssues = [
+  { title: "Επισκευή Οθόνης", icon: "🔧", price: "από 89€" },
+  { title: "Αντικατάσταση Μπαταρίας", icon: "🔋", price: "από 49€" },
+  { title: "Βλάβη από Νερό", icon: "💧", price: "από 99€" },
+  { title: "Επισκευή Κάμερας", icon: "📸", price: "από 69€" },
+];
+
 export default function RepairPage() {
   const [selectedBrand, setSelectedBrand] = useState<string>("");
   const [selectedModel, setSelectedModel] = useState<string>("");
@@ -37,13 +44,6 @@ export default function RepairPage() {
     notes: '',
     paymentMethod: 'online'
   });
-
-  const commonIssues = [
-    { title: "Screen Repair", icon: "🔧", price: "from $89" },
-    { title: "Battery Replacement", icon: "🔋", price: "from $49" },
-    { title: "Water Damage", icon: "💧", price: "from $99" },
-    { title: "Camera Fix", icon: "📸", price: "from $69" },
-  ];
 
   const calculateTotal = () => {
     return selectedIssues.reduce((total, issue) => {
@@ -116,7 +116,7 @@ export default function RepairPage() {
               <button
                 key={brand}
                 onClick={() => handleBrandSelect(brand)}
-                className="flex flex-col items-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all transform hover:scale-105"
+                className="flex flex-col items-center justify-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all transform hover:scale-105"
               >
                 <Image
                   src={`/brands/${brand.toLowerCase()}.svg`}
@@ -125,7 +125,7 @@ export default function RepairPage() {
                   height={48}
                   className="mb-3"
                 />
-                <span className="text-sm font-medium">{brand}</span>
+                <span className="text-sm font-medium text-center">{brand}</span>
               </button>
             ))}
           </div>
@@ -134,7 +134,7 @@ export default function RepairPage() {
       case 2:
         return (
           <div className="max-w-2xl mx-auto">
-            <h2 className="text-2xl font-semibold mb-6 text-center">Select Your Model</h2>
+            <h2 className="text-2xl font-semibold mb-6 text-center">Επιλέξτε το Μοντέλο σας</h2>
             <div className="grid grid-cols-2 gap-4">
               {phoneOptions[selectedBrand as keyof typeof phoneOptions].map((model) => (
                 <button
@@ -150,7 +150,7 @@ export default function RepairPage() {
               onClick={() => setStep(1)}
               className="mt-6 text-blue-600 hover:text-blue-800"
             >
-              ← Back to brands
+              ← Πίσω στις μάρκες
             </button>
           </div>
         );
@@ -159,7 +159,7 @@ export default function RepairPage() {
         return (
           <div className="max-w-3xl mx-auto">
             <h2 className="text-2xl font-semibold mb-6 text-center">
-              What&apos;s wrong with your {selectedBrand} {selectedModel}?
+              Τι πρόβλημα έχει το {selectedBrand} {selectedModel} σας;
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
               {commonIssues.map((issue) => (
@@ -183,7 +183,7 @@ export default function RepairPage() {
                 onClick={() => setStep(2)}
                 className="text-blue-600 hover:text-blue-800"
               >
-                ← Back to models
+                ← Πίσω στα μοντέλα
               </button>
               <button
                 onClick={() => setStep(4)}
@@ -194,7 +194,7 @@ export default function RepairPage() {
                     : "bg-gray-300 text-gray-500 cursor-not-allowed"
                 }`}
               >
-                Continue to Booking →
+                Συνέχεια στην Κράτηση →
               </button>
             </div>
           </div>
@@ -209,12 +209,11 @@ export default function RepairPage() {
               price: parseInt(commonIssues.find(i => i.title === issue)?.price.replace(/\D/g, '') || "0")
             }))}
             onComplete={(data) => {
-              console.log('Repair booking completed:', {
+              console.log('Η κράτηση ολοκληρώθηκε:', {
                 device: { brand: selectedBrand, model: selectedModel },
                 issues: selectedIssues,
                 booking: data
               });
-              // Handle completion - redirect or show confirmation
             }}
           />
         );
@@ -230,15 +229,15 @@ export default function RepairPage() {
 
       <main className="max-w-7xl mx-auto px-4 py-12">
         <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold mb-4">What phone needs repair?</h1>
+          <h1 className="text-4xl font-bold mb-4">Ποιο κινητό θέλετε να επισκευάσετε;</h1>
           <p className="text-gray-600 dark:text-gray-400">
-            Select your phone brand to get started
+            Επιλέξτε τη μάρκα του κινητού σας για να ξεκινήσετε
           </p>
         </div>
 
         <div className="max-w-2xl mx-auto mb-12">
           <div className="flex justify-between mb-2">
-            {["Brand", "Model", "Issues", "Book"].map((label, index) => (
+            {["Μάρκα", "Μοντέλο", "Βλάβες", "Κράτηση"].map((label, index) => (
               <div
                 key={label}
                 className={`text-sm ${

@@ -1,43 +1,95 @@
 import { NextResponse } from 'next/server';
-import Stripe from 'stripe';
+import { stripe } from '@/lib/stripe';
+import { prisma } from '@/lib/db';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-01-27.acacia'
-});
+// Define types for items and booking data
+interface Item {
+  title: string;
+  price: number;
+}
 
-// Add price mapping for repair issues
-const REPAIR_PRICES = {
-  "Screen Repair": 8900, // $89.00
-  "Battery Replacement": 4900, // $49.00
-  "Water Damage": 9900, // $99.00
-  "Camera Fix": 6900, // $69.00
-};
+interface BookingData {
+  contactInfo: {
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    notes: string;
+  };
+  paymentMethod: 'online' | 'instore';
+}
 
-function calculateAmount(items: string[]): number {
-  return items.reduce((total, item) => {
-    return total + (REPAIR_PRICES[item as keyof typeof REPAIR_PRICES] || 0);
-  }, 0);
+// Helper function to calculate amount in cents
+function calculateAmount(items: Item[]): number {
+  return items.reduce((total, item) => total + (item.price * 100), 0);
 }
 
 export async function POST(req: Request) {
   try {
-    const { items, brand, model } = await req.json();
+    const body: { items: Item[]; bookingData: BookingData } = await req.json();
+    console.log('Received payload:', body); // Debugging
 
-    // Calculate the amount based on selected issues
+    const { items, bookingData } = body;
+
+    // Validate the payload
+    if (!Array.isArray(items) || !bookingData || typeof bookingData !== 'object') {
+      return NextResponse.json(
+        { error: 'Invalid payload: items must be an array and bookingData must be an object' },
+        { status: 400 }
+      );
+    }
+
+    // Calculate amount in cents
     const amount = calculateAmount(items);
+    console.log('Calculated amount:', amount);
 
+    if (amount < 50) {
+      return NextResponse.json(
+        { error: 'Amount must be at least 50 cents' },
+        { status: 400 }
+      );
+    }
+
+    // Create payment intent
     const paymentIntent = await stripe.paymentIntents.create({
       amount,
-      currency: 'usd',
-      metadata: {
-        brand,
-        model,
-        issues: items.join(', '),
+      currency: 'eur',
+      payment_method_types: ['card'],
+    });
+
+    // Create booking record
+    const booking = await prisma.booking.create({
+      data: {
+        brand: items[0].title.split(' - ')[0].split(' ')[0],
+        model: items[0].title.split(' - ')[0].split(' ').slice(1).join(' '),
+        issues: items.map(item => item.title.split(' - ')[1]),
+        name: bookingData.contactInfo.name,
+        email: bookingData.contactInfo.email,
+        phone: bookingData.contactInfo.phone,
+        address: bookingData.contactInfo.address || '',
+        notes: bookingData.contactInfo.notes || '',
+        date: new Date(bookingData.date),
+        timeSlot: bookingData.timeSlot,
+        totalAmount: amount / 100,
+        paymentMethod: 'online',
+        paymentId: paymentIntent.id,
+        status: 'pending',
+        paymentStatus: 'pending',
       },
     });
 
-    return NextResponse.json({ clientSecret: paymentIntent.client_secret });
+    return NextResponse.json({
+      clientSecret: paymentIntent.client_secret,
+      bookingId: booking.id,
+    });
   } catch (error) {
-    return NextResponse.json({ error: 'Error creating payment intent' }, { status: 500 });
+    console.error('Full error:', error);
+    return NextResponse.json(
+      { 
+        error: error instanceof Error ? error.message : 'Failed to create payment intent',
+        details: error instanceof Error ? error.stack : undefined
+      },
+      { status: 500 }
+    );
   }
-} 
+}
