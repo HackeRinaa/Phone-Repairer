@@ -2,8 +2,6 @@
 import { useState } from "react";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
-
-import { loadStripe } from '@stripe/stripe-js';
 import 'react-calendar/dist/Calendar.css';
 import { PaymentSection } from "@/components/PaymentSection";
 
@@ -14,14 +12,6 @@ const phoneOptions = {
   OnePlus: ["11 5G", "10 Pro", "10T", "Nord N300"],
 };
 
-interface BookingForm {
-  name: string;
-  email: string;
-  phone: string;
-  address: string;
-  notes: string;
-  paymentMethod: 'online' | 'instore';
-}
 
 const commonIssues = [
   { title: "Επισκευή Οθόνης", icon: "🔧", price: "από 89€" },
@@ -35,15 +25,6 @@ export default function RepairPage() {
   const [selectedModel, setSelectedModel] = useState<string>("");
   const [step, setStep] = useState<number>(1);
   const [selectedIssues, setSelectedIssues] = useState<string[]>([]);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [bookingForm, setBookingForm] = useState<BookingForm>({
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
-    notes: '',
-    paymentMethod: 'online'
-  });
 
   const calculateTotal = () => {
     return selectedIssues.reduce((total, issue) => {
@@ -70,53 +51,16 @@ export default function RepairPage() {
     );
   };
 
-  const handlePayment = async () => {
-    try {
-      const response = await fetch('/api/create-payment-intent', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          items: selectedIssues,
-          brand: selectedBrand,
-          model: selectedModel,
-        }),
-      });
-
-      const { clientSecret } = await response.json();
-      const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY!);
-      
-      if (stripe) {
-        const result = await stripe.confirmPayment({
-          clientSecret,
-          confirmParams: {
-            payment_method: 'card',
-            return_url: `${window.location.origin}/repair/confirmation`,
-          },
-        });
-
-        if (result.error) {
-          console.error(result.error);
-        } else {
-          console.log('Payment successful');
-        }
-      }
-    } catch (error) {
-      console.error('Payment failed:', error);
-    }
-  };
-
   const renderStep = () => {
     switch (step) {
       case 1:
         return (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6 mb-16">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 mb-16">
             {Object.keys(phoneOptions).map((brand) => (
               <button
                 key={brand}
                 onClick={() => handleBrandSelect(brand)}
-                className="flex flex-col items-center justify-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all transform hover:scale-105"
+                className="w-full h-full flex flex-col items-center justify-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all transform hover:scale-105"
               >
                 <Image
                   src={`/brands/${brand.toLowerCase()}.svg`}

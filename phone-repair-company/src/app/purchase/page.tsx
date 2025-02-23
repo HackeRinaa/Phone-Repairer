@@ -195,12 +195,24 @@ export default function PurchasePage() {
             totalAmount={selectedPhone?.price || 0}
             itemDetails={[
               {
-                title: `${selectedPhone?.brand} ${selectedPhone?.model}`,
+                title: `${selectedPhone?.brand} ${selectedPhone?.model} - purchase`,
                 price: selectedPhone?.price || 0
               }
             ]}
             onComplete={(data) => {
-              console.log('Η παραγγελία ολοκληρώθηκε:', data);
+              console.log('Η παραγγελία ολοκληρώθηκε:', {
+                device: {
+                  brand: selectedPhone?.brand,
+                  model: selectedPhone?.model
+                },
+                issues: 'purchase',
+                orderDetails: {
+                  condition: selectedPhone?.condition,
+                  storage: selectedPhone?.storage,
+                  price: selectedPhone?.price
+                },
+                booking: data
+              });
               // Handle completion
             }}
           />
