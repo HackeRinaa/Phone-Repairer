@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
+import './Calendar.css';
 import {
   Elements,
   PaymentElement,

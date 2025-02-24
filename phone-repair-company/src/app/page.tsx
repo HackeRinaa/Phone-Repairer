@@ -6,7 +6,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 relative">
       {/* Add TechBackground with a lower z-index */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0">
         <TechBackground />
       </div>
       
