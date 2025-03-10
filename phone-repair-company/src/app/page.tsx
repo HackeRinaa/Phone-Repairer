@@ -1,46 +1,16 @@
 import Link from "next/link";
 import Navbar from "../components/Navbar";
-import ParticleRing from "@/components/ParticleRing";
+import TextParallaxContentExample from "@/components/Hero/page";
+
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 relative">
-      {/* Add TechBackground with a lower z-index */}
-      <div className="absolute inset-0">
-        <ParticleRing />
-      </div>
-
+      
       {/* Wrap existing content in a relative container with higher z-index */}
       <div className="relative z-10 grid grid-rows-[80px_1fr_60px] min-h-screen">
         <Navbar />
-
-        {/* Main Content - add container with slight transparency */}
-        <main className="flex flex-col items-center justify-center gap-12 px-4">
-          <div className="text-center">
-            <h1 className="text-4xl sm:text-5xl font-bold mb-4 text-gray-900 dark:text-white">
-              Επισκευή & Πώληση Κινητών
-            </h1>
-            <p className="text-gray-700 dark:text-gray-400 text-lg max-w-2xl">
-              Γρήγορες και αξιόπιστες επισκευές κινητών ή οικονομικά ανακατασκευασμένα κινητά.
-              Επιλέξτε την υπηρεσία που χρειάζεστε.
-            </p>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-6">
-            <Link
-              href="/repair"
-              className="px-8 py-4 bg-blue-600/90 dark:bg-blue-500/90 backdrop-blur-sm text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors text-center min-w-[200px]"
-            >
-              Επισκευή Κινητού
-            </Link>
-            <Link
-              href="/purchase"
-              className="px-8 py-4 border-2 border-blue-600 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-800 transition-colors text-center min-w-[200px]"
-            >
-              Αγορά Ανακατασκευασμένου
-            </Link>
-          </div>
-        </main>
+        <TextParallaxContentExample/>
 
         {/* Footer - add slight transparency */}
         <footer className="flex items-center justify-center gap-8 text-sm text-gray-700 dark:text-gray-400 border-t border-gray-300 dark:border-gray-800 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">

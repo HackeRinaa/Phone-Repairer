@@ -12,13 +12,13 @@ export default function Navbar() {
           height={40}
           priority
         />*/}
-        <span className="text-4xl font-bold">iRescue</span>
+        <span className="text-4xl font-bold text-purple-600">iRescue</span>
       </Link>
-      <div className="hidden sm:flex gap-8">
-        <Link href="/about" className="hover:text-blue-600">Υπηρεσίες</Link>
-        <Link href="/repair" className="hover:text-blue-600">Επισκευή</Link>
-        <Link href="/purchase" className="hover:text-blue-600">Αγορά</Link>
-        <Link href="/contact" className="hover:text-blue-600">Επικοινωνία</Link>
+      <div className="hidden sm:flex gap-8 text-lg">
+        <Link href="/about" className="hover:text-purple-600">Υπηρεσίες</Link>
+        <Link href="/repair" className="hover:text-purple-600">Επισκευή</Link>
+        <Link href="/purchase" className="hover:text-purple-600">Αγορά Μεταχειρισμένου</Link>
+        <Link href="/contact" className="hover:text-purple-600">Επικοινωνία</Link>
         <ThemeSwitcher />
       </div>
     </nav>

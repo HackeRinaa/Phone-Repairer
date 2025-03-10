@@ -15,7 +15,7 @@ const ParticleRing: React.FC = () => {
   const { theme } = useTheme(); // Get the current theme
 
   // Define background colors based on theme
-  const bgClass = theme === "dark" ? "bg-slate-900" : "bg-gray-100";
+  const bgClass = theme === "dark" ? "bg-slate-900" : "bg-white";
 
   return (
     <div className={`relative ${bgClass} transition-colors duration-300`}>
@@ -63,7 +63,7 @@ const PointCircle: React.FC<PointCircleProps> = ({ theme }) => {
 // Adjust point colors based on theme
 const getThemeColor = (color: string, theme: string | undefined) => {
   if (theme === "dark") return color; // Keep original colors in dark mode
-  return "#1e3a8a"; // Light mode alternative (adjust to match design)
+  return color; // Light mode alternative (adjust to match design)
 };
 
 const Point: React.FC<PointProps> = ({ position, color }) => {

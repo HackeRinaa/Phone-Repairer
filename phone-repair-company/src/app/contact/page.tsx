@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
-import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock } from "react-icons/fa";
+import { FaPhone, FaEnvelope, FaInstagram } from "react-icons/fa";
 
 interface ContactForm {
   name: string;
@@ -23,27 +23,12 @@ export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'success' | 'error' | null>(null);
 
-  const locations = [
-    {
-      name: "Fix & Go - Κεντρικό Κατάστημα",
-      address: "Λεωφόρος Τεχνολογίας 123, Αθήνα, 12345",
-      phone: "+30 210 1234567",
-      hours: "Δευ-Σαβ: 9:00 - 18:00",
-    },
-    {
-      name: "Fix & Go - Υποκατάστημα Κέντρου",
-      address: "Οδός Επισκευών 456, Αθήνα, 12345",
-      phone: "+30 210 9876543",
-      hours: "Δευ-Σαβ: 10:00 - 19:00",
-    },
-  ];
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
     try {
-      // Implement your form submission logic here
+      // Simulate form submission
       await new Promise(resolve => setTimeout(resolve, 1000)); // Simulated API call
       setSubmitStatus('success');
       setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
@@ -61,9 +46,8 @@ export default function ContactPage() {
       <main className="max-w-7xl mx-auto px-4 py-12">
         <div className="text-center mb-16">
           <h1 className="text-4xl font-bold mb-4">Επικοινωνία</h1>
-          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Έχετε ερωτήσεις για τις υπηρεσίες μας; Χρειάζεστε υποστήριξη; Είμαστε εδώ για να βοηθήσουμε.
-            Επικοινωνήστε μαζί μας μέσω οποιουδήποτε από τους παρακάτω τρόπους.
+          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-lg">
+            Χρειάζεστε βοήθεια; Είμαστε εδώ για εσάς! Επικοινωνήστε μαζί μας τώρα.
           </p>
         </div>
 
@@ -137,13 +121,13 @@ export default function ContactPage() {
 
               {submitStatus === 'success' && (
                 <div className="p-4 bg-green-100 text-green-700 rounded-lg">
-                  Το μήνυμά σας στάλθηκε με επιτυχία! Θα επικοινωνήσουμε σύντομα μαζί σας.
+                  Το μήνυμά σας στάλθηκε! Θα σας απαντήσουμε σύντομα.
                 </div>
               )}
               
               {submitStatus === 'error' && (
                 <div className="p-4 bg-red-100 text-red-700 rounded-lg">
-                  Αποτυχία αποστολής μηνύματος. Παρακαλώ δοκιμάστε ξανά αργότερα.
+                  Κάτι πήγε στραβά. Δοκιμάστε ξανά!
                 </div>
               )}
             </form>
@@ -158,7 +142,7 @@ export default function ContactPage() {
                 <div className="flex items-center gap-4">
                   <FaPhone className="text-blue-600 text-xl" />
                   <div>
-                    <p className="font-medium">Τηλεφωνική Υποστήριξη</p>
+                    <p className="font-medium">Τηλέφωνο</p>
                     <p className="text-gray-600 dark:text-gray-400">+30 210 1234567</p>
                   </div>
                 </div>
@@ -166,30 +150,32 @@ export default function ContactPage() {
                   <FaEnvelope className="text-blue-600 text-xl" />
                   <div>
                     <p className="font-medium">Email</p>
-                    <p className="text-gray-600 dark:text-gray-400">support@fixandgo.gr</p>
+                    <p className="text-gray-600 dark:text-gray-400">support@irescue.gr</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <FaInstagram className="text-blue-600 text-xl" />
+                  <div>
+                    <p className="font-medium">Instagram</p>
+                    <p className="text-gray-600 dark:text-gray-400">
+                      irescue.athens
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Store Locations */}
+            {/* Service Information */}
             <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-sm">
-              <h2 className="text-2xl font-semibold mb-6">Τα Καταστήματά μας</h2>
-              <div className="space-y-6">
-                {locations.map((location, index) => (
-                  <div key={index} className="space-y-3">
-                    <h3 className="font-medium text-lg">{location.name}</h3>
-                    <div className="flex items-start gap-4">
-                      <FaMapMarkerAlt className="text-blue-600 text-xl mt-1" />
-                      <p className="text-gray-600 dark:text-gray-400">{location.address}</p>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <FaClock className="text-blue-600 text-xl" />
-                      <p className="text-gray-600 dark:text-gray-400">{location.hours}</p>
-                    </div>
-                    {index < locations.length - 1 && <hr className="my-4" />}
-                  </div>
-                ))}
+              <h2 className="text-2xl font-semibold mb-6">Πώς Λειτουργούμε</h2>
+              <div className="space-y-4">
+                <p className="text-gray-600 dark:text-gray-400 text-md text-left">
+                  🚚 <strong>Δωρεάν μεταφορικά:</strong> Παίρνουμε και φέρνουμε τη συσκευή σας.  <br/>
+                  🔧 <strong>Γρήγορη επισκευή:</strong> Επισκευάζουμε ή αγοράζουμε τη συσκευή σας.  <br/>
+                  📦 <strong>Άμεση επιστροφή:</strong> Σας την επιστρέφουμε άμεσα και χωρίς κόστος.  
+                  <br />
+                  <strong className="text-lg text-blue-600">Απλό, γρήγορο και χωρίς κόπο!</strong>
+                </p>
               </div>
             </div>
           </div>
@@ -197,4 +183,4 @@ export default function ContactPage() {
       </main>
     </div>
   );
-} 
+}
