@@ -1,211 +1,8 @@
 "use client";
-import React, { useRef, ReactNode } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { FiArrowUpRight } from "react-icons/fi";
+import React, { useEffect, useState } from "react";
+import { motion, useMotionValue } from "framer-motion";
 
-// Export TextParallaxContentExample as default
-export default function TextParallaxContentExample() {
-  return (
-    <div className="bg-gray-50 dark:bg-gray-900">
-      {/* General Service Introduction with Video Background */}
-      <TextParallaxContent
-        videoUrl="/video.mp4" // Replace with your video
-        subheading="Η Καλύτερη Λύση για το Κινητό σου"
-        heading="iRescue"
-      >
-        <ExampleContent id={0} />
-      </TextParallaxContent>
-
-      {/* Reliability & Professionalism */}
-      <TextParallaxContent
-        imgUrl="/images/cartoon-phone.jpg" // Replace with your image
-        subheading="Αξιοπιστία & Επαγγελματισμός"
-        heading="iRescue"
-      >
-        <ExampleContent id={1} />
-      </TextParallaxContent>
-
-      {/* Free Estimate & Shipping */}
-      <TextParallaxContent
-        imgUrl="/images/free-estimate-shipping.jpg" // Replace with your image
-        subheading="Δωρεάν Εκτίμηση & Μεταφορικά"
-        heading="iRescue"
-      >
-        <ExampleContent id={2} />
-      </TextParallaxContent>
-
-      {/* Eco Friendly */}
-      <TextParallaxContent
-        imgUrl="/images/eco-friendly.jpg" // Replace with your image
-        subheading="Eco Friendly"
-        heading="iRescue"
-      >
-        <ExampleContent id={3} />
-      </TextParallaxContent>
-    </div>
-  );
-}
-
-const IMG_PADDING = 12;
-
-interface TextParallaxContentProps {
-  imgUrl?: string;
-  videoUrl?: string;
-  subheading: string;
-  heading: string;
-  children: ReactNode;
-}
-
-// Export TextParallaxContent if needed elsewhere
-export const TextParallaxContent = ({
-  imgUrl,
-  videoUrl,
-  subheading,
-  heading,
-  children,
-}: TextParallaxContentProps) => {
-  return (
-    <div
-      style={{
-        paddingLeft: IMG_PADDING,
-        paddingRight: IMG_PADDING,
-      }}
-    >
-      <div className="relative h-[150vh]">
-        {videoUrl ? (
-          <StickyVideo videoUrl={videoUrl} />
-        ) : (
-          <StickyImage imgUrl={imgUrl!} />
-        )}
-        <OverlayCopy heading={heading} subheading={subheading} />
-      </div>
-      {children}
-    </div>
-  );
-};
-
-interface StickyImageProps {
-  imgUrl: string;
-}
-
-// Export StickyImage if needed elsewhere
-export const StickyImage = ({ imgUrl }: StickyImageProps) => {
-  const targetRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: targetRef,
-    offset: ["end end", "end start"],
-  });
-
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.85]);
-  const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
-
-  return (
-    <motion.div
-      style={{
-        backgroundImage: `url(${imgUrl})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        height: `calc(100vh - ${IMG_PADDING * 2}px)`,
-        top: IMG_PADDING,
-        scale,
-      }}
-      ref={targetRef}
-      className="sticky z-0 overflow-hidden rounded-3xl"
-    >
-      <motion.div
-        className="absolute inset-0 bg-neutral-950/70"
-        style={{
-          opacity,
-        }}
-      />
-    </motion.div>
-  );
-};
-
-interface StickyVideoProps {
-  videoUrl: string;
-}
-
-// Export StickyVideo if needed elsewhere
-export const StickyVideo = ({ videoUrl }: StickyVideoProps) => {
-  const targetRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: targetRef,
-    offset: ["end end", "end start"],
-  });
-
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.85]);
-  const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
-
-  return (
-    <motion.div
-      style={{
-        height: `calc(100vh - ${IMG_PADDING * 2}px)`,
-        top: IMG_PADDING,
-        scale,
-      }}
-      ref={targetRef}
-      className="sticky z-0 overflow-hidden rounded-3xl"
-    >
-      <video
-        autoPlay
-        muted
-        loop
-        className="absolute inset-0 w-full h-full object-cover"
-      >
-        <source src={videoUrl} type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-      <motion.div
-        className="absolute inset-0 bg-neutral-950/70"
-        style={{
-          opacity,
-        }}
-      />
-    </motion.div>
-  );
-};
-
-interface OverlayCopyProps {
-  subheading: string;
-  heading: string;
-}
-
-// Export OverlayCopy if needed elsewhere
-export const OverlayCopy = ({ subheading, heading }: OverlayCopyProps) => {
-  const targetRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: targetRef,
-    offset: ["start end", "end start"],
-  });
-
-  const y = useTransform(scrollYProgress, [0, 1], [250, -250]);
-  const opacity = useTransform(scrollYProgress, [0.25, 0.5, 0.75], [0, 1, 0]);
-
-  return (
-    <motion.div
-      style={{
-        y,
-        opacity,
-      }}
-      ref={targetRef}
-      className="absolute left-0 top-0 flex h-screen w-full flex-col items-center justify-center text-white"
-    >
-      <p className="text-center text-4xl font-bold md:text-7xl text-purple-600">
-        {heading}
-      </p>
-      <p className="mb-2 text-center text-xl md:mb-4 md:text-3xl text-purple-600">
-        {subheading}
-      </p>
-    </motion.div>
-  );
-};
-
-interface ExampleContentProps {
-  id: number;
-}
-export const ExampleContent = ({ id }: ExampleContentProps) => {
-  const content = [
+const content = [
     {
       heading: "iRescue: Η Λύση για το Κινητό σου",
       description:
@@ -232,24 +29,140 @@ export const ExampleContent = ({ id }: ExampleContentProps) => {
     },
   ];
 
-  const currentContent = content[id];
+const ONE_SECOND: number = 1000;
+const AUTO_DELAY: number = ONE_SECOND * 5;
+const DRAG_BUFFER: number = 50;
+
+const SPRING_OPTIONS = {
+  type: "spring",
+  mass: 3,
+  stiffness: 400,
+  damping: 50,
+};
+
+export const SwipeCarousel: React.FC = () => {
+  const [cardIndex, setCardIndex] = useState<number>(0);
+
+  const dragX = useMotionValue<number>(0);
+
+  useEffect(() => {
+    const intervalRef = setInterval(() => {
+      const x = dragX.get();
+
+      if (x === 0) {
+        setCardIndex((pv: number) => {
+          if (pv === content.length - 1) {
+            return 0;
+          }
+          return pv + 1;
+        });
+      }
+    }, AUTO_DELAY);
+
+    return () => clearInterval(intervalRef);
+  }, [dragX]);
+
+  const onDragEnd = () => {
+    const x = dragX.get();
+
+    if (x <= -DRAG_BUFFER && cardIndex < content.length - 1) {
+      setCardIndex((pv: number) => pv + 1);
+    } else if (x >= DRAG_BUFFER && cardIndex > 0) {
+      setCardIndex((pv: number) => pv - 1);
+    }
+  };
 
   return (
-    <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 px-4 pb-24 pt-12 md:grid-cols-12">
-      <h2 className="col-span-1 text-3xl font-bold md:col-span-4 text-gray-700 dark:text-gray-100">
-        {currentContent.heading}
-      </h2>
-      <div className="col-span-1 md:col-span-8">
-        <p
-          className="mb-4 text-xl text-gray-700 dark:text-gray-400 md:text-2xl whitespace-pre-line"
-          dangerouslySetInnerHTML={{
-            __html: currentContent.description.replace(/\n/g, "<br>"),
-          }}
-        />
-        <button className="w-full rounded-xl bg-blue-600 px-6 py-4 text-xl text-white transition-colors hover:bg-blue-700 md:w-fit">
-          {currentContent.button} <FiArrowUpRight className="inline" />
-        </button>
-      </div>
+    <div className="relative h-[calc(100vh-140px)] overflow-hidden bg-white/50 dark:bg-gray-900">
+      <motion.div
+        drag="x"
+        dragConstraints={{
+          left: 0,
+          right: 0,
+        }}
+        style={{
+          x: dragX,
+        }}
+        animate={{
+          translateX: `-${cardIndex * 100}%`,
+        }}
+        transition={SPRING_OPTIONS}
+        onDragEnd={onDragEnd}
+        className="flex h-full cursor-grab items-center active:cursor-grabbing"
+      >
+        <Cards cardIndex={cardIndex} />
+      </motion.div>
+
+      <Dots cardIndex={cardIndex} setCardIndex={setCardIndex} />
+      <GradientEdges />
     </div>
+  );
+};
+  
+  interface CardsProps {
+    cardIndex: number;
+  }
+
+  const Cards: React.FC<CardsProps> = ({ cardIndex }) => {
+    return (
+      <>
+        {content.map((card, idx) => {
+          return (
+            <motion.div
+              key={idx}
+              style={{
+                backgroundImage: `url(/${idx + 1}.png)`, // Dynamic background image
+                backgroundSize: "contain",
+                backgroundPosition: "center",
+              }}
+              animate={{
+                scale: cardIndex === idx ? 0.95 : 0.85,
+              }}
+              transition={SPRING_OPTIONS}
+              className="aspect-video h-full w-screen shrink-0 rounded-xl dark:bg-gray-900 bg-white/50 object-cover flex items-center justify-center"
+            >
+              <div className="text-center p-8 rounded-lg w-[500px] backdrop-blur-md">
+                <h2 className="text-4xl font-bold text-purple-600">{card.heading}</h2>
+                <p className="mt-4 text-lg dark:text-white text-gray-600">{card.description}</p>
+                <button className="mt-6 px-6 py-3 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-700 transition-colors">
+                  {card.button}
+                </button>
+              </div>
+            </motion.div>
+          );
+        })}
+      </>
+    );
+  };
+
+interface DotsProps {
+  cardIndex: number;
+  setCardIndex: (index: number) => void;
+}
+
+const Dots: React.FC<DotsProps> = ({ cardIndex, setCardIndex }) => {
+  return (
+    <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 justify-center gap-2">
+      {content.map((_, idx) => {
+        return (
+          <button
+            key={idx}
+            onClick={() => setCardIndex(idx)}
+            className={`h-3 w-3 rounded-full transition-colors ${
+              idx === cardIndex ? "bg-purple-600" : "bg-neutral-500"
+            }`}
+          />
+        );
+      })}
+    </div>
+  );
+};
+
+const GradientEdges: React.FC = () => {
+  return (
+    <>
+      <div className="pointer-events-none absolute bottom-0 left-0 top-0 w-[10vw] max-w-[100px] bg-gradient-to-r from-neutral-950/50 to-neutral-950/0" />
+      <div className="pointer-events-none absolute bottom-0 right-0 top-0 w-[10vw] max-w-[100px] bg-gradient-to-l from-neutral-950/50 to-neutral-950/0" />
+    </>
   );
 };

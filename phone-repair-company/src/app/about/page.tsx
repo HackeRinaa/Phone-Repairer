@@ -33,7 +33,7 @@ export default function AboutPage() {
         {/* Hero Section */}
         <div className="text-center mb-20">
           <h1 className="text-4xl sm:text-5xl font-bold mb-6">
-          Φτιάξε, Πούλησε ή Αγόρασε Μεταχειρισμένα Κινητά <span className="text-blue-600"> Άμεσα!</span>  
+          Φτιάξε, Πούλησε ή Αγόρασε Μεταχειρισμένα Κινητά <span className="text-purple-600"> Άμεσα!</span>  
           </h1>
           <p className="text-gray-700 dark:text-gray-400 text-lg max-w-3xl mx-auto">
             Δεν έχουμε φυσικό κατάστημα, αλλά σου προσφέρουμε την πιο γρήγορη και αξιόπιστη εξυπηρέτηση! Θες να φτιάξεις, να πουλήσεις ή να αγοράσεις μεταχειρισμένο κινητό; Έλα σε εμάς!
@@ -60,7 +60,7 @@ export default function AboutPage() {
         </div>
 
         {/* CTA Section */}
-        <div className="text-center bg-blue-600 text-white rounded-2xl p-12">
+        <div className="text-center bg-purple-600 text-white rounded-2xl p-12">
           <h2 className="text-3xl font-bold mb-4">Έτοιμος να Ξεκινήσεις;</h2>
           <p className="mb-8 text-lg text-gray-100">
             Στείλε μας το κινητό σου ή δες τις διαθέσιμες μεταχειρισμένες συσκευές μας!

@@ -169,7 +169,7 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete }: Payment
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Left Column - Calendar & Time Slots */}
         <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
-          <h3 className="text-xl font-semibold mb-4">Επιλέξτε Ημερομηνία & Ώρα</h3>
+          <h3 className="text-xl font-semibold mb-4 dark:text-white text-gray-600">Επιλέξτε Ημερομηνία & Ώρα</h3>
           <Calendar
             onChange={(value) => setSelectedDate(value as Date)}
             value={selectedDate}
@@ -179,8 +179,8 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete }: Payment
           
           {selectedDate && (
             <div className="mt-6">
-              <h4 className="font-medium mb-3">Διαθέσιμες Ώρες</h4>
-              <div className="grid grid-cols-3 gap-2">
+              <h4 className="font-medium mb-3 dark:text-white text-gray-600">Διαθέσιμες Ώρες</h4>
+              <div className="grid grid-cols-3 gap-2 dark:text-white text-gray-600">
                 {['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'].map((time) => (
                   <button
                     key={time}
@@ -188,8 +188,8 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete }: Payment
                     onClick={() => setSelectedTime(time)}
                     className={`p-3 text-sm rounded-lg transition-colors ${
                       selectedTime === time 
-                        ? 'bg-blue-100 dark:bg-blue-900 border-2 border-blue-500' 
-                        : 'bg-gray-50 dark:bg-gray-700 hover:bg-blue-50 dark:hover:bg-gray-600'
+                        ? 'bg-purple-100 dark:bg-purple-900 border-2 border-purple-500' 
+                        : 'bg-gray-50 dark:bg-gray-700 hover:bg-purple-10 dark:hover:bg-gray-600'
                     }`}
                   >
                     {time}
@@ -202,10 +202,10 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete }: Payment
 
         {/* Right Column - Contact Information */}
         <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
-          <h3 className="text-xl font-semibold mb-4">Στοιχεία Επικοινωνίας</h3>
+          <h3 className="text-xl font-semibold mb-4 dark:text-white text-gray-600">Στοιχεία Επικοινωνίας</h3>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Ονοματεπώνυμο</label>
+              <label className="block text-sm font-medium mb-1 dark:text-white text-gray-600">Ονοματεπώνυμο</label>
               <input
                 type="text"
                 value={bookingData.contactInfo.name}
@@ -219,7 +219,7 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete }: Payment
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Email</label>
+              <label className="block text-sm font-medium mb-1 dark:text-white text-gray-600">Email</label>
               <input
                 type="email"
                 value={bookingData.contactInfo.email}
@@ -233,7 +233,7 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete }: Payment
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Τηλέφωνο</label>
+              <label className="block text-sm font-medium mb-1 dark:text-white text-gray-600">Τηλέφωνο</label>
               <input
                 type="tel"
                 value={bookingData.contactInfo.phone}
@@ -247,7 +247,7 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete }: Payment
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Διεύθυνση</label>
+              <label className="block text-sm font-medium mb-1 dark:text-white text-gray-600">Διεύθυνση</label>
               <input
                 type="text"
                 value={bookingData.contactInfo.address}
@@ -261,7 +261,7 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete }: Payment
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Σημειώσεις</label>
+              <label className="block text-sm font-medium mb-1 dark:text-white text-gray-600">Σημειώσεις</label>
               <textarea
                 value={bookingData.contactInfo.notes}
                 onChange={(e) => setBookingData({
@@ -317,24 +317,24 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete }: Payment
 
           {/* Order Summary */}
           <div className="md:col-span-2">
-            <h3 className="text-xl font-semibold mb-4">Σύνοψη Παραγγελίας</h3>
+            <h3 className="text-xl font-semibold mb-4 dark:text-white text-gray-600">Σύνοψη Παραγγελίας</h3>
             <div className="space-y-4">
               {itemDetails.map((item, index) => (
-                <div key={index} className="flex justify-between py-2 border-b">
+                <div key={index} className="flex justify-between py-2 border-b dark:text-white text-gray-600">
                   <span>{item.title}</span>
-                  <span className="font-medium">{item.price}€</span>
+                  <span className="font-medium text-purple-600">{item.price}€</span>
                 </div>
               ))}
-              <div className="flex justify-between pt-4 text-lg font-bold">
+              <div className="flex justify-between pt-4 text-lg font-bold dark:text-white text-gray-600">
                 <span>Σύνολο</span>
-                <span>{totalAmount}€</span>
+                <span className='text-purple-600'>{totalAmount}€</span>
               </div>
             </div>
 
             <button
               onClick={handleSubmit}
               disabled={!selectedDate || !selectedTime || !bookingData.contactInfo.name || isProcessing}
-              className="w-full mt-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400"
+              className="w-full mt-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:bg-gray-400"
             >
               {isProcessing ? (
                 <span className="flex items-center justify-center">
