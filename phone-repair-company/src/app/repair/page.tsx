@@ -2,22 +2,178 @@
 import { useState } from "react";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
-import 'react-calendar/dist/Calendar.css';
+import "react-calendar/dist/Calendar.css";
 import { PaymentSection } from "@/components/PaymentSection";
 
 const phoneOptions = {
-  Apple: ["iPhone 14 Pro Max", "iPhone 14 Pro", "iPhone 14", "iPhone 13 Pro Max", "iPhone 13", "iPhone 12", "iPhone 11"],
-  Samsung: ["Galaxy S23 Ultra", "Galaxy S23+", "Galaxy S23", "Galaxy S22", "Galaxy S21", "Galaxy A53"],
-  Google: ["Pixel 7 Pro", "Pixel 7", "Pixel 6 Pro", "Pixel 6", "Pixel 5"],
-  OnePlus: ["11 5G", "10 Pro", "10T", "Nord N300"],
+  Apple: [
+    "iPhone 15 Pro Max",
+    "iPhone 15 Pro",
+    "iPhone 15",
+    "iPhone 14 Pro Max",
+    "iPhone 14 Pro",
+    "iPhone 14",
+    "iPhone 13 Pro Max",
+    "iPhone 13 Pro",
+    "iPhone 13",
+    "iPhone 12 Pro Max",
+    "iPhone 12 Pro",
+    "iPhone 12",
+    "iPhone 11 Pro Max",
+    "iPhone 11 Pro",
+    "iPhone 11",
+    "iPhone SE (2022)",
+    "iPhone SE (2020)",
+  ],
+  Samsung: [
+    "Galaxy S23 Ultra",
+    "Galaxy S23+",
+    "Galaxy S23",
+    "Galaxy S22 Ultra",
+    "Galaxy S22+",
+    "Galaxy S22",
+    "Galaxy S21 Ultra",
+    "Galaxy S21+",
+    "Galaxy S21",
+    "Galaxy Z Fold 5",
+    "Galaxy Z Flip 5",
+    "Galaxy Z Fold 4",
+    "Galaxy Z Flip 4",
+    "Galaxy A54",
+    "Galaxy A34",
+    "Galaxy A14",
+    "Galaxy M54",
+    "Galaxy M34",
+  ],
+  Google: [
+    "Pixel 8 Pro",
+    "Pixel 8",
+    "Pixel 7 Pro",
+    "Pixel 7",
+    "Pixel 6 Pro",
+    "Pixel 6",
+    "Pixel 5",
+    "Pixel 4a",
+    "Pixel 4 XL",
+    "Pixel 4",
+  ],
+  Huawei: [
+    "Mate 60 Pro",
+    "Mate 50 Pro",
+    "Mate 40 Pro",
+    "P60 Pro",
+    "P50 Pro",
+    "P40 Pro",
+    "Nova 11",
+    "Nova 10",
+    "Nova 9",
+  ],
+  Xiaomi: [
+    "Mi 13 Pro",
+    "Mi 13",
+    "Mi 12 Pro",
+    "Mi 12",
+    "Redmi Note 12 Pro",
+    "Redmi Note 12",
+    "Redmi Note 11",
+    "Poco F5",
+    "Poco X5 Pro",
+    "Poco X5",
+  ],
+  OnePlus: [
+    "11 5G",
+    "10 Pro",
+    "10T",
+    "Nord 3",
+    "Nord CE 3",
+    "Nord N30",
+    "Nord N20",
+  ],
+  Oppo: [
+    "Find X6 Pro",
+    "Find X5 Pro",
+    "Find X3 Pro",
+    "Reno 10 Pro",
+    "Reno 9 Pro",
+    "Reno 8 Pro",
+    "A98",
+    "A78",
+    "A58",
+  ],
+  Vivo: [
+    "X90 Pro",
+    "X80 Pro",
+    "X70 Pro",
+    "V29 Pro",
+    "V27 Pro",
+    "V25 Pro",
+    "iQOO 11",
+    "iQOO 9",
+    "iQOO 7",
+  ],
+  Realme: [
+    "GT 3",
+    "GT 2 Pro",
+    "GT 2",
+    "10 Pro+",
+    "10 Pro",
+    "10",
+    "9 Pro+",
+    "9 Pro",
+    "9",
+  ],
+  Sony: [
+    "Xperia 1 V",
+    "Xperia 5 V",
+    "Xperia 10 V",
+    "Xperia 1 IV",
+    "Xperia 5 IV",
+    "Xperia 10 IV",
+  ],
+  Motorola: [
+    "Moto Edge 40 Pro",
+    "Moto Edge 40",
+    "Moto Edge 30 Ultra",
+    "Moto Edge 30",
+    "Moto G84",
+    "Moto G73",
+    "Moto G53",
+  ],
+  Nokia: [
+    "G60",
+    "X30",
+    "X20",
+    "G50",
+    "G21",
+    "G11",
+    "C32",
+    "C22",
+    "C12",
+  ],
+  Asus: [
+    "ROG Phone 7",
+    "ROG Phone 6",
+    "Zenfone 10",
+    "Zenfone 9",
+    "Zenfone 8",
+    "Zenfone 7 Pro",
+  ],
+  Lenovo: [
+    "Legion Y90",
+    "Legion Duel 2",
+    "K14 Plus",
+    "K13 Pro",
+    "K12 Pro",
+    "K11",
+  ],
 };
-
 
 const commonIssues = [
   { title: "Επισκευή Οθόνης", icon: "🔧", price: "από 89€" },
   { title: "Αντικατάσταση Μπαταρίας", icon: "🔋", price: "από 49€" },
   { title: "Βλάβη από Νερό", icon: "💧", price: "από 99€" },
   { title: "Επισκευή Κάμερας", icon: "📸", price: "από 69€" },
+  { title: "Επισκευή Μικροφώνου / Ηχείου", icon: "🎙️", price: "από 69€" },
 ];
 
 export default function RepairPage() {
@@ -28,8 +184,8 @@ export default function RepairPage() {
 
   const calculateTotal = () => {
     return selectedIssues.reduce((total, issue) => {
-      const issuePrice = commonIssues.find(i => i.title === issue)?.price || "0";
-      return total + parseInt(issuePrice.replace(/\D/g, ''));
+      const issuePrice = commonIssues.find((i) => i.title === issue)?.price || "0";
+      return total + parseInt(issuePrice.replace(/\D/g, ""));
     }, 0);
   };
 
@@ -44,10 +200,8 @@ export default function RepairPage() {
   };
 
   const handleIssueSelect = (issue: string) => {
-    setSelectedIssues(prev => 
-      prev.includes(issue) 
-        ? prev.filter(i => i !== issue)
-        : [...prev, issue]
+    setSelectedIssues((prev) =>
+      prev.includes(issue) ? prev.filter((i) => i !== issue) : [...prev, issue]
     );
   };
 
@@ -60,7 +214,7 @@ export default function RepairPage() {
               <button
                 key={brand}
                 onClick={() => handleBrandSelect(brand)}
-                className="w-full h-full flex flex-col items-center justify-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all transform hover:scale-105"
+                className="w-full h-full flex flex-col items-center justify-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all transform hover:scale-105hover:bg-purple-100 dark:hover:bg-purple-900"
               >
                 <Image
                   src={`/brands/${brand.toLowerCase()}.svg`}
@@ -69,7 +223,9 @@ export default function RepairPage() {
                   height={48}
                   className="mb-3"
                 />
-                <span className="text-sm font-medium text-center dark:text-white text-gray-600">{brand}</span>
+                <span className="text-sm font-medium text-center dark:text-white text-gray-600">
+                  {brand}
+                </span>
               </button>
             ))}
           </div>
@@ -78,17 +234,25 @@ export default function RepairPage() {
       case 2:
         return (
           <div className="max-w-2xl mx-auto">
-            <h2 className="text-2xl font-semibold mb-6 text-center dark:text-white text-gray-600">Επιλέξτε το Μοντέλο σας</h2>
-            <div className="grid grid-cols-2 gap-4">
+            <h2 className="text-2xl font-semibold mb-6 text-center dark:text-white text-gray-600">
+              Επιλέξτε το Μοντέλο σας
+            </h2>
+            <div className="grid grid-cols-4 gap-4">
               {phoneOptions[selectedBrand as keyof typeof phoneOptions].map((model) => (
                 <button
                   key={model}
                   onClick={() => handleModelSelect(model)}
-                  className="p-4 dark:text-white text-gray-600 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all text-left hover:bg-purple-100 dark:hover:bg-gray-700"
+                  className="p-4 dark:text-white text-gray-600 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all text-left hover:bg-purple-100 dark:hover:bg-purple-900"
                 >
                   {model}
                 </button>
               ))}
+              <button
+                  onClick={() => handleModelSelect("Άλλο")}
+                  className="p-4 dark:text-white text-gray-600 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all text-left hover:bg-purple-100 dark:hover:bg-purple-900"
+                >
+                  Άλλο
+                </button>
             </div>
             <button
               onClick={() => setStep(1)}
@@ -103,24 +267,42 @@ export default function RepairPage() {
         return (
           <div className="max-w-3xl mx-auto">
             <h2 className="text-2xl font-semibold mb-6 text-center dark:text-white text-gray-600">
-              Τι πρόβλημα έχει το {selectedBrand} {selectedModel} σας;
+              Τι πρόβλημα έχει το {selectedBrand} {selectedModel==='Άλλο' ? "" : selectedModel} σας;
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
               {commonIssues.map((issue) => (
                 <button
                   key={issue.title}
                   onClick={() => handleIssueSelect(issue.title)}
-                  className={`p-6 rounded-xl text-left transition-all ${
+                  className={`p-6 rounded-xl text-left transition-all hover:bg-purple-100 dark:hover:bg-purple-900
+                  ${
                     selectedIssues.includes(issue.title)
                       ? "bg-purple-100 dark:bg-purple-900 border-2 border-purple-500"
                       : "bg-white dark:bg-gray-800 hover:shadow-md"
                   }`}
                 >
                   <span className="text-3xl mb-4 block">{issue.icon}</span>
-                  <h3 className="font-medium mb-2 dark:text-white text-gray-600">{issue.title}</h3>
+                  <h3 className="font-medium mb-2 dark:text-white text-gray-600">
+                    {issue.title}
+                  </h3>
                   <p className="text-purple-600 dark:text-purple-500">{issue.price}</p>
                 </button>
               ))}
+              <button
+                  onClick={() => handleIssueSelect('Αλλο')}
+                  className={`p-6 rounded-xl text-left transition-all ${
+                    selectedIssues.includes('Αλλο')
+                      ? "bg-purple-100 dark:bg-purple-900 border-2 border-purple-500"
+                      : "bg-white dark:bg-gray-800 hover:shadow-md"
+                  }`}
+                >
+                  <span className="text-3xl mb-4 block">❔</span>
+                  <h3 className="font-medium mb-2 dark:text-white text-gray-600">
+                    Άλλο
+                  </h3>
+                  <input type="text" className="p-2 rounded-lg bg-gray-600 border-gray-600 w-[200px]"/> 
+                  <p className="text-purple-600 dark:text-purple-500">Ας το δούμε μαζί!</p>
+                </button>
             </div>
             <div className="flex justify-between items-center">
               <button
@@ -148,15 +330,17 @@ export default function RepairPage() {
         return (
           <PaymentSection
             totalAmount={calculateTotal()}
-            itemDetails={selectedIssues.map(issue => ({
+            itemDetails={selectedIssues.map((issue) => ({
               title: `${selectedBrand} ${selectedModel} - ${issue}`,
-              price: parseInt(commonIssues.find(i => i.title === issue)?.price.replace(/\D/g, '') || "0")
+              price: parseInt(
+                commonIssues.find((i) => i.title === issue)?.price.replace(/\D/g, "") || "0"
+              ),
             }))}
             onComplete={(data) => {
-              console.log('Η κράτηση ολοκληρώθηκε:', {
+              console.log("Η κράτηση ολοκληρώθηκε:", {
                 device: { brand: selectedBrand, model: selectedModel },
                 issues: selectedIssues,
-                booking: data
+                booking: data,
               });
             }}
           />
@@ -173,7 +357,9 @@ export default function RepairPage() {
 
       <main className="max-w-7xl mx-auto px-4 py-12">
         <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold mb-4 dark:text-white text-gray-600">Ποιο κινητό θέλετε να επισκευάσετε;</h1>
+          <h1 className="text-4xl font-bold mb-4 dark:text-white text-gray-600">
+            Ποιο κινητό θέλετε να επισκευάσετε;
+          </h1>
           <p className="text-gray-600 dark:text-gray-400">
             Επιλέξτε τη μάρκα του κινητού σας για να ξεκινήσετε
           </p>
