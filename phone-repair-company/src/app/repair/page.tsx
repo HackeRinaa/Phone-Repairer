@@ -4,6 +4,7 @@ import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import "react-calendar/dist/Calendar.css";
 import { PaymentSection } from "@/components/PaymentSection";
+import Link from "next/link";
 
 const phoneOptions = {
   Apple: [
@@ -176,6 +177,21 @@ const commonIssues = [
   { title: "Επισκευή Μικροφώνου / Ηχείου", icon: "🎙️", price: "από 69€" },
 ];
 
+// Step titles and descriptions
+const stepTitles = {
+  1: "Ποιο κινητό θέλετε να επισκευάσετε;",
+  2: "Επιλέξτε το Μοντέλο σας",
+  3: "Τι πρόβλημα έχει το κινητό σας;",
+  4: "Ολοκληρώστε την Κράτηση",
+};
+
+const stepDescriptions = {
+  1: "Επιλέξτε τη μάρκα του κινητού σας για να ξεκινήσετε",
+  2: "Επιλέξτε το μοντέλο του κινητού σας",
+  3: "Επιλέξτε το πρόβλημα που αντιμετωπίζετε",
+  4: "Συμπληρώστε τα στοιχεία σας για να ολοκληρώσετε την κράτηση",
+};
+
 export default function RepairPage() {
   const [selectedBrand, setSelectedBrand] = useState<string>("");
   const [selectedModel, setSelectedModel] = useState<string>("");
@@ -214,7 +230,7 @@ export default function RepairPage() {
               <button
                 key={brand}
                 onClick={() => handleBrandSelect(brand)}
-                className="w-full h-full flex flex-col items-center justify-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all transform hover:scale-105hover:bg-purple-100 dark:hover:bg-purple-900"
+                className="w-full h-full flex flex-col items-center justify-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all transform hover:scale-105  dark:hover:bg-purple-900"
               >
                 <Image
                   src={`/brands/${brand.toLowerCase()}.svg`}
@@ -235,24 +251,24 @@ export default function RepairPage() {
         return (
           <div className="max-w-2xl mx-auto">
             <h2 className="text-2xl font-semibold mb-6 text-center dark:text-white text-gray-600">
-              Επιλέξτε το Μοντέλο σας
+              {stepTitles[2]}
             </h2>
             <div className="grid grid-cols-4 gap-4">
               {phoneOptions[selectedBrand as keyof typeof phoneOptions].map((model) => (
                 <button
                   key={model}
                   onClick={() => handleModelSelect(model)}
-                  className="p-4 dark:text-white text-gray-600 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all text-left hover:bg-purple-100 dark:hover:bg-purple-900"
+                  className="p-4 dark:text-white text-gray-600 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all hover:scale-105 text-left dark:hover:bg-purple-900"
                 >
                   {model}
                 </button>
               ))}
               <button
-                  onClick={() => handleModelSelect("Άλλο")}
-                  className="p-4 dark:text-white text-gray-600 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all text-left hover:bg-purple-100 dark:hover:bg-purple-900"
-                >
-                  Άλλο
-                </button>
+                onClick={() => handleModelSelect("Άλλο")}
+                className="p-4 dark:text-white text-gray-600 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all text-left hover:bg-purple-100 dark:hover:bg-purple-900"
+              >
+                Άλλο
+              </button>
             </div>
             <button
               onClick={() => setStep(1)}
@@ -267,14 +283,14 @@ export default function RepairPage() {
         return (
           <div className="max-w-3xl mx-auto">
             <h2 className="text-2xl font-semibold mb-6 text-center dark:text-white text-gray-600">
-              Τι πρόβλημα έχει το {selectedBrand} {selectedModel==='Άλλο' ? "" : selectedModel} σας;
+              {stepTitles[3]}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
               {commonIssues.map((issue) => (
                 <button
                   key={issue.title}
                   onClick={() => handleIssueSelect(issue.title)}
-                  className={`p-6 rounded-xl text-left transition-all hover:bg-purple-100 dark:hover:bg-purple-900
+                  className={`p-6 rounded-xl text-left transition-all hover:shadow-md hover:scale-105 dark:hover:bg-purple-900
                   ${
                     selectedIssues.includes(issue.title)
                       ? "bg-purple-100 dark:bg-purple-900 border-2 border-purple-500"
@@ -289,20 +305,23 @@ export default function RepairPage() {
                 </button>
               ))}
               <button
-                  onClick={() => handleIssueSelect('Αλλο')}
-                  className={`p-6 rounded-xl text-left transition-all ${
-                    selectedIssues.includes('Αλλο')
-                      ? "bg-purple-100 dark:bg-purple-900 border-2 border-purple-500"
-                      : "bg-white dark:bg-gray-800 hover:shadow-md"
-                  }`}
-                >
-                  <span className="text-3xl mb-4 block">❔</span>
-                  <h3 className="font-medium mb-2 dark:text-white text-gray-600">
-                    Άλλο
-                  </h3>
-                  <input type="text" className="p-2 rounded-lg bg-gray-600 border-gray-600 w-[200px]"/> 
-                  <p className="text-purple-600 dark:text-purple-500">Ας το δούμε μαζί!</p>
-                </button>
+                onClick={() => handleIssueSelect("Αλλο")}
+                className={`p-6 rounded-xl text-left transition-all ${
+                  selectedIssues.includes("Αλλο")
+                    ? "bg-purple-100 dark:bg-purple-900 border-2 border-purple-500"
+                    : "bg-white dark:bg-gray-800 hover:shadow-md"
+                }`}
+              >
+                <span className="text-3xl mb-4 block">❔</span>
+                <h3 className="font-medium mb-2 dark:text-white text-gray-600">
+                  Άλλο
+                </h3>
+                <input
+                  type="text"
+                  className="p-2 rounded-lg dark:bg-gray-600 bg-gray-200 text-gray-600 dark:text-white border-gray-600 w-[200px]"
+                />
+                <p className="text-purple-600 dark:text-purple-500">Ας το δούμε μαζί!</p>
+              </button>
             </div>
             <div className="flex justify-between items-center">
               <button
@@ -343,6 +362,7 @@ export default function RepairPage() {
                 booking: data,
               });
             }}
+            pageId={1}
           />
         );
 
@@ -352,16 +372,16 @@ export default function RepairPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-100">
       <Navbar />
 
       <main className="max-w-7xl mx-auto px-4 py-12">
         <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold mb-4 dark:text-white text-gray-600">
-            Ποιο κινητό θέλετε να επισκευάσετε;
+          <h1 className="text-4xl sm:text-5xl font-bold mb-4 dark:text-white text-gray-600">
+            {stepTitles[step]}
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
-            Επιλέξτε τη μάρκα του κινητού σας για να ξεκινήσετε
+            {stepDescriptions[step]}
           </p>
         </div>
 
@@ -392,6 +412,11 @@ export default function RepairPage() {
 
         {renderStep()}
       </main>
+      {/* Footer - add slight transparency */}
+      <footer className="py-5 flex items-center justify-center gap-8 text-sm text-gray-700 dark:text-gray-400 border-t border-gray-300 dark:border-gray-800 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
+          <Link href="/privacy" className="hover:text-purple-600 dark:hover:text-purple-400">Πολιτική Απορρήτου & Όροι Χρήσης</Link>
+          <Link href="/faq" className="hover:text-purple-600 dark:hover:text-purple-400">Συχνές Ερωτήσεις</Link>
+      </footer>
     </div>
   );
 }

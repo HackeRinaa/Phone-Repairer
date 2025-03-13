@@ -9,6 +9,7 @@ import {
   useStripe,
   useElements,
 } from '@stripe/react-stripe-js';
+import { div } from 'framer-motion/client';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY!);
 
@@ -21,6 +22,7 @@ interface PaymentSectionProps {
   totalAmount: number;
   itemDetails: Array<{ title: string; price: number }>;
   onComplete: (data: BookingData) => void;
+  pageId: number;
 }
 
 interface BookingData {
@@ -36,7 +38,7 @@ interface BookingData {
   paymentMethod: 'online' | 'instore';
 }
 
-function PaymentForm({ clientSecret, onSuccess }: PaymentFormProps) {
+function PaymentForm({ clientSecret, onSuccess}: PaymentFormProps) {
   const stripe = useStripe();
   const elements = useElements();
   const [error, setError] = useState<string>('');
@@ -78,7 +80,7 @@ function PaymentForm({ clientSecret, onSuccess }: PaymentFormProps) {
   );
 }
 
-export function PaymentSection({ totalAmount, itemDetails, onComplete }: PaymentSectionProps) {
+export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }: PaymentSectionProps) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string>('');
   const [error, setError] = useState<string>('');
@@ -110,34 +112,43 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete }: Payment
     console.log('Sending payload:', payload); // Debugging
 
     try {
-      const response = await fetch('/api/create-payment-intent', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+      if (pageId === 1) {
+        // If pageId is 1, skip payment and directly call onComplete
+        onComplete({
+          ...bookingData,
+          date: selectedDate,
+          timeSlot: selectedTime
+        });
+      } else if (pageId === 2) {
+        // If pageId is 2, proceed with Stripe payment
+        const response = await fetch('/api/create-payment-intent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
 
-      // Check if the response is ok
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Error response:', errorData); // Log the error response
-        throw new Error(errorData.error || 'Failed to create payment intent');
+        // Check if the response is ok
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error('Error response:', errorData); // Log the error response
+          throw new Error(errorData.error || 'Failed to create payment intent');
+        }
+
+        const data = await response.json();
+
+        if (data.error) {
+          throw new Error(data.error);
+        }
+
+        setClientSecret(data.clientSecret);
+        setShowStripePayment(true);
       }
-
-      const data = await response.json();
-
-      if (data.error) {
-        throw new Error(data.error);
-      }
-
-      setClientSecret(data.clientSecret);
-      setShowStripePayment(true);
     } catch (error) {
       console.error('Error:', error);
       setError(error instanceof Error ? error.message : 'An unexpected error occurred');
     }
   };
 
- 
   if (showStripePayment && clientSecret) {
     return (
       <div className="max-w-md mx-auto">
@@ -189,7 +200,7 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete }: Payment
                     className={`p-3 text-sm rounded-lg transition-colors ${
                       selectedTime === time 
                         ? 'bg-purple-100 dark:bg-purple-900 border-2 border-purple-500' 
-                        : 'bg-gray-50 dark:bg-gray-700 hover:bg-purple-10 dark:hover:bg-gray-600'
+                        : 'bg-gray-50 dark:bg-gray-700 hover:shadow-md transition-all hover:scale-105 dark:hover:bg-purple-600'
                     }`}
                   >
                     {time}
@@ -213,7 +224,7 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete }: Payment
                   ...bookingData,
                   contactInfo: { ...bookingData.contactInfo, name: e.target.value }
                 })}
-                className="w-full p-2 border rounded-lg dark:bg-gray-700"
+                className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-white text-gray-600"
                 required
               />
             </div>
@@ -227,7 +238,7 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete }: Payment
                   ...bookingData,
                   contactInfo: { ...bookingData.contactInfo, email: e.target.value }
                 })}
-                className="w-full p-2 border rounded-lg dark:bg-gray-700"
+                className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-white text-gray-600"
                 required
               />
             </div>
@@ -241,7 +252,7 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete }: Payment
                   ...bookingData,
                   contactInfo: { ...bookingData.contactInfo, phone: e.target.value }
                 })}
-                className="w-full p-2 border rounded-lg dark:bg-gray-700"
+                className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-white text-gray-600"
                 required
               />
             </div>
@@ -255,7 +266,7 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete }: Payment
                   ...bookingData,
                   contactInfo: { ...bookingData.contactInfo, address: e.target.value }
                 })}
-                className="w-full p-2 border rounded-lg dark:bg-gray-700"
+                className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-white text-gray-600"
                 required
               />
             </div>
@@ -268,7 +279,7 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete }: Payment
                   ...bookingData,
                   contactInfo: { ...bookingData.contactInfo, notes: e.target.value }
                 })}
-                className="w-full p-2 border rounded-lg dark:bg-gray-700"
+                className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-white text-gray-600"
                 rows={3}
               />
             </div>
@@ -276,81 +287,104 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete }: Payment
         </div>
       </div>
 
-      {/* Bottom Section - Payment & Summary */}
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Payment Method Selection */}
-          <div className="md:col-span-1">
-            <h3 className="text-xl font-semibold mb-4">Τρόπος Πληρωμής</h3>
-            <div className="space-y-3">
-              <label className="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="online"
-                  checked={bookingData.paymentMethod === 'online'}
-                  onChange={() => setBookingData({ ...bookingData, paymentMethod: 'online' })}
-                  className="mr-3"
-                />
-                <div>
-                  <div className="font-medium">Online Πληρωμή</div>
-                  <div className="text-sm text-gray-500">Πληρώστε με κάρτα</div>
-                </div>
-              </label>
+      {pageId !== 1 && (
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Payment Method Selection */}
+            <div className="md:col-span-1">
+              <h3 className="text-xl font-semibold mb-4">Τρόπος Πληρωμής</h3>
+              <div className="space-y-3">
+                <label className="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="online"
+                    checked={bookingData.paymentMethod === 'online'}
+                    onChange={() => setBookingData({ ...bookingData, paymentMethod: 'online' })}
+                    className="mr-3"
+                  />
+                  <div>
+                    <div className="font-medium">Online Πληρωμή</div>
+                    <div className="text-sm text-gray-500">Πληρώστε με κάρτα</div>
+                  </div>
+                </label>
 
-              <label className="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="instore"
-                  checked={bookingData.paymentMethod === 'instore'}
-                  onChange={() => setBookingData({ ...bookingData, paymentMethod: 'instore' })}
-                  className="mr-3"
-                />
-                <div>
-                  <div className="font-medium">Πληρωμή στο Κατάστημα</div>
-                  <div className="text-sm text-gray-500">Μετρητά ή κάρτα</div>
-                </div>
-              </label>
-            </div>
-          </div>
-
-          {/* Order Summary */}
-          <div className="md:col-span-2">
-            <h3 className="text-xl font-semibold mb-4 dark:text-white text-gray-600">Σύνοψη Παραγγελίας</h3>
-            <div className="space-y-4">
-              {itemDetails.map((item, index) => (
-                <div key={index} className="flex justify-between py-2 border-b dark:text-white text-gray-600">
-                  <span>{item.title}</span>
-                  <span className="font-medium text-purple-600">{item.price}€</span>
-                </div>
-              ))}
-              <div className="flex justify-between pt-4 text-lg font-bold dark:text-white text-gray-600">
-                <span>Σύνολο</span>
-                <span className='text-purple-600'>{totalAmount}€</span>
+                <label className="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="instore"
+                    checked={bookingData.paymentMethod === 'instore'}
+                    onChange={() => setBookingData({ ...bookingData, paymentMethod: 'instore' })}
+                    className="mr-3"
+                  />
+                  <div>
+                    <div className="font-medium">Πληρωμή στο Κατάστημα</div>
+                    <div className="text-sm text-gray-500">Μετρητά ή κάρτα</div>
+                  </div>
+                </label>
               </div>
             </div>
 
-            <button
-              onClick={handleSubmit}
-              disabled={!selectedDate || !selectedTime || !bookingData.contactInfo.name || isProcessing}
-              className="w-full mt-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:bg-gray-400"
-            >
-              {isProcessing ? (
-                <span className="flex items-center justify-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Επεξεργασία...
-                </span>
-              ) : (
-                'Ολοκλήρωση Κράτησης'
-              )}
-            </button>
+            {/* Order Summary */}
+            <div className="md:col-span-2">
+              <h3 className="text-xl font-semibold mb-4 dark:text-white text-gray-600">Σύνοψη Παραγγελίας</h3>
+              <div className="space-y-4">
+                {itemDetails.map((item, index) => (
+                  <div key={index} className="flex justify-between py-2 border-b dark:text-white text-gray-600">
+                    <span>{item.title}</span>
+                    <span className="font-medium text-purple-600">{item.price}€</span>
+                  </div>
+                ))}
+                <div className="flex justify-between pt-4 text-lg font-bold dark:text-white text-gray-600">
+                  <span>Σύνολο</span>
+                  <span className='text-purple-600'>{totalAmount}€</span>
+                </div>
+              </div>
+
+              <button
+                onClick={handleSubmit}
+                disabled={!selectedDate || !selectedTime || !bookingData.contactInfo.name || isProcessing}
+                className="w-full mt-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:bg-gray-400"
+              >
+                {isProcessing ? (
+                  <span className="flex items-center justify-center">
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Επεξεργασία...
+                  </span>
+                ) : (
+                  'Ολοκλήρωση Κράτησης'
+                )}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
+
+      {pageId === 1 && (
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
+          <button
+            onClick={handleSubmit}
+            disabled={!selectedDate || !selectedTime || !bookingData.contactInfo.name || isProcessing}
+            className="w-full mt-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:bg-gray-400"
+          >
+            {isProcessing ? (
+              <span className="flex items-center justify-center">
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Επεξεργασία...
+              </span>
+            ) : (
+              'Κράτηση Ημερομηνίας'
+            )}
+          </button>
+        </div>
+      )}
 
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
@@ -359,4 +393,4 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete }: Payment
       )}
     </div>
   );
-} 
+}

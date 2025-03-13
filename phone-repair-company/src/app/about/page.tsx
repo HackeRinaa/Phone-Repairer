@@ -1,5 +1,6 @@
 "use client";
 import Navbar from "@/components/Navbar";
+import Link from "next/link";
 
 export default function AboutPage() {
   const services = [
@@ -47,7 +48,7 @@ export default function AboutPage() {
             {services.map((service, index) => (
               <div 
                 key={index}
-                className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm text-gray-700 dark:text-gray-400"
+                className="shadow-md p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm text-gray-700 dark:text-gray-400"
               >
                 <div className="text-4xl mb-4">{service.icon}</div>
                 <h3 className="text-xl font-semibold mb-3 dark:text-gray-100">{service.title}</h3>
@@ -60,7 +61,7 @@ export default function AboutPage() {
         </div>
 
         {/* CTA Section */}
-        <div className="text-center bg-purple-600 text-white rounded-2xl p-12">
+        <div className="text-center bg-purple-600 text-white rounded-2xl p-12 shadow-md">
           <h2 className="text-3xl font-bold mb-4">Έτοιμος να Ξεκινήσεις;</h2>
           <p className="mb-8 text-lg text-gray-100">
             Στείλε μας το κινητό σου ή δες τις διαθέσιμες μεταχειρισμένες συσκευές μας!
@@ -70,6 +71,11 @@ export default function AboutPage() {
           </button>
         </div>
       </main>
+      {/* Footer - add slight transparency */}
+      <footer className="py-5 flex items-center justify-center gap-8 text-sm text-gray-700 dark:text-gray-400 border-t border-gray-300 dark:border-gray-800 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
+          <Link href="/privacy" className="hover:text-purple-600 dark:hover:text-purple-400">Πολιτική Απορρήτου & Όροι Χρήσης</Link>
+          <Link href="/faq" className="hover:text-purple-600 dark:hover:text-purple-400">Συχνές Ερωτήσεις</Link>
+      </footer>
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import { PaymentSection } from "@/components/PaymentSection";
+import Link from "next/link";
 
 interface PhoneProduct {
   id: string;
@@ -25,6 +26,9 @@ export default function PurchasePage() {
     condition: "all",
     storage: "all"
   });
+
+  // Set pageId to 2 for payment functionality
+  const pageId = 2;
 
   const phones: PhoneProduct[] = [
     {
@@ -76,37 +80,39 @@ export default function PurchasePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-100">
       <Navbar />
 
       <main className="max-w-7xl mx-auto px-4 py-12">
         {!showPayment ? (
           <>
             <div className="text-center mb-16">
-              <h1 className="text-4xl font-bold mb-4">Πιστοποιημένα Ανακατασκευασμένα Κινητά</h1>
+              <h1 className="text-4xl font-bold mb-4 text-gray-800 dark:text-white">
+                Ανακατασκευασμένα Κινητά
+              </h1>
               <p className="text-gray-600 dark:text-gray-400">
                 Ελεγμένες συσκευές με εγγύηση σε προσιτές τιμές
               </p>
             </div>
 
             {/* Horizontal Filters */}
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl mb-8 flex flex-wrap gap-4 items-end">
+            <div className="shadow-md bg-white dark:bg-gray-800 p-6 rounded-xl mb-8 flex flex-wrap gap-4 items-end shadow-sm">
               <div className="flex-1 min-w-[200px]">
-                <label className="block text-sm font-medium mb-2">Μάρκα</label>
+                <label className="block text-sm font-medium mb-2 text-gray-600 dark:text-gray-400">Μάρκα</label>
                 <select
                   value={filters.brand}
                   onChange={(e) => setFilters({ ...filters, brand: e.target.value })}
-                  className="w-full p-2 rounded border dark:bg-gray-700"
+                  className="w-full p-2 rounded border border-gray-600 dark:border-white dark:bg-gray-600  text-gray-600 dark:text-gray-400"
                 >
-                  <option value="all">Όλες οι Μάρκες</option>
-                  <option value="Apple">Apple</option>
-                  <option value="Samsung">Samsung</option>
-                  <option value="Google">Google</option>
+                  <option className='text-gray-600 dark:text-gray-400' value="all">Όλες οι Μάρκες</option>
+                  <option className='text-gray-600 dark:text-gray-400' value="Apple">Apple</option>
+                  <option className='text-gray-600 dark:text-gray-400' value="Samsung">Samsung</option>
+                  <option className='text-gray-600 dark:text-gray-400' value="Google">Google</option>
                 </select>
               </div>
 
               <div className="flex-1 min-w-[200px]">
-                <label className="block text-sm font-medium mb-2">Εύρος Τιμής</label>
+                <label className="block text-sm font-medium mb-2 text-gray-600 dark:text-gray-400">Εύρος Τιμής</label>
                 <div className="flex gap-2 items-center">
                   <input
                     type="number"
@@ -115,9 +121,9 @@ export default function PurchasePage() {
                       ...filters,
                       priceRange: [Number(e.target.value), filters.priceRange[1]]
                     })}
-                    className="w-full p-2 rounded border dark:bg-gray-700"
+                    className="w-full p-2 rounded border dark:border-white border-gray-600 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
                   />
-                  <span>έως</span>
+                  <span className="text-gray-600 dark:text-gray-400">έως</span>
                   <input
                     type="number"
                     value={filters.priceRange[1]}
@@ -125,22 +131,22 @@ export default function PurchasePage() {
                       ...filters,
                       priceRange: [filters.priceRange[0], Number(e.target.value)]
                     })}
-                    className="w-full p-2 rounded border dark:bg-gray-700"
+                    className="w-full p-2 rounded border dark:border-white border-gray-600 text-gray-600 dark:bg-gray-600 dark:text-gray-400"
                   />
                 </div>
               </div>
 
               <div className="flex-1 min-w-[200px]">
-                <label className="block text-sm font-medium mb-2">Κατάσταση</label>
+                <label className="block text-sm font-medium mb-2 text-gray-600 dark:text-gray-400">Κατάσταση</label>
                 <select
                   value={filters.condition}
                   onChange={(e) => setFilters({ ...filters, condition: e.target.value })}
-                  className="w-full p-2 rounded border dark:bg-gray-700"
+                  className="w-full p-2 rounded border dark:border-white border-gray-600 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
                 >
-                  <option value="all">Όλες οι Καταστάσεις</option>
-                  <option value="Excellent">Άριστη</option>
-                  <option value="Very Good">Πολύ Καλή</option>
-                  <option value="Good">Καλή</option>
+                  <option className='text-gray-600 dark:text-gray-400' value="all">Όλες οι Καταστάσεις</option>
+                  <option className='text-gray-600 dark:text-gray-400' value="Excellent">Άριστη</option>
+                  <option className='text-gray-600 dark:text-gray-400' value="Very Good">Πολύ Καλή</option>
+                  <option className='text-gray-600 dark:text-gray-400' value="Good">Καλή</option>
                 </select>
               </div>
 
@@ -151,7 +157,7 @@ export default function PurchasePage() {
                   condition: "all",
                   storage: "all"
                 })}
-                className="px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                className="px-4 py-2 text-purple-600 hover:bg-purple-100 rounded-lg dark:text-purple-400 dark:hover:bg-purple-700"
               >
                 Επαναφορά Φίλτρων
               </button>
@@ -160,7 +166,7 @@ export default function PurchasePage() {
             {/* Phone Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredPhones.map((phone) => (
-                <div key={phone.id} className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                <div key={phone.id} className="shadow-md bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                   <div className="relative h-48">
                     <Image
                       src={phone.image}
@@ -170,7 +176,9 @@ export default function PurchasePage() {
                     />
                   </div>
                   <div className="p-4">
-                    <h3 className="font-semibold text-lg mb-2">{phone.brand} {phone.model}</h3>
+                    <h3 className="font-semibold text-lg mb-2 text-gray-800 dark:text-white">
+                      {phone.brand} {phone.model}
+                    </h3>
                     <p className="text-blue-600 dark:text-blue-400 text-xl font-bold mb-2">
                       {phone.price}€
                     </p>
@@ -181,7 +189,7 @@ export default function PurchasePage() {
                     </div>
                     <button
                       onClick={() => handleBuyClick(phone)}
-                      className="w-full mt-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                      className="w-full mt-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors dark:bg-blue-700 dark:hover:bg-blue-800"
                     >
                       Αγορά
                     </button>
@@ -215,9 +223,15 @@ export default function PurchasePage() {
               });
               // Handle completion
             }}
+            pageId={pageId} // Pass pageId === 2 to PaymentSection
           />
         )}
       </main>
+      {/* Footer - add slight transparency */}
+      <footer className="py-5 flex items-center justify-center gap-8 text-sm text-gray-700 dark:text-gray-400 border-t border-gray-300 dark:border-gray-800 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
+          <Link href="/privacy" className="hover:text-purple-600 dark:hover:text-purple-400">Πολιτική Απορρήτου & Όροι Χρήσης</Link>
+          <Link href="/faq" className="hover:text-purple-600 dark:hover:text-purple-400">Συχνές Ερωτήσεις</Link>
+      </footer>
     </div>
   );
-} 
+}
