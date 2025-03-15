@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
-import { FaPhone, FaEnvelope, FaInstagram } from "react-icons/fa";
+import { FaPhone, FaEnvelope, FaInstagram, FaFacebook, FaTiktok } from "react-icons/fa";
 import Link from "next/link";
 
 interface ContactForm {
@@ -139,7 +139,7 @@ export default function ContactPage() {
             {/* Quick Contact */}
             <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-md">
               <h2 className="text-2xl font-semibold mb-6 text-gray-600 dark:text-white">Γρήγορη Επικοινωνία</h2>
-              <div className="space-y-4">
+              <div className="space-y-4 grid grid-cols-2">
                 <div className="flex items-center gap-4">
                   <FaPhone className="text-purple-600 text-xl" />
                   <div>
@@ -163,6 +163,24 @@ export default function ContactPage() {
                     </p>
                   </div>
                 </div>
+                <div className="flex items-center gap-4">
+                  <FaFacebook className="text-purple-600 text-xl" />
+                  <div>
+                    <p className="font-semibold text-purple-600">Facebook</p>
+                    <p className="text-gray-600 dark:text-gray-400">
+                      irescue.athens
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <FaTiktok className="text-purple-600 text-xl" />
+                  <div>
+                    <p className="font-semibold text-purple-600">TikTok</p>
+                    <p className="text-gray-600 dark:text-gray-400">
+                      irescue.athens
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -171,11 +189,11 @@ export default function ContactPage() {
               <h2 className="text-2xl font-semibold mb-6 text-gray-600 dark:text-white">Πώς Λειτουργούμε</h2>
               <div className="space-y-4">
                 <p className="text-gray-600 dark:text-gray-400 text-md text-left">
-                  🚚 <strong>Δωρεάν μεταφορικά:</strong> Παίρνουμε και φέρνουμε τη συσκευή σας.  <br/>
-                  🔧 <strong>Γρήγορη επισκευή:</strong> Επισκευάζουμε ή αγοράζουμε τη συσκευή σας.  <br/>
-                  📦 <strong>Άμεση επιστροφή:</strong> Σας την επιστρέφουμε άμεσα και χωρίς κόστος.  
+                  🚚 <strong>Δωρεάν μεταφορικά:</strong> Παραλαβή και Παράδοση της συσκευής σας Χωρίς Χρέωση.  <br/>
+                  🔧 <strong>Γρήγορη επισκευή:</strong> Άμεση Επισκευή ή Αγορά της συσκευής σας.  <br/>
+                  📦 <strong>Δωρεάν επιστροφή:</strong> Σας την επιστρέφουμε άμεσα και χωρίς κόστος.  
                   <br />
-                  <strong className="text-lg text-purple-600">Απλό, γρήγορο και χωρίς κόπο!</strong>
+                  <strong className="text-lg text-purple-600">Απλά και Γρήγορα στην πόρτα σου!</strong>
                 </p>
               </div>
             </div>

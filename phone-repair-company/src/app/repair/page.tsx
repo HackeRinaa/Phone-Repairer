@@ -178,14 +178,14 @@ const commonIssues = [
 ];
 
 // Step titles and descriptions
-const stepTitles = {
+const stepTitles: Record<number,string> = {
   1: "Ποιο κινητό θέλετε να επισκευάσετε;",
   2: "Επιλέξτε το Μοντέλο σας",
   3: "Τι πρόβλημα έχει το κινητό σας;",
   4: "Ολοκληρώστε την Κράτηση",
 };
 
-const stepDescriptions = {
+const stepDescriptions: Record<number,string> = {
   1: "Επιλέξτε τη μάρκα του κινητού σας για να ξεκινήσετε",
   2: "Επιλέξτε το μοντέλο του κινητού σας",
   3: "Επιλέξτε το πρόβλημα που αντιμετωπίζετε",
@@ -253,7 +253,7 @@ export default function RepairPage() {
             <h2 className="text-2xl font-semibold mb-6 text-center dark:text-white text-gray-600">
               {stepTitles[2]}
             </h2>
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {phoneOptions[selectedBrand as keyof typeof phoneOptions].map((model) => (
                 <button
                   key={model}
@@ -372,10 +372,10 @@ export default function RepairPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-100">
+    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-100">
       <Navbar />
 
-      <main className="max-w-7xl mx-auto px-4 py-12">
+      <main className="flex-grow max-w-7xl mx-auto px-4 py-12">
         <div className="text-center mb-16">
           <h1 className="text-4xl sm:text-5xl font-bold mb-4 dark:text-white text-gray-600">
             {stepTitles[step]}

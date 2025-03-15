@@ -59,9 +59,9 @@ export default function FAQPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-100">
+    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-100">
         <Navbar/>
-      <main className="max-w-4xl mx-auto px-4 py-12">
+      <main className="flex-grow max-w-4xl mx-auto px-4 py-12">
         <h1 className="text-4xl sm:text-5xl font-bold mb-8 text-center dark:text-white text-gray-600">
           Συχνές Ερωτήσεις (FAQ)
         </h1>

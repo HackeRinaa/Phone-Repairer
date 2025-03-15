@@ -11,7 +11,7 @@ export default function AboutPage() {
     },
     {
       title: "Άμεση Επισκευή",
-      description: "Επισκευάζουμε γρήγορα και αξιόπιστα, με τις περισσότερες εργασίες να ολοκληρώνονται σε 24 ώρες!",
+      description: "Επισκευάζουμε γρήγορα και αξιόπιστα, με τις περισσότερες επισκεύες να ολοκληρώνονται σε 24 ώρες!",
       icon: "⚡"
     },
     {
@@ -20,8 +20,8 @@ export default function AboutPage() {
       icon: "🛡️"
     },
     {
-      title: "Οι Καλύτερες Τιμές",
-      description: "Εξαιρετικές τιμές χωρίς κρυφές χρεώσεις και με διαφάνεια!",
+      title: "Ανταγωνιστικές Τιμές",
+      description: "Προσιτές τιμές χωρίς κρυφές χρεώσεις και με διαφάνεια!",
       icon: "💰"
     }
   ];
@@ -34,11 +34,8 @@ export default function AboutPage() {
         {/* Hero Section */}
         <div className="text-center mb-20">
           <h1 className="text-4xl sm:text-5xl font-bold mb-6">
-          Φτιάξε, Πούλησε ή Αγόρασε Μεταχειρισμένα Κινητά <span className="text-purple-600"> Άμεσα!</span>  
+          Επισκεύασε, Μεταπώλησε ή Αγόρασε <br/>Μεταχειρισμένη Συσκευή <span className="text-purple-600"> Άμεσα!</span>  
           </h1>
-          <p className="text-gray-700 dark:text-gray-400 text-lg max-w-3xl mx-auto">
-            Δεν έχουμε φυσικό κατάστημα, αλλά σου προσφέρουμε την πιο γρήγορη και αξιόπιστη εξυπηρέτηση! Θες να φτιάξεις, να πουλήσεις ή να αγοράσεις μεταχειρισμένο κινητό; Έλα σε εμάς!
-          </p>
         </div>
 
         {/* Services Grid */}

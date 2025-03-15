@@ -10,12 +10,6 @@ const content = [
       button: "Μάθε Περισσότερα",
     },
     {
-      heading: "Αξιοπιστία & Επαγγελματισμός",
-      description:
-        "Επισκευές από ειδικούς με πολλά χρόνια εμπειρίας. Εμπιστευτείτε μας τη συσκευή σας!",
-      button: "Επισκευή Κινητού",
-    },
-    {
       heading: "Δωρεάν Εκτίμηση & Μεταφορικά",
       description:
         "Αποκτήστε μια δωρεάν εκτίμηση για την επισκευή ή την πώληση της συσκευής σας. Παίρνουμε και φέρνουμε το κινητό σας χωρίς χρέωση!",
@@ -26,6 +20,12 @@ const content = [
       description:
         "Δώστε μια δεύτερη ευκαιρία στο κινητό σας. Μην το πετάξετε! Είμαστε υπέρμαχοι της ανακύκλωσης.",
       button: "Μάθε Περισσότερα",
+    },
+    {
+      heading: "Αξιοπιστία & Επαγγελματισμός",
+      description:
+        "Επισκευές από ειδικούς με πολλά χρόνια εμπειρίας. Εμπιστευτείτε μας τη συσκευή σας!",
+      button: "Επισκευή Κινητού",
     },
   ];
 
@@ -73,7 +73,7 @@ export const SwipeCarousel: React.FC = () => {
   };
 
   return (
-    <div className="relative h-[calc(100vh-140px)] overflow-hidden bg-white/50 dark:bg-gray-900">
+    <div className="relative h-[calc(100vh-140px)] overflow-hidden bg-white/50 dark:bg-gray-900 rounded-xl">
       <motion.div
         drag="x"
         dragConstraints={{
@@ -161,8 +161,8 @@ const Dots: React.FC<DotsProps> = ({ cardIndex, setCardIndex }) => {
 const GradientEdges: React.FC = () => {
   return (
     <>
-      <div className="pointer-events-none absolute bottom-0 left-0 top-0 w-[10vw] max-w-[100px] bg-gradient-to-r from-neutral-950/50 to-neutral-950/0" />
-      <div className="pointer-events-none absolute bottom-0 right-0 top-0 w-[10vw] max-w-[100px] bg-gradient-to-l from-neutral-950/50 to-neutral-950/0" />
+      <div className="pointer-events-none absolute bottom-0 left-0 top-0 w-[10vw] max-w-[100px] bg-gradient-to-r from-neutral-950/30 to-neutral-950/0" />
+      <div className="pointer-events-none absolute bottom-0 right-0 top-0 w-[10vw] max-w-[100px] bg-gradient-to-l from-neutral-950/30 to-neutral-950/0" />
     </>
   );
 };
