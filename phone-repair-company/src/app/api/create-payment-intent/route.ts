@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { prisma } from '@/lib/db';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 
 // Define types for items and booking data
 interface Item {
@@ -8,7 +10,9 @@ interface Item {
   price: number;
 }
 
-interface BookingData {
+interface BookingFormData {
+  date: string | null;
+  timeSlot: string;
   contactInfo: {
     name: string;
     email: string;
@@ -19,6 +23,14 @@ interface BookingData {
   paymentMethod: 'online' | 'instore';
 }
 
+// Extended user type to include id
+interface ExtendedUser {
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+  id: string;
+}
+
 // Helper function to calculate amount in cents
 function calculateAmount(items: Item[]): number {
   return items.reduce((total, item) => total + (item.price * 100), 0);
@@ -26,19 +38,22 @@ function calculateAmount(items: Item[]): number {
 
 export async function POST(req: Request) {
   try {
-    const body: { items: Item[]; bookingData: BookingData } = await req.json();
+    const body: { items: Item[]; bookingData: BookingFormData } = await req.json();
     console.log('Received payload:', body); // Debugging
 
-    const { items, bookingData } = body;
+    const { items, bookingData: formData } = body;
 
     // Validate the payload
-    if (!Array.isArray(items) || !bookingData || typeof bookingData !== 'object') {
+    if (!Array.isArray(items) || !formData || typeof formData !== 'object') {
       return NextResponse.json(
         { error: 'Invalid payload: items must be an array and bookingData must be an object' },
         { status: 400 }
       );
     }
 
+    // Get user session if available
+    const session = await getServerSession(authOptions);
+    
     // Calculate amount in cents
     const amount = calculateAmount(items);
     console.log('Calculated amount:', amount);
@@ -57,25 +72,37 @@ export async function POST(req: Request) {
       payment_method_types: ['card'],
     });
 
+    // Prepare booking data for database
+    const bookingData = {
+      brand: items[0].title.split(' - ')[0].split(' ')[0],
+      model: items[0].title.split(' - ')[0].split(' ').slice(1).join(' '),
+      issues: items.map(item => item.title.split(' - ')[1]),
+      name: formData.contactInfo.name,
+      email: formData.contactInfo.email,
+      phone: formData.contactInfo.phone,
+      address: formData.contactInfo.address || '',
+      notes: formData.contactInfo.notes || '',
+      date: formData.date ? new Date(formData.date) : new Date(), // Use current date if not provided
+      timeSlot: formData.timeSlot || '',
+      totalAmount: amount / 100,
+      paymentMethod: 'online',
+      paymentId: paymentIntent.id,
+      status: 'pending',
+      paymentStatus: 'pending',
+    };
+    
+    // Add userId if user is logged in
+    if (session?.user) {
+      const user = session.user as ExtendedUser;
+      if (user.id) {
+        // @ts-expect-error - userId exists in the Prisma schema but TypeScript doesn't know about it
+        bookingData.userId = user.id;
+      }
+    }
+
     // Create booking record
     const booking = await prisma.booking.create({
-      data: {
-        brand: items[0].title.split(' - ')[0].split(' ')[0],
-        model: items[0].title.split(' - ')[0].split(' ').slice(1).join(' '),
-        issues: items.map(item => item.title.split(' - ')[1]),
-        name: bookingData.contactInfo.name,
-        email: bookingData.contactInfo.email,
-        phone: bookingData.contactInfo.phone,
-        address: bookingData.contactInfo.address || '',
-        notes: bookingData.contactInfo.notes || '',
-        date: new Date(bookingData.date),
-        timeSlot: bookingData.timeSlot,
-        totalAmount: amount / 100,
-        paymentMethod: 'online',
-        paymentId: paymentIntent.id,
-        status: 'pending',
-        paymentStatus: 'pending',
-      },
+      data: bookingData,
     });
 
     return NextResponse.json({
