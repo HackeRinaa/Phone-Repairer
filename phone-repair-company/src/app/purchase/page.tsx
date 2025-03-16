@@ -41,7 +41,7 @@ export default function PurchasePage() {
       condition: "Excellent",
       storage: "128GB",
       color: "Graphite",
-      image: "/phones/iphone-13-pro.jpg",
+      image: "/iphone-13-pro.jpg",
       year: 2021
     },
     {
@@ -52,7 +52,7 @@ export default function PurchasePage() {
       condition: "Excellent",
       storage: "128GB",
       color: "Graphite",
-      image: "/phones/iphone-14-pro.jpg",
+      image: "/iphone-14-pro.jpg",
       year: 2024
     },
     {
@@ -63,7 +63,29 @@ export default function PurchasePage() {
       condition: "Excellent",
       storage: "128GB",
       color: "Graphite",
-      image: "/phones/iphone-12.jpg",
+      image: "/iphone-12.jpg",
+      year: 2024
+    },
+    {
+      id: "4",
+      brand: "Samsung",
+      model: "S22",
+      price: 399,
+      condition: "Excellent",
+      storage: "128GB",
+      color: "Graphite",
+      image: "/Samsung-s22.jpg",
+      year: 2024
+    },
+    {
+      id: "5",
+      brand: "Samsung",
+      model: "S25",
+      price: 999,
+      condition: "Excellent",
+      storage: "1T",
+      color: "Graphite",
+      image: "/Samsung-s25.jpg",
       year: 2024
     },
   ];
@@ -204,7 +226,7 @@ export default function PurchasePage() {
                     onClick={() =>
                       setFilters( { brand: "all", priceRange: [ 0, 2000 ], condition: "all", storage: "all", sort: "newest" } )
                     }
-                    className="px-4 py-2 text-purple-600 hover:bg-purple-100 rounded-lg dark:text-purple-400 dark:hover:bg-purple-700 border rounded-lg border-purple-600"
+                    className="px-4 py-2 text-purple-600 hover:bg-purple-100 dark:text-purple-400 dark:hover:bg-purple-700 border rounded-lg border-purple-600"
                   >
                     Επαναφορά Φίλτρων
                   </button>
@@ -222,13 +244,13 @@ export default function PurchasePage() {
             {/* Phone Grid */}
             <div className={`grid  grid-cols-${Math.min(viewColumns, 2)} md:grid-cols-${viewColumns} gap-6`}>
               {sortedPhones.map( ( phone ) => (
-                <div key={phone.id} className="shadow-md bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col">
+                <div key={phone.id} className="shadow-md bg-white dark:bg-gray-800 rounded-xl overflow-hidden hover:shadow-md transition-shadow flex flex-col">
                 <div className="relative h-48">
                   <Image
                     src={phone.image}
                     alt={`${phone.brand} ${phone.model}`}
                     fill
-                    className="object-cover w-full h-full"
+                    className="object-fill w-full h-full"
                   />
                 </div>
                 <div className="p-4 flex flex-col flex-grow">
@@ -245,7 +267,7 @@ export default function PurchasePage() {
                   </div>
                   <button
                     onClick={() => handleBuyClick(phone)}
-                    className="w-full mt-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors dark:bg-blue-700 dark:hover:bg-blue-800"
+                    className="w-full mt-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors dark:bg-purple-700 dark:hover:bg-purple-800"
                   >
                     Αγορά
                   </button>

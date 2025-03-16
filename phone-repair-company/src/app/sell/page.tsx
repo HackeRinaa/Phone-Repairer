@@ -4,8 +4,6 @@ import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import { PaymentSection } from "@/components/PaymentSection";
 import Link from "next/link";
-import { SessionProvider, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 // Phone brands and models (reusing from repair page)
@@ -139,8 +137,6 @@ interface BookingData {
 }
 
 const SellPhonePage: React.FC = () => {
-  const { status } = useSession();
-  const router = useRouter();
   
   const [selectedBrand, setSelectedBrand] = useState<string>("");
   const [step, setStep] = useState<number>(1);
@@ -265,18 +261,26 @@ const SellPhonePage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Check if user is logged in
-    if (status !== "authenticated") {
-      toast.error("Πρέπει να συνδεθείτε για να υποβάλετε αγγελία");
-      router.push("/login?callbackUrl=/sell");
-      return;
-    }
-    
     setIsSubmitting(true);
     
     try {
       // Convert images to base64
       const base64Images = await convertImagesToBase64(phoneDetails.images);
+      
+      // Get contact info from the form
+      const contactInfo = {
+        name: (document.getElementById('name') as HTMLInputElement)?.value || '',
+        email: (document.getElementById('email') as HTMLInputElement)?.value || '',
+        phone: (document.getElementById('phone') as HTMLInputElement)?.value || '',
+        address: (document.getElementById('address') as HTMLInputElement)?.value || '',
+      };
+      
+      // Validate contact info
+      if (!contactInfo.name || !contactInfo.email || !contactInfo.phone) {
+        toast.error('Παρακαλώ συμπληρώστε τα στοιχεία επικοινωνίας');
+        setIsSubmitting(false);
+        return;
+      }
       
       // Submit to API
       const response = await fetch("/api/phone-listings", {
@@ -287,11 +291,12 @@ const SellPhonePage: React.FC = () => {
         body: JSON.stringify({
           ...phoneDetails,
           images: base64Images,
+          ...contactInfo
         }),
       });
       
       const data = await response.json();
-      
+      console.log(data);
       if (!response.ok) {
         throw new Error(data.error || "Σφάλμα κατά την υποβολή της αγγελίας");
       }
@@ -455,7 +460,7 @@ const SellPhonePage: React.FC = () => {
                     type="number"
                     value={phoneDetails.price}
                     onChange={handleChange}
-                    className="w-full p-3 pl-8 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-600 dark:text-white"
+                    className="w-full p-3 pl-8 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-600 dark:text-white"
                     placeholder="Εισάγετε την τιμή"
                     required
                   />
@@ -476,7 +481,7 @@ const SellPhonePage: React.FC = () => {
                   value={phoneDetails.description}
                   onChange={handleChange}
                   rows={4}
-                  className="w-full p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-600 dark:text-white"
+                  className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-600 dark:text-white"
                   placeholder="Περιγράψτε τη συσκευή σας (προαιρετικά)"
                 />
               </div>
@@ -511,11 +516,8 @@ const SellPhonePage: React.FC = () => {
                     {phoneDetails.images.map((image, index) => (
                       <div key={index} className="relative">
                         <div className="aspect-square rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700">
-                          <img
-                            src={URL.createObjectURL(image)}
-                            alt={`Uploaded ${index + 1}`}
-                            className="w-full h-full object-cover"
-                          />
+                          <Image src={URL.createObjectURL(image)} alt={`Uploaded ${index + 1}`}
+                            className="w-full h-full object-cover"/>
                         </div>
                         <button
                           type="button"
@@ -528,6 +530,68 @@ const SellPhonePage: React.FC = () => {
                     ))}
                   </div>
                 )}
+              </div>
+              
+              {/* Contact Information */}
+              <div className="border-t pt-6 mt-6">
+                <h3 className="text-lg font-medium mb-4 dark:text-white text-gray-600">Στοιχεία Επικοινωνίας</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                      Ονοματεπώνυμο
+                    </label>
+                    <input
+                      id="name"
+                      name="name"
+                      type="text"
+                      className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-600 dark:text-white"
+                      placeholder="Το ονοματεπώνυμό σας"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                      Email
+                    </label>
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-600 dark:text-white"
+                      placeholder="Το email σας"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="phone" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                      Τηλέφωνο
+                    </label>
+                    <input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-600 dark:text-white"
+                      placeholder="Το τηλέφωνό σας"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="address" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                      Διεύθυνση
+                    </label>
+                    <input
+                      id="address"
+                      name="address"
+                      type="text"
+                      className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-600 dark:text-white"
+                      placeholder="Η διεύθυνσή σας (προαιρετικά)"
+                    />
+                  </div>
+                </div>
               </div>
               
               <div className="flex justify-between items-center pt-4">
@@ -556,7 +620,7 @@ const SellPhonePage: React.FC = () => {
                       Υποβολή...
                     </span>
                   ) : (
-                    "Συνέχεια →"
+                    "Υποβολή Αγγελίας"
                   )}
                 </button>
               </div>
@@ -626,7 +690,6 @@ const SellPhonePage: React.FC = () => {
   };
 
   return (
-    <SessionProvider>
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-100">
       <Navbar />
 
@@ -676,7 +739,6 @@ const SellPhonePage: React.FC = () => {
         <Link href="/faq" className="hover:text-purple-600 dark:hover:text-purple-400">Συχνές Ερωτήσεις</Link>
       </footer>
     </div>
-    </SessionProvider>
   );
 };
 

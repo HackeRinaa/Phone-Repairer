@@ -1,8 +1,14 @@
 import { NextResponse } from 'next/server';
-import { stripe } from '@/lib/stripe';
-import { prisma } from '@/lib/db';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import Stripe from 'stripe';
+import { prisma } from '@/lib/prisma';
+
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error('STRIPE_SECRET_KEY is not set in environment variables');
+}
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: '2023-10-16' as any // Type assertion to avoid TypeScript error
+});
 
 // Define types for items and booking data
 interface Item {
@@ -36,85 +42,88 @@ function calculateAmount(items: Item[]): number {
   return items.reduce((total, item) => total + (item.price * 100), 0);
 }
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
-    const body: { items: Item[]; bookingData: BookingFormData } = await req.json();
-    console.log('Received payload:', body); // Debugging
+    const { items, bookingData } = await request.json();
+    console.log('Received payment request:', { items, bookingData });
 
-    const { items, bookingData: formData } = body;
-
-    // Validate the payload
-    if (!Array.isArray(items) || !formData || typeof formData !== 'object') {
+    // Validate required fields
+    if (!bookingData.date || !bookingData.timeSlot || !bookingData.contactInfo.name) {
+      console.log('Missing required fields:', {
+        date: bookingData.date,
+        timeSlot: bookingData.timeSlot,
+        name: bookingData.contactInfo.name
+      });
       return NextResponse.json(
-        { error: 'Invalid payload: items must be an array and bookingData must be an object' },
+        { error: 'Missing required booking information' },
         { status: 400 }
       );
     }
 
-    // Get user session if available
-    const session = await getServerSession(authOptions);
-    
-    // Calculate amount in cents
-    const amount = calculateAmount(items);
-    console.log('Calculated amount:', amount);
-
-    if (amount < 50) {
+    // Validate items
+    if (!Array.isArray(items) || items.length === 0) {
       return NextResponse.json(
-        { error: 'Amount must be at least 50 cents' },
+        { error: 'Invalid or empty items array' },
         { status: 400 }
       );
     }
 
-    // Create payment intent
+    // Calculate total amount
+    const totalAmount = items.reduce((total: number, item: {price: number}) => total + item.price, 0);
+    console.log('Calculated total amount:', totalAmount);
+
+    // Convert date string to Date object if needed
+    const bookingDate = new Date(bookingData.date);
+
+    // Create Stripe payment intent
     const paymentIntent = await stripe.paymentIntents.create({
-      amount,
+      amount: Math.round(totalAmount * 100), // Convert to cents
       currency: 'eur',
-      payment_method_types: ['card'],
-    });
-
-    // Prepare booking data for database
-    const bookingData = {
-      brand: items[0].title.split(' - ')[0].split(' ')[0],
-      model: items[0].title.split(' - ')[0].split(' ').slice(1).join(' '),
-      issues: items.map(item => item.title.split(' - ')[1]),
-      name: formData.contactInfo.name,
-      email: formData.contactInfo.email,
-      phone: formData.contactInfo.phone,
-      address: formData.contactInfo.address || '',
-      notes: formData.contactInfo.notes || '',
-      date: formData.date ? new Date(formData.date) : new Date(), // Use current date if not provided
-      timeSlot: formData.timeSlot || '',
-      totalAmount: amount / 100,
-      paymentMethod: 'online',
-      paymentId: paymentIntent.id,
-      status: 'pending',
-      paymentStatus: 'pending',
-    };
-    
-    // Add userId if user is logged in
-    if (session?.user) {
-      const user = session.user as ExtendedUser;
-      if (user.id) {
-        // @ts-expect-error - userId exists in the Prisma schema but TypeScript doesn't know about it
-        bookingData.userId = user.id;
+      metadata: {
+        bookingDate: bookingData.date.toString(),
+        timeSlot: bookingData.timeSlot,
+        name: bookingData.contactInfo.name,
+        email: bookingData.contactInfo.email,
+        phone: bookingData.contactInfo.phone,
+        address: bookingData.contactInfo.address || '',
+        notes: bookingData.contactInfo.notes || '',
+        paymentMethod: bookingData.paymentMethod
       }
-    }
-
-    // Create booking record
-    const booking = await prisma.booking.create({
-      data: bookingData,
     });
 
-    return NextResponse.json({
+    console.log('Stripe payment intent created:', paymentIntent.id);
+
+    // Create booking in database
+    const booking = await prisma.booking.create({
+      data: {
+        date: bookingDate,
+        timeSlot: bookingData.timeSlot,
+        name: bookingData.contactInfo.name,
+        email: bookingData.contactInfo.email,
+        phone: bookingData.contactInfo.phone,
+        address: bookingData.contactInfo.address || '',
+        notes: bookingData.contactInfo.notes || '',
+        status: 'PENDING',
+        type: 'PRODUCT',
+        totalAmount,
+        paymentMethod: bookingData.paymentMethod,
+        paymentStatus: 'PENDING',
+        stripePaymentIntentId: paymentIntent.id
+      }
+    });
+
+    console.log('Booking created successfully:', booking);
+
+    return NextResponse.json({ 
       clientSecret: paymentIntent.client_secret,
-      bookingId: booking.id,
+      booking
     });
   } catch (error) {
-    console.error('Full error:', error);
+    console.error('Detailed payment intent creation error:', error);
     return NextResponse.json(
       { 
-        error: error instanceof Error ? error.message : 'Failed to create payment intent',
-        details: error instanceof Error ? error.stack : undefined
+        error: 'Failed to create payment intent',
+        details: error instanceof Error ? error.message : 'Unknown error'
       },
       { status: 500 }
     );

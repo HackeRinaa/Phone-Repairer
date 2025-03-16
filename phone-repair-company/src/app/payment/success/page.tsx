@@ -19,16 +19,16 @@ export default function PaymentSuccessPage() {
   }, [payment_intent]);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-sm">
-        <h1 className="text-2xl font-bold text-center mb-4">Επιτυχής Πληρωμή!</h1>
-        <p className="text-gray-600 text-center mb-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900/50 flex items-center justify-center">
+      <div className="max-w-md w-full bg-white dark:bg-gray-900 p-8 rounded-lg shadow-md">
+        <h1 className="text-2xl font-bold text-center mb-4 text-gray-600 dark:text-white">Επιτυχής Πληρωμή!</h1>
+        <p className="text-gray-600 dark:text-gray-400 text-center mb-6">
           Η παραγγελία σας έχει καταχωρηθεί και θα επεξεργαστεί άμεσα.
         </p>
         <div className="flex justify-center">
           <Link
             href="/"
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
           >
             Επιστροφή στην Αρχική
           </Link>

@@ -1,37 +1,55 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
+import { prisma } from '@/lib/prisma';
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
-    const { items, bookingData } = await req.json();
+    const { bookingData } = await request.json();
+    console.log('Received booking data:', bookingData);
 
+    // Validate required fields
+    if (!bookingData.date || !bookingData.timeSlot || !bookingData.contactInfo.name) {
+      console.log('Missing required fields:', {
+        date: bookingData.date,
+        timeSlot: bookingData.timeSlot,
+        name: bookingData.contactInfo.name
+      });
+      return NextResponse.json(
+        { error: 'Missing required booking information' },
+        { status: 400 }
+      );
+    }
+
+    // Convert date string to Date object if needed
+    const bookingDate = new Date(bookingData.date);
+
+    // Create the booking in the database
     const booking = await prisma.booking.create({
       data: {
-        brand: items[0].title.split(' - ')[0].split(' ')[0],
-        model: items[0].title.split(' - ')[0].split(' ').slice(1).join(' '),
-        issues: items.map((item: any) => item.title.split(' - ')[1]),
+        date: bookingDate,
+        timeSlot: bookingData.timeSlot,
         name: bookingData.contactInfo.name,
         email: bookingData.contactInfo.email,
         phone: bookingData.contactInfo.phone,
-        address: bookingData.contactInfo.address,
-        notes: bookingData.contactInfo.notes,
-        date: new Date(bookingData.date),
-        timeSlot: bookingData.timeSlot,
-        totalAmount: items.reduce((total: number, item: any) => total + item.price, 0),
-        paymentMethod: bookingData.paymentMethod,
-        status: 'pending',
-        paymentStatus: bookingData.paymentMethod === 'instore' ? 'pending' : 'completed',
-      },
+        address: bookingData.contactInfo.address || '',
+        notes: bookingData.contactInfo.notes || '',
+        status: 'PENDING',
+        type: 'REPAIR'
+      }
     });
 
+    console.log('Booking created successfully:', booking);
+
     return NextResponse.json({ 
-      success: true,
-      bookingId: booking.id 
+      success: true, 
+      booking 
     });
   } catch (error) {
-    console.error('Booking creation failed:', error);
+    console.error('Detailed booking creation error:', error);
     return NextResponse.json(
-      { error: 'Failed to create booking' },
+      { 
+        error: 'Failed to create booking',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }

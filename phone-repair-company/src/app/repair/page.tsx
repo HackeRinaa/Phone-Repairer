@@ -112,17 +112,6 @@ const phoneOptions = {
     "iQOO 9",
     "iQOO 7",
   ],
-  Realme: [
-    "GT 3",
-    "GT 2 Pro",
-    "GT 2",
-    "10 Pro+",
-    "10 Pro",
-    "10",
-    "9 Pro+",
-    "9 Pro",
-    "9",
-  ],
   Sony: [
     "Xperia 1 V",
     "Xperia 5 V",
@@ -265,7 +254,7 @@ export default function RepairPage() {
               ))}
               <button
                 onClick={() => handleModelSelect("Άλλο")}
-                className="p-4 dark:text-white text-gray-600 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all text-left hover:bg-purple-100 dark:hover:bg-purple-900"
+                className="p-4 dark:text-white text-gray-600 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all hover:scale-105 text-left dark:hover:bg-purple-900"
               >
                 Άλλο
               </button>
@@ -375,7 +364,7 @@ export default function RepairPage() {
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-100">
       <Navbar />
 
-      <main className="flex-grow max-w-7xl mx-auto px-4 py-12">
+      <main className="flex-grow max-w-7xl mx-auto px-4 py-12 w-full">
         <div className="text-center mb-16">
           <h1 className="text-4xl sm:text-5xl font-bold mb-4 dark:text-white text-gray-600">
             {stepTitles[step]}

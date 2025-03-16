@@ -9,12 +9,11 @@ import {
   useStripe,
   useElements,
 } from '@stripe/react-stripe-js';
-import { div } from 'framer-motion/client';
+
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY!);
 
 interface PaymentFormProps {
-  clientSecret: string;
   onSuccess: () => void;
 }
 
@@ -38,7 +37,7 @@ interface BookingData {
   paymentMethod: 'online' | 'instore';
 }
 
-function PaymentForm({ clientSecret, onSuccess}: PaymentFormProps) {
+function PaymentForm({ onSuccess}: PaymentFormProps) {
   const stripe = useStripe();
   const elements = useElements();
   const [error, setError] = useState<string>('');
@@ -83,7 +82,7 @@ function PaymentForm({ clientSecret, onSuccess}: PaymentFormProps) {
 export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }: PaymentSectionProps) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string>('');
-  const [error, setError] = useState<string>('');
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [bookingData, setBookingData] = useState<BookingData>({
     date: null,
     timeSlot: '',
@@ -100,42 +99,93 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
   const [isProcessing, setIsProcessing] = useState(false);
   const [showStripePayment, setShowStripePayment] = useState(false);
   const [clientSecret, setClientSecret] = useState<string>('');
-  
+
+  const handleInputChange = (field: keyof BookingData['contactInfo'], value: string) => {
+    let isValid = true;
+    let errorMsg = '';
+
+    switch (field) {
+      case 'name':
+        isValid = /^[A-Za-zΑ-Ωα-ω\s]+$/.test(value);
+        errorMsg = isValid ? '' : 'Το όνομα πρέπει να περιέχει μόνο γράμματα.';
+        break;
+      case 'email':
+        isValid = /^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/.test(value);
+        errorMsg = isValid ? '' : 'Μη έγκυρη διεύθυνση email.';
+        break;
+      case 'phone':
+        isValid = /^\+?\d{10,15}$/.test(value);
+        errorMsg = isValid ? '' : 'Μη έγκυρος αριθμός τηλεφώνου.';
+        break;
+      case 'address':
+        isValid = /^[A-Za-zΑ-Ωα-ω0-9\s,.-]+$/.test(value);
+        errorMsg = isValid ? '' : 'Μη έγκυρη διεύθυνση.';
+        break;
+    }
+
+    setBookingData({
+      ...bookingData,
+      contactInfo: { ...bookingData.contactInfo, [field]: value },
+    });
+
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      [field]: errorMsg
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const payload = {
-      items: itemDetails,
-      bookingData: bookingData
-    };
-
-    console.log('Sending payload:', payload); // Debugging
+    setIsProcessing(true);
 
     try {
       if (pageId === 1) {
-        // If pageId is 1, skip payment and directly call onComplete
+        // For repair booking without payment
+        const response = await fetch('/api/create-booking', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            bookingData: {
+              ...bookingData,
+              date: selectedDate,
+              timeSlot: selectedTime
+            }
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to create booking');
+        }
+
+        const data = await response.json();
+        console.log(`data from post id=1 ${data}`);
         onComplete({
           ...bookingData,
           date: selectedDate,
           timeSlot: selectedTime
         });
       } else if (pageId === 2) {
-        // If pageId is 2, proceed with Stripe payment
+        // For booking with payment
         const response = await fetch('/api/create-payment-intent', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
+          body: JSON.stringify({
+            items: itemDetails,
+            bookingData: {
+              ...bookingData,
+              date: selectedDate,
+              timeSlot: selectedTime
+            }
+          }),
         });
 
-        // Check if the response is ok
         if (!response.ok) {
           const errorData = await response.json();
-          console.error('Error response:', errorData); // Log the error response
           throw new Error(errorData.error || 'Failed to create payment intent');
         }
 
         const data = await response.json();
-
         if (data.error) {
           throw new Error(data.error);
         }
@@ -145,7 +195,9 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
       }
     } catch (error) {
       console.error('Error:', error);
-      setError(error instanceof Error ? error.message : 'An unexpected error occurred');
+      setErrors({ form: error instanceof Error ? error.message : 'An unexpected error occurred' });
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -160,7 +212,6 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
         </button>
         <Elements stripe={stripePromise} options={{ clientSecret }}>
           <PaymentForm
-            clientSecret={clientSecret}
             onSuccess={() => {
               onComplete({
                 ...bookingData,
@@ -179,7 +230,7 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
       {/* Main Grid: Calendar and Contact Info */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Left Column - Calendar & Time Slots */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm w-full">
           <h3 className="text-xl font-semibold mb-4 dark:text-white text-gray-600">Επιλέξτε Ημερομηνία & Ώρα</h3>
           <Calendar
             onChange={(value) => setSelectedDate(value as Date)}
@@ -212,18 +263,16 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
         </div>
 
         {/* Right Column - Contact Information */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm w-full">
           <h3 className="text-xl font-semibold mb-4 dark:text-white text-gray-600">Στοιχεία Επικοινωνίας</h3>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-1 dark:text-white text-gray-600">Ονοματεπώνυμο</label>
+              {errors.name && <span className="text-xs text-red-500">{errors.name}</span>}
               <input
                 type="text"
                 value={bookingData.contactInfo.name}
-                onChange={(e) => setBookingData({
-                  ...bookingData,
-                  contactInfo: { ...bookingData.contactInfo, name: e.target.value }
-                })}
+                onChange={(e) => handleInputChange('name', e.target.value)}
                 className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-white text-gray-600"
                 required
               />
@@ -231,13 +280,11 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
 
             <div>
               <label className="block text-sm font-medium mb-1 dark:text-white text-gray-600">Email</label>
+              {errors.email && <span className="text-xs text-red-500">{errors.email}</span>}
               <input
                 type="email"
                 value={bookingData.contactInfo.email}
-                onChange={(e) => setBookingData({
-                  ...bookingData,
-                  contactInfo: { ...bookingData.contactInfo, email: e.target.value }
-                })}
+                onChange={(e) => handleInputChange('email', e.target.value)}
                 className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-white text-gray-600"
                 required
               />
@@ -245,13 +292,11 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
 
             <div>
               <label className="block text-sm font-medium mb-1 dark:text-white text-gray-600">Τηλέφωνο</label>
+              {errors.phone && <span className="text-xs text-red-500">{errors.phone}</span>}
               <input
                 type="tel"
                 value={bookingData.contactInfo.phone}
-                onChange={(e) => setBookingData({
-                  ...bookingData,
-                  contactInfo: { ...bookingData.contactInfo, phone: e.target.value }
-                })}
+                onChange={(e) => handleInputChange('phone', e.target.value)}
                 className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-white text-gray-600"
                 required
               />
@@ -259,13 +304,11 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
 
             <div>
               <label className="block text-sm font-medium mb-1 dark:text-white text-gray-600">Διεύθυνση</label>
+              {errors.address && <span className="text-xs text-red-500">{errors.address}</span>}
               <input
                 type="text"
                 value={bookingData.contactInfo.address}
-                onChange={(e) => setBookingData({
-                  ...bookingData,
-                  contactInfo: { ...bookingData.contactInfo, address: e.target.value }
-                })}
+                onChange={(e) => handleInputChange('address', e.target.value)}
                 className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-white text-gray-600"
                 required
               />
@@ -275,10 +318,7 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
               <label className="block text-sm font-medium mb-1 dark:text-white text-gray-600">Σημειώσεις</label>
               <textarea
                 value={bookingData.contactInfo.notes}
-                onChange={(e) => setBookingData({
-                  ...bookingData,
-                  contactInfo: { ...bookingData.contactInfo, notes: e.target.value }
-                })}
+                onChange={(e) => handleInputChange('notes', e.target.value)}
                 className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-white text-gray-600"
                 rows={3}
               />
@@ -288,7 +328,7 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
       </div>
 
       {pageId !== 1 && (
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm w-full">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Payment Method Selection */}
             <div className="md:col-span-1">
@@ -365,7 +405,7 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
       )}
 
       {pageId === 1 && (
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm w-full">
           <button
             onClick={handleSubmit}
             disabled={!selectedDate || !selectedTime || !bookingData.contactInfo.name || isProcessing}
@@ -386,9 +426,9 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
         </div>
       )}
 
-      {error && (
+      {errors.form && (
         <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
-          {error}
+          {errors.form}
         </div>
       )}
     </div>

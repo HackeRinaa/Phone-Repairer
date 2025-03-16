@@ -64,6 +64,9 @@ export default function Navbar() {
         <Link href="/purchase" className={`hover:text-purple-600 dark:hover:text-purple-400 ${isActive("/purchase")}`}>
           Αγορά Μεταχειρισμένου
         </Link>
+        <Link href="/sell" className={`hover:text-purple-600 dark:hover:text-purple-400 ${isActive("/sell")}`}>
+          Πούλησέ το
+        </Link>
         <Link href="/contact" className={`hover:text-purple-600 dark:hover:text-purple-400 ${isActive("/contact")}`}>
           Επικοινωνία
         </Link>

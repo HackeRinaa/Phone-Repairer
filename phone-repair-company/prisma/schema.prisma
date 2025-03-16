@@ -8,177 +8,50 @@ datasource db {
 }
 
 model Booking {
+  id                  String   @id @default(cuid())
+  date                DateTime
+  timeSlot            String
+  name                String
+  email               String
+  phone               String
+  address             String?
+  notes               String?
+  status              String   @default("PENDING") // PENDING, CONFIRMED, COMPLETED, CANCELLED
+  type                String   // "REPAIR" or "PRODUCT"
+  totalAmount         Float?
+  paymentMethod       String?  // "online" or "instore"
+  paymentStatus       String?  // "PENDING", "PAID", "FAILED"
+  stripePaymentIntentId String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model AdminUser {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PhoneListing {
   id          String   @id @default(cuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  // Device Info
   brand       String
   model       String
-  issues      String[]
+  price       Float
+  condition   String
+  storage     String
+  description String?
+  images      String[] // URLs or base64 strings
+  status      String   @default("PENDING") // PENDING, APPROVED, SOLD, REJECTED
   
-  // Customer Info
+  // Contact info
   name        String
   email       String
   phone       String
   address     String?
-  notes       String?
   
-  // Appointment
-  date        DateTime
-  timeSlot    String
-  
-  // Payment
-  totalAmount Float
-  paymentId   String?  @unique
-  paymentStatus String @default("pending") // pending, completed, failed
-  paymentMethod String // online, instore
-  
-  status      String @default("scheduled") // scheduled, in-progress, completed, cancelled
-
-  // Relations
-  userId      String?
-  user        User?   @relation(fields: [userId], references: [id])
-  technician  String?
-}
-
-model Contact {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  name      String
-  email     String
-  phone     String?
-  subject   String
-  message   String
-  status    String @default("unread") // unread, read, responded
-}
-
-model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
-  password      String
-  name          String?
-  role          String    @default("user") // user, admin, technician
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  
-  // Relations
-  bookings      Booking[]
-  phoneListings PhoneListing[]
-  orders        Order[]
-}
-
-// New model for phone listings (sell functionality)
-model PhoneListing {
-  id          String   @id @default(cuid())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
-  // Phone details
-  brand       String
-  model       String
-  storage     String
-  condition   String
-  price       Float
-  description String?
-  
-  // Images
-  images      String[] // URLs to images stored in Supabase Storage
-  
-  // Status
-  status      String   @default("pending") // pending, approved, sold, rejected
-  
-  // Relations
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
-  orders      Order[]
-}
-
-// New model for orders (when someone buys a listed phone)
-model Order {
-  id            String   @id @default(cuid())
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  
-  // Order details
-  totalAmount   Float
-  
-  // Payment
-  paymentId     String?
-  paymentStatus String   @default("pending") // pending, completed, failed
-  paymentMethod String    // online, instore
-  
-  // Status
-  status        String   @default("pending") // pending, processing, shipped, delivered, cancelled
-  
-  // Relations
-  phoneListingId String
-  phoneListing   PhoneListing @relation(fields: [phoneListingId], references: [id])
-  
-  buyerId       String
-  buyer         User     @relation(fields: [buyerId], references: [id])
-}
-
-// New model for repair services
-model RepairService {
-  id          String   @id @default(cuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  title       String
-  description String?
-  price       Float
-  icon        String?  // Emoji or icon name
-  
-  // For which brands/models this service is available
-  availableBrands String[] // Empty means all brands
-  availableModels String[] // Empty means all models
-  
-  isActive    Boolean  @default(true)
-}
-
-// New model for inventory
-model InventoryItem {
-  id          String   @id @default(cuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  name        String
-  description String?
-  category    String   // e.g., "screen", "battery", "part"
-  
-  // For which brands/models this item is compatible
-  compatibleBrands String[]
-  compatibleModels String[]
-  
-  price       Float
-  cost        Float
-  quantity    Int
-  
-  // Supplier info
-  supplier    String?
-  supplierSku String?
-}
-
-// New model for notifications
-model Notification {
-  id          String   @id @default(cuid())
-  createdAt   DateTime @default(now())
-  
-  title       String
-  message     String
-  type        String   // info, success, warning, error
-  
-  // Target user (null means system-wide)
-  userId      String?
-  
-  isRead      Boolean  @default(false)
-}
-
-// New model for settings
-model Setting {
-  id          String   @id @default(cuid())
-  key         String   @unique
-  value       String
-  description String?
 } 
