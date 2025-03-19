@@ -186,6 +186,8 @@ export default function RepairPage() {
   const [selectedModel, setSelectedModel] = useState<string>("");
   const [step, setStep] = useState<number>(1);
   const [selectedIssues, setSelectedIssues] = useState<string[]>([]);
+  const [otherIssueSelected, setOtherIssueSelected] = useState<boolean>(false);
+  const [otherIssueDescription, setOtherIssueDescription] = useState<string>("");
 
   const calculateTotal = () => {
     return selectedIssues.reduce((total, issue) => {
@@ -204,10 +206,15 @@ export default function RepairPage() {
     setStep(3);
   };
 
-  const handleIssueSelect = (issue: string) => {
+  const handleIssueSelect = (issue: string, description?: string) => {
     setSelectedIssues((prev) =>
       prev.includes(issue) ? prev.filter((i) => i !== issue) : [...prev, issue]
     );
+
+    if (description) {
+      setOtherIssueSelected(true);
+      setOtherIssueDescription(issue);
+    }
   };
 
   const renderStep = () => {
@@ -294,9 +301,8 @@ export default function RepairPage() {
                 </button>
               ))}
               <button
-                onClick={() => handleIssueSelect("Αλλο")}
                 className={`p-6 rounded-xl text-left transition-all ${
-                  selectedIssues.includes("Αλλο")
+                  otherIssueSelected && otherIssueDescription.length > 0
                     ? "bg-purple-100 dark:bg-purple-900 border-2 border-purple-500"
                     : "bg-white dark:bg-gray-800 hover:shadow-md"
                 }`}
@@ -306,8 +312,11 @@ export default function RepairPage() {
                   Άλλο
                 </h3>
                 <input
+                  placeholder="Περιγραφή του προβλήματος"
+                  onChange={(e) => handleIssueSelect(e.target.value, "Άλλο")}
                   type="text"
-                  className="p-2 rounded-lg dark:bg-gray-600 bg-gray-200 text-gray-600 dark:text-white border-gray-600 w-[200px]"
+                  value={otherIssueDescription}
+                  className="p-2 rounded-lg dark:bg-gray-600 bg-gray-200 text-gray-600 dark:text-white border-gray-900 w-[200px]"
                 />
                 <p className="text-purple-600 dark:text-purple-500">Ας το δούμε μαζί!</p>
               </button>

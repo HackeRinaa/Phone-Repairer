@@ -63,8 +63,8 @@ export default function AboutPage() {
           <p className="mb-8 text-lg text-gray-100">
             Στείλε μας το κινητό σου ή δες τις διαθέσιμες μεταχειρισμένες συσκευές μας!
           </p>
-          <button className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-            Ζήτησε Δωρεάν Εκτίμηση
+          <button className="transition-all duration-300  hover:scale-105 bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+            <Link href="/repair">Ζήτησε Δωρεάν Εκτίμηση</Link>
           </button>
         </div>
       </main>
