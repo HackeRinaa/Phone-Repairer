@@ -80,11 +80,13 @@ interface PhoneListing {
   images: string[];
   status: string;
   createdAt: string;
+  address: string;
   user: {
     id: string;
     name: string;
     email: string;
   };
+  phone: string;
 }
 
 // Extended user type to include role
@@ -122,14 +124,15 @@ export default function PhoneListingsAdmin() {
   useEffect(() => {
     const fetchListings = async () => {
       try {
-        const response = await fetch(`/api/phone-listings?status=${filterStatus}`);
+        setLoading(true);
+        const response = await fetch(`/api/admin/phone-listings?status=${filterStatus}`);
         
         if (!response.ok) {
           throw new Error("Failed to fetch listings");
         }
         
         const data = await response.json();
-        setListings(data);
+        setListings(data.listings);
       } catch (error) {
         console.error("Error fetching listings:", error);
         toast.error("Failed to load phone listings");
@@ -255,119 +258,157 @@ export default function PhoneListingsAdmin() {
                     onClick={() => setSelectedListing(null)}
                     className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                   >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                   </button>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {/* Images */}
+                  {/* Left column - Images */}
                   <div>
-                    <div className="aspect-square rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700 mb-4">
-                      {selectedListing.images.length > 0 ? (
+                    {selectedListing.images.length > 0 ? (
+                      <div>
                         <img
                           src={selectedListing.images[0]}
                           alt={`${selectedListing.brand} ${selectedListing.model}`}
-                          className="w-full h-full object-cover"
+                          className="w-full h-60 object-cover rounded-lg mb-4"
                         />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-400">
-                          No image available
-                        </div>
-                      )}
-                    </div>
-                    
-                    {selectedListing.images.length > 1 && (
-                      <div className="grid grid-cols-4 gap-2">
-                        {selectedListing.images.slice(1).map((image, index) => (
-                          <div key={index} className="aspect-square rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700">
-                            <img
-                              src={image}
-                              alt={`${selectedListing.brand} ${selectedListing.model} ${index + 2}`}
-                              className="w-full h-full object-cover"
-                            />
+                        
+                        {/* Thumbnail images */}
+                        {selectedListing.images.length > 1 && (
+                          <div className="grid grid-cols-4 gap-2">
+                            {selectedListing.images.slice(1).map((image, index) => (
+                              <img
+                                key={index}
+                                src={image}
+                                alt={`${selectedListing.brand} ${selectedListing.model} ${index + 2}`}
+                                className="w-full h-20 object-cover rounded-lg"
+                              />
+                            ))}
                           </div>
-                        ))}
+                        )}
+                      </div>
+                    ) : (
+                      <div className="w-full h-60 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+                        <span className="text-gray-500 dark:text-gray-400">No images available</span>
                       </div>
                     )}
+                    
+                    <div className="mt-6">
+                      <h3 className="text-md font-semibold text-gray-600 dark:text-gray-300 mb-2">Status</h3>
+                      <div className="mt-1">{getStatusBadge(selectedListing.status)}</div>
+                    </div>
+                    
+                    <div className="mt-6">
+                      <h3 className="text-md font-semibold text-gray-600 dark:text-gray-300 mb-2">Price</h3>
+                      <p className="mt-1 text-lg font-semibold text-gray-900 dark:text-white">{selectedListing.price}€</p>
+                    </div>
+                    
+                    <div className="mt-6">
+                      <h3 className="text-md font-semibold text-gray-600 dark:text-gray-300 mb-2">Storage</h3>
+                      <p className="mt-1 text-gray-900 dark:text-white">{selectedListing.storage}</p>
+                    </div>
+                    
+                    <div className="mt-6">
+                      <h3 className="text-md font-semibold text-gray-600 dark:text-gray-300 mb-2">Condition</h3>
+                      <p className="mt-1 text-gray-900 dark:text-white">{selectedListing.condition}</p>
+                    </div>
+                    
+                    <div className="mt-6">
+                      <h3 className="text-md font-semibold text-gray-600 dark:text-gray-300 mb-2">Description</h3>
+                      <p className="mt-1 text-gray-900 dark:text-white whitespace-pre-wrap">{selectedListing.description || "No description provided"}</p>
+                    </div>
                   </div>
                   
-                  {/* Details */}
+                  {/* Right column - Seller info and actions */}
                   <div>
-                    <div className="space-y-4">
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Status</h3>
-                        <div className="mt-1">{getStatusBadge(selectedListing.status)}</div>
-                      </div>
-                      
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Price</h3>
-                        <p className="mt-1 text-lg font-semibold text-gray-900 dark:text-white">{selectedListing.price}€</p>
-                      </div>
-                      
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Storage</h3>
-                        <p className="mt-1 text-gray-900 dark:text-white">{selectedListing.storage}</p>
-                      </div>
-                      
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Condition</h3>
-                        <p className="mt-1 text-gray-900 dark:text-white">{selectedListing.condition}</p>
-                      </div>
-                      
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Description</h3>
-                        <p className="mt-1 text-gray-900 dark:text-white">{selectedListing.description || "No description provided"}</p>
-                      </div>
-                      
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Seller</h3>
-                        <p className="mt-1 text-gray-900 dark:text-white">{selectedListing.user.name} ({selectedListing.user.email})</p>
-                      </div>
-                      
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Listed on</h3>
-                        <p className="mt-1 text-gray-900 dark:text-white">{formatDate(selectedListing.createdAt)}</p>
+                    <div className="mb-6">
+                      <h3 className="text-md font-semibold text-gray-600 dark:text-gray-300 mb-2">Seller Information</h3>
+                      <div className="space-y-3">
+                        <div>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">Name</p>
+                          <p className="text-gray-900 dark:text-white">{selectedListing.user.name}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">Email</p>
+                          <p className="text-gray-900 dark:text-white">{selectedListing.user.email}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">Phone</p>
+                          <p className="text-gray-900 dark:text-white">{selectedListing.phone}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">Address</p>
+                          <p className="text-gray-900 dark:text-white whitespace-pre-wrap">{selectedListing.address || "No address provided"}</p>
+                        </div>
                       </div>
                     </div>
                     
-                    {/* Actions */}
-                    <div className="mt-8 flex space-x-4">
-                      {selectedListing.status === "pending" && (
-                        <>
+                    <div className="mb-6">
+                      <h3 className="text-md font-semibold text-gray-600 dark:text-gray-300 mb-2">Listing Information</h3>
+                      <div>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Created At</p>
+                        <p className="mt-1 text-gray-900 dark:text-white">{formatDate(selectedListing.createdAt)}</p>
+                      </div>
+                      <div className="mt-3">
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Listing ID</p>
+                        <p className="mt-1 text-gray-900 dark:text-white">{selectedListing.id}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-8">
+                      <h3 className="text-md font-semibold text-gray-600 dark:text-gray-300 mb-2">Actions</h3>
+                      <div className="space-y-4">
+                        {selectedListing.status === "pending" && (
+                          <div className="flex space-x-2">
+                            <button
+                              onClick={() => handleStatusChange(selectedListing.id, "approved")}
+                              className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex-1"
+                            >
+                              Approve
+                            </button>
+                            <button
+                              onClick={() => handleStatusChange(selectedListing.id, "rejected")}
+                              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex-1"
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        )}
+                        
+                        {selectedListing.status === "approved" && (
+                          <button
+                            onClick={() => handleStatusChange(selectedListing.id, "sold")}
+                            className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                          >
+                            Mark as Sold
+                          </button>
+                        )}
+                        
+                        {(selectedListing.status === "rejected" || selectedListing.status === "sold") && (
                           <button
                             onClick={() => handleStatusChange(selectedListing.id, "approved")}
-                            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                            className="w-full px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
                           >
-                            Approve
+                            Reactivate Listing
                           </button>
-                          <button
-                            onClick={() => handleStatusChange(selectedListing.id, "rejected")}
-                            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-                          >
-                            Reject
-                          </button>
-                        </>
-                      )}
-                      
-                      {selectedListing.status === "approved" && (
-                        <button
-                          onClick={() => handleStatusChange(selectedListing.id, "sold")}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                        )}
+                        
+                        <button 
+                          onClick={() => window.open(`mailto:${selectedListing.user.email}?subject=Regarding Your Phone Listing #${selectedListing.id}`, '_blank')}
+                          className="w-full px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                         >
-                          Mark as Sold
+                          Email Seller
                         </button>
-                      )}
-                      
-                      {(selectedListing.status === "rejected" || selectedListing.status === "sold") && (
-                        <button
-                          onClick={() => handleStatusChange(selectedListing.id, "approved")}
-                          className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+                        
+                        <button 
+                          onClick={() => {navigator.clipboard.writeText(selectedListing.id); toast.success('Listing ID copied to clipboard');}}
+                          className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
                         >
-                          Reactivate
+                          Copy Listing ID
                         </button>
-                      )}
+                      </div>
                     </div>
                   </div>
                 </div>

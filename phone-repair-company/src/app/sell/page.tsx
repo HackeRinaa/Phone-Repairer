@@ -330,7 +330,7 @@ const SellPhonePage: React.FC = () => {
     switch (step) {
       case 1:
         return (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 mb-16">
+          <div className="w-[80%] grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 mb-16 mx-auto">
             {Object.keys(phoneOptions).map((brand) => (
               <button
                 key={brand}
@@ -354,7 +354,7 @@ const SellPhonePage: React.FC = () => {
 
       case 2:
         return (
-          <div className="max-w-2xl mx-auto">
+          <div className="w-[80%] mx-auto">
             <h2 className="text-2xl font-semibold mb-6 text-center dark:text-white text-gray-600">
               {stepTitles[2]}
             </h2>
@@ -386,7 +386,7 @@ const SellPhonePage: React.FC = () => {
 
       case 3:
         return (
-          <div className="max-w-3xl mx-auto">
+          <div className="w-[80%] mx-auto">
             <h2 className="text-2xl font-semibold mb-6 text-center dark:text-white text-gray-600">
               {stepTitles[3]}
             </h2>
@@ -517,7 +517,10 @@ const SellPhonePage: React.FC = () => {
                       <div key={index} className="relative">
                         <div className="aspect-square rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700">
                           <Image src={URL.createObjectURL(image)} alt={`Uploaded ${index + 1}`}
-                            className="w-full h-full object-cover"/>
+                            className="w-full h-full object-cover"
+                            width={100}
+                            height={100}
+                          />
                         </div>
                         <button
                           type="button"
@@ -647,7 +650,7 @@ const SellPhonePage: React.FC = () => {
         
       case 5:
         return (
-          <div className="max-w-3xl mx-auto text-center">
+          <div className="w-[80%] mx-auto text-center">
             <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md">
               <div className="mb-6 flex justify-center">
                 <div className="w-20 h-20 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
@@ -673,9 +676,6 @@ const SellPhonePage: React.FC = () => {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/account/listings" className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
-                  Προβολή των Αγγελιών μου
-                </Link>
                 <Link href="/" className="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
                   Επιστροφή στην Αρχική
                 </Link>
@@ -693,7 +693,7 @@ const SellPhonePage: React.FC = () => {
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-100">
       <Navbar />
 
-      <main className="flex-grow max-w-7xl mx-auto px-4 py-12">
+      <main className="flex-grow w-full mx-auto px-4 py-12">
         <div className="text-center mb-16">
           <h1 className="text-4xl sm:text-5xl font-bold mb-4 dark:text-white text-gray-600">
             {stepTitles[step]}

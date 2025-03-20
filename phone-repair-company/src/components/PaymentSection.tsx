@@ -9,7 +9,7 @@ import {
   useStripe,
   useElements,
 } from '@stripe/react-stripe-js';
-
+import Link from 'next/link';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY!);
 
@@ -22,6 +22,7 @@ interface PaymentSectionProps {
   itemDetails: Array<{ title: string; price: number }>;
   onComplete: (data: BookingData) => void;
   pageId: number;
+  repair?: boolean;
 }
 
 interface BookingData {
@@ -95,6 +96,9 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
     },
     paymentMethod: 'online'
   });
+  const [listingId, setListingId] = useState<string>('');
+  const [nextStep, setNextStep] = useState(false);
+  const [phoneDetails, setPhoneDetails] = useState<{brand?: string, model?: string}>({});
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [showStripePayment, setShowStripePayment] = useState(false);
@@ -160,11 +164,27 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
 
         const data = await response.json();
         console.log(`data from post id=1 ${data}`);
+        
+        // Set phone details from the first item if available
+        if (itemDetails && itemDetails.length > 0) {
+          const firstItem = itemDetails[0];
+          const titleParts = firstItem.title.split(' - ');
+          if (titleParts.length > 0) {
+            const brandModel = titleParts[0].split(' ');
+            setPhoneDetails({
+              brand: brandModel[0],
+              model: brandModel.slice(1).join(' ')
+            });
+          }
+        }
+        
         onComplete({
           ...bookingData,
           date: selectedDate,
           timeSlot: selectedTime
         });
+        setListingId(data.listing?.id || 'N/A');
+        setNextStep(true);
       } else if (pageId === 2) {
         // For booking with payment
         const response = await fetch('/api/create-payment-intent', {
@@ -225,8 +245,41 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
     );
   }
 
-  return (
-    <div className="max-w-7xl mx-auto space-y-8">
+  return nextStep ? (
+    <div className="w-[80%] mx-auto text-center">
+      <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md">
+        <div className="mb-6 flex justify-center">
+          <div className="w-20 h-20 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
+            <svg className="w-10 h-10 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+          </div>
+        </div>
+        
+        <h2 className="text-2xl font-bold mb-4 dark:text-white text-gray-600">
+          Η αγγελία σας υποβλήθηκε με επιτυχία!
+        </h2>
+        
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
+          Η αγγελία σας για το {phoneDetails.brand} {phoneDetails.model} έχει υποβληθεί και βρίσκεται υπό έγκριση. 
+          Θα σας ενημερώσουμε μόλις εγκριθεί.
+        </p>
+        
+        <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg mb-6">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Αριθμός Αγγελίας: <span className="font-medium text-gray-700 dark:text-gray-300">{listingId}</span>
+          </p>
+        </div>
+        
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Link href="/" className="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+            Επιστροφή στην Αρχική
+          </Link>
+        </div>
+      </div>
+    </div>
+  ) : (
+    <div className="w-full mx-auto space-y-8">
       {/* Main Grid: Calendar and Contact Info */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Left Column - Calendar & Time Slots */}

@@ -164,7 +164,7 @@ export default function AdminDashboard() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
         <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-md w-full max-w-md">
-          <h1 className="text-2xl font-bold mb-6 text-center dark:text-white">Admin Login</h1>
+          <h1 className="text-2xl font-bold mb-6 text-gray-600 text-center dark:text-white">Admin Login</h1>
           
           {error && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -174,23 +174,23 @@ export default function AdminDashboard() {
           
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-1 dark:text-white">Username</label>
+              <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-white">Username</label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-white"
+                className="w-full p-2 border rounded-lg text-gray-600 bg-gray-300 dark:bg-gray-700 dark:text-white"
                 required
               />
             </div>
             
             <div>
-              <label className="block text-sm font-medium mb-1 dark:text-white">Password</label>
+              <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-white">Password</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-white"
+                className="w-full p-2 border rounded-lg text-gray-600 bg-gray-300 dark:bg-gray-700 dark:text-white"
                 required
               />
             </div>
@@ -211,7 +211,7 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold dark:text-white">Admin Dashboard</h1>
+          <h1 className="text-2xl font-bold text-gray-600 dark:text-white">Admin Dashboard</h1>
           <button
             onClick={() => {
               localStorage.removeItem('adminAuthenticated');

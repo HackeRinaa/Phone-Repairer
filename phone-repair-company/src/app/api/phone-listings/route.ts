@@ -50,16 +50,38 @@ export async function POST(request: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    // Get all approved listings
+    const { searchParams } = new URL(request.url);
+    const status = searchParams.get('status');
+    
+    // Set up filter object
+    const filter: { status?: string } = {};
+    
+    // Apply status filter if provided
+    if (status) {
+      filter.status = status.toUpperCase();
+    } else {
+      // Default to only approved listings if no status provided
+      filter.status = 'APPROVED';
+    }
+    
+    // Get listings with applied filters
+    // @ts-expect-error - New Prisma model not recognized by TypeScript
     const listings = await prisma.phoneListing.findMany({
-      where: {
-        status: 'APPROVED'
-      },
+      where: filter,
       orderBy: {
         createdAt: 'desc'
-      }
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
     });
 
     return NextResponse.json({ listings });

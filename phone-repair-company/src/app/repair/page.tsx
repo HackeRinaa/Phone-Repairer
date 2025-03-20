@@ -221,7 +221,7 @@ export default function RepairPage() {
     switch (step) {
       case 1:
         return (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 mb-16">
+          <div className="w-[80%] grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 mb-16 mx-auto">
             {Object.keys(phoneOptions).map((brand) => (
               <button
                 key={brand}
@@ -245,7 +245,7 @@ export default function RepairPage() {
 
       case 2:
         return (
-          <div className="max-w-2xl mx-auto">
+          <div className="w-[80%] mx-auto">
             <h2 className="text-2xl font-semibold mb-6 text-center dark:text-white text-gray-600">
               {stepTitles[2]}
             </h2>
@@ -277,7 +277,7 @@ export default function RepairPage() {
 
       case 3:
         return (
-          <div className="max-w-3xl mx-auto">
+          <div className="w-[80%] mx-auto">
             <h2 className="text-2xl font-semibold mb-6 text-center dark:text-white text-gray-600">
               {stepTitles[3]}
             </h2>
@@ -361,6 +361,7 @@ export default function RepairPage() {
               });
             }}
             pageId={1}
+            repair={true}
           />
         );
 
@@ -370,7 +371,7 @@ export default function RepairPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-100">
+    <div className="w-full flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-100">
       <Navbar />
 
       <main className="flex-grow max-w-7xl mx-auto px-4 py-12 w-full">
