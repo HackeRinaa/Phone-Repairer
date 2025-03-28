@@ -153,7 +153,8 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
               ...bookingData,
               date: selectedDate,
               timeSlot: selectedTime
-            }
+            },
+            itemDetails: itemDetails
           }),
         });
 

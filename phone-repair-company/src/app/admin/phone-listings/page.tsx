@@ -149,7 +149,7 @@ export default function PhoneListingsAdmin() {
   // Handle status change
   const handleStatusChange = async (listingId: string, newStatus: string) => {
     try {
-      const response = await fetch(`/api/phone-listings/${listingId}`, {
+      const response = await fetch(`/api/admin/phone-listings/${listingId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -175,6 +175,36 @@ export default function PhoneListingsAdmin() {
     } catch (error) {
       console.error("Error updating listing status:", error);
       toast.error("Failed to update listing status");
+    }
+  };
+  
+  // Handle delete listing
+  const handleDelete = async (listingId: string) => {
+    if (!confirm("Are you sure you want to delete this listing? This action cannot be undone.")) {
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/admin/phone-listings/${listingId}`, {
+        method: "DELETE",
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to delete listing");
+      }
+      
+      // Remove from listings
+      setListings(listings.filter(listing => listing.id !== listingId));
+      
+      // Close detail view if open
+      if (selectedListing?.id === listingId) {
+        setSelectedListing(null);
+      }
+      
+      toast.success("Listing deleted successfully");
+    } catch (error) {
+      console.error("Error deleting listing:", error);
+      toast.error("Failed to delete listing");
     }
   };
   
@@ -407,6 +437,13 @@ export default function PhoneListingsAdmin() {
                           className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
                         >
                           Copy Listing ID
+                        </button>
+                        
+                        <button 
+                          onClick={() => handleDelete(selectedListing.id)}
+                          className="w-full px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors dark:bg-red-900 dark:text-red-200 dark:hover:bg-red-800"
+                        >
+                          Delete Listing
                         </button>
                       </div>
                     </div>

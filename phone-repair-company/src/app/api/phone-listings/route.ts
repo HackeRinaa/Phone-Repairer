@@ -23,7 +23,7 @@ export async function POST(request: Request) {
         condition: data.condition,
         storage: data.storage,
         description: data.description || '',
-        images: data.images || [],
+        images: Array.isArray(data.images) ? JSON.stringify(data.images) : (data.images || '[]'),
         name: data.name || '',
         email: data.email || '',
         phone: data.phone || '',
@@ -55,35 +55,33 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
     
+    console.log('Public phone listings requested with status:', status);
+    
     // Set up filter object
     const filter: { status?: string } = {};
     
     // Apply status filter if provided
-    if (status) {
+    if (status && status.toLowerCase() !== 'all') {
       filter.status = status.toUpperCase();
+    } else if (status && status.toLowerCase() === 'all') {
+      // Don't add any status filter if 'all' is requested - show everything
     } else {
       // Default to only approved listings if no status provided
       filter.status = 'APPROVED';
     }
     
+    console.log('Using filter:', filter);
+    
     // Get listings with applied filters
-    // @ts-expect-error - New Prisma model not recognized by TypeScript
     const listings = await prisma.phoneListing.findMany({
       where: filter,
       orderBy: {
         createdAt: 'desc'
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-      },
+      }
     });
 
+    console.log(`Found ${listings.length} listings`);
+    
     return NextResponse.json({ listings });
   } catch (error) {
     console.error('Error fetching phone listings:', error);

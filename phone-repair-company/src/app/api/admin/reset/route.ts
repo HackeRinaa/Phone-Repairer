@@ -1,38 +1,49 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
-import * as bcrypt from 'bcryptjs';
+import { prisma } from '@/lib/prisma';
+import bcrypt from 'bcrypt';
 
 export async function POST() {
   try {
-    // This is a one-time setup endpoint, you should remove it after use
-    // or add proper authorization
-    
-    // Delete all existing admin users
-    await prisma.adminUser.deleteMany({});
-    
-    // Create new admin user with default credentials
-    const hashedPassword = await bcrypt.hash('admin123', 10);
-    
-    await prisma.adminUser.create({
-      data: {
-        username: 'admin',
-        password: hashedPassword,
-        name: 'Administrator'
+    // Delete all existing users
+    // @ts-expect-error - Prisma model not recognized properly
+    await prisma.user.deleteMany({
+      where: {
+        role: 'admin'
       }
     });
-    
+
+    // Create a new admin user
+    const username = 'admin';
+    const password = 'admin123';
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // @ts-expect-error - Prisma model not recognized properly
+    await prisma.user.create({
+      data: {
+        name: 'Admin User',
+        email: 'admin@example.com',
+        username,
+        password: hashedPassword,
+        role: 'admin',
+      },
+    });
+
     return NextResponse.json({
       success: true,
       message: 'Admin user reset successfully',
-      adminCredentials: {
-        username: 'admin',
-        password: 'admin123' // This is just for initial setup
+      credentials: {
+        username,
+        password,
       }
     });
   } catch (error) {
-    console.error('Failed to reset admin user:', error);
+    console.error('Error resetting admin user:', error);
     return NextResponse.json(
-      { error: 'Failed to reset admin user' },
+      { 
+        success: false,
+        error: 'Failed to reset admin user',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }

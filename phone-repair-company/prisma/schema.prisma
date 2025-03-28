@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model Booking {
@@ -18,6 +18,9 @@ model Booking {
   notes               String?
   status              String   @default("PENDING") // PENDING, CONFIRMED, COMPLETED, CANCELLED
   type                String   // "REPAIR" or "PRODUCT"
+  brand               String?  // Phone brand
+  model               String?  // Phone model
+  issues              String?  // JSON array of issues for repairs
   totalAmount         Float?
   paymentMethod       String?  // "online" or "instore"
   paymentStatus       String?  // "PENDING", "PAID", "FAILED"
@@ -43,7 +46,7 @@ model PhoneListing {
   condition   String
   storage     String
   description String?
-  images      String[] // URLs or base64 strings
+  images      String   // JSON string of image URLs  
   status      String   @default("PENDING") // PENDING, APPROVED, SOLD, REJECTED
   
   // Contact info
@@ -54,4 +57,15 @@ model PhoneListing {
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String?  @unique
+  username  String?  @unique
+  password  String?
+  role      String   @default("user") // "user" or "admin"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 } 
