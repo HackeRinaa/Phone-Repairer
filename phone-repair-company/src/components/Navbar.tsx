@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
+import Image from "next/image";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -31,9 +32,18 @@ export default function Navbar() {
   return (
     <nav className="z-50 sticky top-0 w-full shadow-sm px-8 h-20 flex items-center justify-between border-b border-gray-300 dark:border-gray-800 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
       {/* Logo */}
+      <div className="flex items-center justify-center">
+      <Image
+        src="/irescue-logo.png"
+        alt="logo"
+        width={60}
+        height={60}
+      />
       <Link href="/" className="flex items-center gap-2">
         <span className="text-4xl font-bold text-purple-600">iRescue</span>
       </Link>
+      </div>
+      
 
       {/* Hamburger Menu Icon (Mobile Only) */}
       <div className="sm:hidden cursor-pointer" onClick={toggleMenu}>
