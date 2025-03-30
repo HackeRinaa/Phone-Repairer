@@ -337,7 +337,7 @@ export default function AdminDashboard() {
             <li className="mr-2">
               <button
                 onClick={() => setActiveTab('bookings')}
-                className={`inline-block p-4 rounded-t-lg ${
+                className={`inline-block p-4 rounded-t-lg text-gray-600 dark:text-white ${
                   activeTab === 'bookings'
                     ? 'text-purple-600 border-b-2 border-purple-600 dark:text-purple-500 dark:border-purple-500'
                     : 'hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300'
@@ -349,7 +349,7 @@ export default function AdminDashboard() {
             <li className="mr-2">
               <button
                 onClick={() => setActiveTab('listings')}
-                className={`inline-block p-4 rounded-t-lg ${
+                className={`inline-block p-4 rounded-t-lg text-gray-600 dark:text-white ${
                   activeTab === 'listings'
                     ? 'text-purple-600 border-b-2 border-purple-600 dark:text-purple-500 dark:border-purple-500'
                     : 'hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300'
@@ -432,7 +432,7 @@ export default function AdminDashboard() {
                                 )}
                               </td>
                               <td className="px-6 py-4">
-                                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full text-gray-600 dark:text-white ${
                                   booking.status === 'PENDING' 
                                     ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' 
                                     : booking.status === 'CONFIRMED'
@@ -449,7 +449,7 @@ export default function AdminDashboard() {
                                   value={booking.status}
                                   onClick={(e) => e.stopPropagation()}
                                   onChange={(e) => handleBookingStatusChange(booking.id, e.target.value)}
-                                  className="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                  className="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm text-gray-600 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                                 >
                                   <option value="PENDING">Pending</option>
                                   <option value="CONFIRMED">Confirmed</option>
@@ -686,7 +686,7 @@ export default function AdminDashboard() {
                                   value={listing.status}
                                   onClick={(e) => e.stopPropagation()}
                                   onChange={(e) => handleListingStatusChange(listing.id, e.target.value)}
-                                  className="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                  className="block w-full py-2 px-3 border border-gray-300 text-gray-600 dark:text-white bg-white rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600"
                                 >
                                   <option value="PENDING">Pending</option>
                                   <option value="APPROVED">Approved</option>
