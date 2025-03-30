@@ -384,6 +384,21 @@ export default function AdminDashboard() {
     }
     
     try {
+      // Log the notes for debugging
+      console.log('Notes to parse:', notes);
+      
+      // First check if it's a valid JSON string
+      if (typeof notes !== 'string' || notes.trim() === '') {
+        console.warn('Notes is not a valid string:', notes);
+        return { brand: "N/A", model: "N/A", issues: [] };
+      }
+      
+      // If it starts with 'test' or any non-JSON character, handle it
+      if (!notes.trim().startsWith('{')) {
+        console.warn('Notes does not start with {:', notes.substring(0, 20));
+        return { brand: "N/A", model: "N/A", issues: [] };
+      }
+      
       const parsedNotes = JSON.parse(notes);
       const deviceDetails = parsedNotes.deviceDetails || {};
       
@@ -393,8 +408,9 @@ export default function AdminDashboard() {
         issues: Array.isArray(deviceDetails.issues) ? deviceDetails.issues : []
       };
     } catch (error) {
-      // If parsing fails, return default values
+      // If parsing fails, return default values and log the error
       console.error("Error parsing device details from notes:", error);
+      console.error("Notes content causing error:", notes?.substring(0, 100));
       return { brand: "N/A", model: "N/A", issues: [] };
     }
   };
@@ -544,15 +560,45 @@ export default function AdminDashboard() {
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold text-gray-600 dark:text-white">Admin Dashboard</h1>
-          <button
-            onClick={() => {
-              localStorage.removeItem('adminAuthenticated');
-              setIsAuthenticated(false);
-            }}
-            className="py-2 px-4 bg-red-600 text-white rounded-lg hover:bg-red-700"
-          >
-            Logout
-          </button>
+          <div className="flex space-x-3">
+            <button
+              onClick={async () => {
+                if (window.confirm('Είστε σίγουροι ότι θέλετε να διαγράψετε όλα τα δεδομένα από τη βάση; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί!')) {
+                  try {
+                    const response = await fetch('/api/admin/reset-database?adminKey=admin123', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      credentials: 'include'
+                    });
+                    
+                    if (response.ok) {
+                      const data = await response.json();
+                      alert(`Η βάση δεδομένων καθαρίστηκε επιτυχώς!\nΔιαγράφηκαν:\n${data.deletedBookings} κρατήσεις\n${data.deletedPhoneListings} αγγελίες κινητών\n${data.deletedPhonesForSale} κινητά προς πώληση`);
+                      // Refresh data
+                      fetchData();
+                    } else {
+                      alert('Προέκυψε σφάλμα κατά τον καθαρισμό της βάσης δεδομένων');
+                    }
+                  } catch (err) {
+                    console.error('Error resetting database:', err);
+                    alert('Προέκυψε σφάλμα κατά τη σύνδεση με τον διακομιστή');
+                  }
+                }
+              }}
+              className="py-2 px-4 bg-red-500 text-white rounded-lg hover:bg-red-600"
+            >
+              Καθαρισμός Βάσης
+            </button>
+            <button
+              onClick={() => {
+                localStorage.removeItem('adminAuthenticated');
+                setIsAuthenticated(false);
+              }}
+              className="py-2 px-4 bg-red-600 text-white rounded-lg hover:bg-red-700"
+            >
+              Logout
+            </button>
+          </div>
         </div>
         
         <div className="flex mb-6 border-b border-gray-300 dark:border-gray-700">

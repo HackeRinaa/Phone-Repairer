@@ -159,16 +159,16 @@ export default function PurchasePage() {
         } else {
           console.log('Phone marked as SOLD');
           
-          // Remove the phone from the displayed list
+          // Remove the phone from the displayed list without resetting the UI
+          // This will allow the confirmation page to remain visible
           setPhones(phones.filter(phone => phone.id !== selectedPhone.id));
         }
       } catch (err) {
         console.error('Error updating phone status:', err);
       }
       
-      // Return to the phone listings
-      setShowPayment(false);
-      setSelectedPhone(null);
+      // Don't reset the UI so the user stays on the confirmation page
+      // The user can navigate away manually when they're ready
     }
   };
 

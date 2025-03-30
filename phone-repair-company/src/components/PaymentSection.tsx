@@ -166,17 +166,27 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
         const data = await response.json();
         console.log(`data from post id=1 ${data}`);
         
-        // Set phone details from the first item if available
+        // Set phone details from the first item
         if (itemDetails && itemDetails.length > 0) {
           const firstItem = itemDetails[0];
           const titleParts = firstItem.title.split(' - ');
-          if (titleParts.length > 0) {
-            const brandModel = titleParts[0].split(' ');
-            setPhoneDetails({
-              brand: brandModel[0],
-              model: brandModel.slice(1).join(' ')
-            });
+          
+          // Extract brand and model more carefully with defaults
+          let brand = 'Συσκευή';
+          let model = '';
+          
+          if (titleParts.length > 0 && titleParts[0].trim() !== '') {
+            const parts = titleParts[0].split(' ');
+            if (parts.length > 0) {
+              brand = parts[0];
+              if (parts.length > 1) {
+                model = parts.slice(1).join(' ');
+              }
+            }
           }
+          
+          console.log('Extracted phone details:', { brand, model });
+          setPhoneDetails({ brand, model });
         }
         
         onComplete({
@@ -187,32 +197,108 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
         setListingId(data.listing?.id || 'N/A');
         setNextStep(true);
       } else if (pageId === 2) {
-        // For booking with payment
-        const response = await fetch('/api/create-payment-intent', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            items: itemDetails,
-            bookingData: {
+        // For phone purchase bookings
+        
+        // If using cash on delivery (payment method is 'instore')
+        if (bookingData.paymentMethod === 'instore') {
+          try {
+            const requestData = {
+              bookingData: {
+                ...bookingData,
+                date: selectedDate,
+                timeSlot: selectedTime
+              },
+              itemDetails: itemDetails
+            };
+            
+            console.log('Sending purchase booking data:', JSON.stringify(requestData));
+            
+            const response = await fetch('/api/purchase-booking', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(requestData),
+            });
+  
+            console.log('Response status:', response.status);
+            
+            if (!response.ok) {
+              const responseText = await response.text();
+              console.error('Error response:', responseText);
+              try {
+                const errorData = JSON.parse(responseText);
+                throw new Error(errorData.error || `Failed to create booking: ${response.status}`);
+              } catch {
+                // Parse error - response is not valid JSON
+                throw new Error(`Failed to create booking: ${response.status} - ${responseText.substring(0, 100)}...`);
+              }
+            }
+  
+            const data = await response.json();
+            console.log('Purchase booking created:', data);
+            
+            // Set phone details from the first item
+            if (itemDetails && itemDetails.length > 0) {
+              const firstItem = itemDetails[0];
+              const titleParts = firstItem.title.split(' - ');
+              
+              // Extract brand and model more carefully with defaults
+              let brand = 'Συσκευή';
+              let model = '';
+              
+              if (titleParts.length > 0 && titleParts[0].trim() !== '') {
+                const parts = titleParts[0].split(' ');
+                if (parts.length > 0) {
+                  brand = parts[0];
+                  if (parts.length > 1) {
+                    model = parts.slice(1).join(' ');
+                  }
+                }
+              }
+              
+              console.log('Extracted phone details:', { brand, model });
+              setPhoneDetails({ brand, model });
+            }
+            
+            // Complete the purchase process
+            onComplete({
               ...bookingData,
               date: selectedDate,
               timeSlot: selectedTime
-            }
-          }),
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'Failed to create payment intent');
+            });
+            setListingId(data.booking?.id || 'N/A');
+            setNextStep(true);
+          } catch (error) {
+            console.error('Error:', error);
+            setErrors({ form: error instanceof Error ? error.message : 'An unexpected error occurred' });
+          }
+        } else {
+          // For online payment (using Stripe)
+          const response = await fetch('/api/create-payment-intent', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              items: itemDetails,
+              bookingData: {
+                ...bookingData,
+                date: selectedDate,
+                timeSlot: selectedTime
+              }
+            }),
+          });
+  
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to create payment intent');
+          }
+  
+          const data = await response.json();
+          if (data.error) {
+            throw new Error(data.error);
+          }
+  
+          setClientSecret(data.clientSecret);
+          setShowStripePayment(true);
         }
-
-        const data = await response.json();
-        if (data.error) {
-          throw new Error(data.error);
-        }
-
-        setClientSecret(data.clientSecret);
-        setShowStripePayment(true);
       }
     } catch (error) {
       console.error('Error:', error);
@@ -257,18 +343,34 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
           </div>
         </div>
         
-        <h2 className="text-2xl font-bold mb-4 dark:text-white text-gray-600">
-          Η αγγελία σας υποβλήθηκε με επιτυχία!
-        </h2>
-        
-        <p className="text-gray-600 dark:text-gray-400 mb-6">
-          Η αγγελία σας για το {phoneDetails.brand} {phoneDetails.model} έχει υποβληθεί και βρίσκεται υπό έγκριση. 
-          Θα σας ενημερώσουμε μέσω email μόλις εγκριθεί.
-        </p>
+        {pageId === 1 ? (
+          <>
+            <h2 className="text-2xl font-bold mb-4 dark:text-white text-gray-600">
+              Η αγγελία σας υποβλήθηκε με επιτυχία!
+            </h2>
+            
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              Η αγγελία σας {phoneDetails.brand && phoneDetails.model ? `για το ${phoneDetails.brand} ${phoneDetails.model}` : 'για τη συσκευή σας'} έχει υποβληθεί και βρίσκεται υπό έγκριση. 
+              Θα σας ενημερώσουμε μέσω email μόλις εγκριθεί.
+            </p>
+          </>
+        ) : (
+          <>
+            <h2 className="text-2xl font-bold mb-4 dark:text-white text-gray-600">
+              {bookingData.paymentMethod === 'instore' ? 'Η παραγγελία σας καταχωρήθηκε!' : 'Η αγορά ολοκληρώθηκε!'}
+            </h2>
+            
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              {bookingData.paymentMethod === 'instore' 
+                ? `Η αγορά ${phoneDetails.brand && phoneDetails.model ? `του ${phoneDetails.brand} ${phoneDetails.model}` : 'της συσκευής'} έχει καταχωρηθεί. Θα επικοινωνήσουμε μαζί σας για την παράδοση. Η πληρωμή θα γίνει κατά την παραλαβή.` 
+                : `Η αγορά ${phoneDetails.brand && phoneDetails.model ? `του ${phoneDetails.brand} ${phoneDetails.model}` : 'της συσκευής'} ολοκληρώθηκε επιτυχώς. Θα λάβετε ένα email επιβεβαίωσης με τα στοιχεία της παραγγελίας σας.`}
+            </p>
+          </>
+        )}
         
         <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg mb-6">
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Αριθμός Αγγελίας: <span className="font-medium text-gray-700 dark:text-gray-300">{listingId}</span>
+            {pageId === 1 ? 'Αριθμός Αγγελίας:' : 'Αριθμός Παραγγελίας:'} <span className="font-medium text-gray-700 dark:text-gray-300">{listingId}</span>
           </p>
         </div>
         
