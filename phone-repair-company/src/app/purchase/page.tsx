@@ -1,9 +1,12 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import { PaymentSection } from "@/components/PaymentSection";
 import Link from "next/link";
+import { getFirstImageFromString, getAllImagesFromString } from "@/lib/imageUtils";
+// Import icons
+import { FaChevronLeft, FaChevronRight, FaTimes, FaMemory, FaMobileAlt, FaPaintBrush } from "react-icons/fa";
 
 interface PhoneProduct {
   id: string;
@@ -13,84 +16,76 @@ interface PhoneProduct {
   condition: string;
   storage: string;
   color: string;
-  image: string;
-  year: number;
+  images: string; // This will be parsed
+  year?: number;
+  description?: string;
+  status?: string;
+}
+
+// Define the booking data type to match PaymentSection
+interface BookingData {
+  date: Date | null;
+  timeSlot: string;
+  contactInfo: {
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    notes: string;
+  };
+  paymentMethod: 'online' | 'instore';
 }
 
 export default function PurchasePage() {
-  const [ showPayment, setShowPayment ] = useState( false );
-  const [ selectedPhone, setSelectedPhone ] = useState<PhoneProduct | null>( null );
-  const [ filters, setFilters ] = useState( {
+  const [showPayment, setShowPayment] = useState(false);
+  const [selectedPhone, setSelectedPhone] = useState<PhoneProduct | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [phones, setPhones] = useState<PhoneProduct[]>([]);
+  const [filters, setFilters] = useState({
     brand: "all",
-    priceRange: [ 0, 2000 ],
+    priceRange: [0, 2000],
     condition: "all",
     storage: "all",
-    sort: "newest", // Add this line
-  } );
-
+    sort: "newest",
+  });
+  
+  // State for the detail modal
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [phoneImages, setPhoneImages] = useState<string[]>([]);
 
   // Set pageId to 2 for payment functionality
   const pageId = 2;
 
-  const phones: PhoneProduct[] = [
-    {
-      id: "1",
-      brand: "Apple",
-      model: "iPhone 13 Pro",
-      price: 699,
-      condition: "Excellent",
-      storage: "128GB",
-      color: "Graphite",
-      image: "/iphone-13-pro.jpg",
-      year: 2021
-    },
-    {
-      id: "2",
-      brand: "Apple",
-      model: "iPhone 14 Pro",
-      price: 899,
-      condition: "Excellent",
-      storage: "128GB",
-      color: "Graphite",
-      image: "/iphone-14-pro.jpg",
-      year: 2024
-    },
-    {
-      id: "3",
-      brand: "Apple",
-      model: "iPhone 12",
-      price: 699,
-      condition: "Excellent",
-      storage: "128GB",
-      color: "Graphite",
-      image: "/iphone-12.jpg",
-      year: 2024
-    },
-    {
-      id: "4",
-      brand: "Samsung",
-      model: "S22",
-      price: 399,
-      condition: "Excellent",
-      storage: "128GB",
-      color: "Graphite",
-      image: "/Samsung-s22.jpg",
-      year: 2024
-    },
-    {
-      id: "5",
-      brand: "Samsung",
-      model: "S25",
-      price: 999,
-      condition: "Excellent",
-      storage: "1T",
-      color: "Graphite",
-      image: "/Samsung-s25.jpg",
-      year: 2024
-    },
-  ];
-
-
+  // Fetch phones from API
+  useEffect(() => {
+    async function fetchPhones() {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/phones-for-sale');
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch phones');
+        }
+        
+        const data = await response.json();
+        setPhones(data.phones || []);
+        
+        // Extract unique brands for filter options
+        const brands = Array.from(new Set(data.phones.map((phone: PhoneProduct) => phone.brand)));
+        console.log('Available brands:', brands);
+        
+      } catch (err) {
+        console.error('Error fetching phones:', err);
+        setError('Failed to load phones. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    fetchPhones();
+  }, []);
 
   const sortedPhones = phones
     .filter((phone) => {
@@ -103,7 +98,7 @@ export default function PurchasePage() {
     .sort((a, b) => {
       switch (filters.sort) {
         case "newest":
-          return b.year - a.year; // Sort by newest first
+          return (b.year || 0) - (a.year || 0); // Sort by newest first
         case "priceAsc":
           return a.price - b.price; // Sort by price ascending
         case "priceDesc":
@@ -120,15 +115,109 @@ export default function PurchasePage() {
     });
   };
 
-  const handleBuyClick = ( phone: PhoneProduct ) => {
-    setSelectedPhone( phone );
-    setShowPayment( true );
+  const handlePhoneClick = (phone: PhoneProduct) => {
+    setSelectedPhone(phone);
+    setPhoneImages(getAllImagesFromString(phone.images));
+    setCurrentImageIndex(0);
+    setShowDetailModal(true);
   };
 
-  const [ showFilters, setShowFilters ] = useState( false );
+  const handleBuyClick = (phone: PhoneProduct) => {
+    setSelectedPhone(phone);
+    setShowPayment(true);
+    setShowDetailModal(false); // Close the modal if open
+  };
   
+  // Handle marking the phone as sold after purchase
+  const handlePurchaseComplete = async (data: BookingData) => {
+    console.log('Η παραγγελία ολοκληρώθηκε:', {
+      device: {
+        brand: selectedPhone?.brand,
+        model: selectedPhone?.model
+      },
+      orderDetails: {
+        condition: selectedPhone?.condition,
+        storage: selectedPhone?.storage,
+        price: selectedPhone?.price
+      },
+      booking: data
+    });
+    
+    if (selectedPhone) {
+      try {
+        // Update the phone listing status to SOLD
+        const response = await fetch(`/api/admin/phones-for-sale/${selectedPhone.id}?adminKey=admin123`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status: 'SOLD' }),
+        });
+        
+        if (!response.ok) {
+          console.error('Failed to update phone status');
+        } else {
+          console.log('Phone marked as SOLD');
+          
+          // Remove the phone from the displayed list
+          setPhones(phones.filter(phone => phone.id !== selectedPhone.id));
+        }
+      } catch (err) {
+        console.error('Error updating phone status:', err);
+      }
+      
+      // Return to the phone listings
+      setShowPayment(false);
+      setSelectedPhone(null);
+    }
+  };
+
+  const [showFilters, setShowFilters] = useState(false);
   const [viewColumns, setViewColumns] = useState(3);
 
+  // Get unique brands for filter dropdown
+  const availableBrands = Array.from(new Set(phones.map(phone => phone.brand)));
+
+  // Image carousel navigation functions
+  const nextImage = () => {
+    if (phoneImages.length > 1) {
+      setCurrentImageIndex((prevIndex) => 
+        prevIndex === phoneImages.length - 1 ? 0 : prevIndex + 1
+      );
+    }
+  };
+  
+  const prevImage = () => {
+    if (phoneImages.length > 1) {
+      setCurrentImageIndex((prevIndex) => 
+        prevIndex === 0 ? phoneImages.length - 1 : prevIndex - 1
+      );
+    }
+  };
+
+  // Function to determine condition label class
+  const getConditionClass = (condition: string) => {
+    switch(condition.toLowerCase()) {
+      case 'new':
+      case 'brand new':
+      case 'καινούριο':
+        return 'bg-green-100 text-green-800';
+      case 'like new':
+      case 'σαν καινούριο':
+        return 'bg-teal-100 text-teal-800';
+      case 'excellent':
+      case 'άριστο':
+        return 'bg-blue-100 text-blue-800';
+      case 'good':
+      case 'καλό':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'fair':
+      case 'μέτριο':
+        return 'bg-orange-100 text-orange-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-100">
@@ -139,7 +228,7 @@ export default function PurchasePage() {
           <>
             <div className="text-center mb-10">
               <h1 className="text-4xl font-bold mb-4 text-gray-800 dark:text-white">
-                Μεταχειρισμένα Κινητά
+                Διάλεξε το κινητό που σου ταιριάζει
               </h1>
               <p className="text-lg text-gray-600 dark:text-gray-400">
                 Ελεγμένες συσκευές με εγγύηση σε προσιτές τιμές
@@ -151,13 +240,13 @@ export default function PurchasePage() {
               {/* Small screen buttons */}
               <div className="flex sm:hidden justify-between">
                 <button
-                  onClick={() => setShowFilters( !showFilters )}
+                  onClick={() => setShowFilters(!showFilters)}
                   className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 rounded-md"
                 >
                   Φίλτρα
                 </button>
                 <button
-                  onClick={() => setViewColumns( viewColumns === 1 ? 2 : viewColumns === 2 ? 3 : 1 )}
+                  onClick={() => setViewColumns(viewColumns === 1 ? 2 : viewColumns === 2 ? 3 : 1)}
                   className="py-2"
                 >
                   Προβολή <span className="text-purple-600 font-bold px-1 text-lg">{viewColumns}</span>
@@ -172,13 +261,13 @@ export default function PurchasePage() {
                   <label className="block text-sm font-medium text-gray-600 dark:text-gray-400">Μάρκα</label>
                   <select
                     value={filters.brand}
-                    onChange={( e ) => setFilters( { ...filters, brand: e.target.value } )}
+                    onChange={(e) => setFilters({ ...filters, brand: e.target.value })}
                     className="w-full p-2 rounded border border-gray-600 dark:border-white dark:bg-gray-700 text-gray-600 dark:text-gray-400"
                   >
                     <option value="all">Όλες οι Μάρκες</option>
-                    <option value="Apple">Apple</option>
-                    <option value="Samsung">Samsung</option>
-                    <option value="Google">Google</option>
+                    {availableBrands.map(brand => (
+                      <option key={brand} value={brand}>{brand}</option>
+                    ))}
                   </select>
                 </div>
 
@@ -202,18 +291,18 @@ export default function PurchasePage() {
                   <div className="flex gap-2 items-center">
                     <input
                       type="number"
-                      value={filters.priceRange[ 0 ]}
-                      onChange={( e ) =>
-                        setFilters( { ...filters, priceRange: [ Number( e.target.value ), filters.priceRange[ 1 ] ] } )
+                      value={filters.priceRange[0]}
+                      onChange={(e) =>
+                        setFilters({ ...filters, priceRange: [Number(e.target.value), filters.priceRange[1]] })
                       }
                       className="w-full p-2 rounded border border-gray-600 dark:border-white dark:bg-gray-700 text-gray-600 dark:text-gray-400"
                     />
                     <span className="text-gray-600 dark:text-gray-400">έως</span>
                     <input
                       type="number"
-                      value={filters.priceRange[ 1 ]}
-                      onChange={( e ) =>
-                        setFilters( { ...filters, priceRange: [ filters.priceRange[ 0 ], Number( e.target.value ) ] } )
+                      value={filters.priceRange[1]}
+                      onChange={(e) =>
+                        setFilters({ ...filters, priceRange: [filters.priceRange[0], Number(e.target.value)] })
                       }
                       className="w-full p-2 rounded border border-gray-600 dark:border-white dark:bg-gray-700 text-gray-600 dark:text-gray-400"
                     />
@@ -224,58 +313,246 @@ export default function PurchasePage() {
                 <div className="flex items-end justify-between gap-2">
                   <button
                     onClick={() =>
-                      setFilters( { brand: "all", priceRange: [ 0, 2000 ], condition: "all", storage: "all", sort: "newest" } )
+                      setFilters({ brand: "all", priceRange: [0, 2000], condition: "all", storage: "all", sort: "newest" })
                     }
                     className="px-4 py-2 text-purple-600 hover:bg-purple-100 dark:text-purple-400 dark:hover:bg-purple-700 border rounded-lg border-purple-600"
                   >
                     Επαναφορά Φίλτρων
                   </button>
                   <button
-                  onClick={() => setViewColumns( viewColumns === 1 ? 2 : viewColumns === 2 ? 3 : 1 )}
-                  className="py-2"
-                >
-                  Προβολή <span className="text-purple-600 font-bold px-1 text-lg">{viewColumns}</span>
-                </button>
-                </div>
-              </div>
-            </div>
-
-
-            {/* Phone Grid */}
-            <div className={`grid  grid-cols-${Math.min(viewColumns, 2)} md:grid-cols-${viewColumns} gap-6`}>
-              {sortedPhones.map( ( phone ) => (
-                <div key={phone.id} className="shadow-md bg-white dark:bg-gray-800 rounded-xl overflow-hidden hover:shadow-md transition-shadow flex flex-col">
-                <div className="relative h-48">
-                  <Image
-                    src={phone.image}
-                    alt={`${phone.brand} ${phone.model}`}
-                    fill
-                    className="object-fill w-full h-full"
-                  />
-                </div>
-                <div className="p-4 flex flex-col flex-grow">
-                  <h3 className="font-semibold text-lg mb-2 text-gray-800 dark:text-white">
-                    {phone.brand} {phone.model}
-                  </h3>
-                  <p className="text-blue-600 dark:text-blue-400 text-xl font-bold mb-2">
-                    {phone.price}€
-                  </p>
-                  <div className="text-sm text-gray-600 dark:text-gray-400 flex-grow">
-                    <p>Κατάσταση: {phone.condition}</p>
-                    <p>Αποθηκευτικός Χώρος: {phone.storage}</p>
-                    <p>Χρώμα: {phone.color}</p>
-                  </div>
-                  <button
-                    onClick={() => handleBuyClick(phone)}
-                    className="w-full mt-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors dark:bg-purple-700 dark:hover:bg-purple-800"
+                    onClick={() => setViewColumns(viewColumns === 1 ? 2 : viewColumns === 2 ? 3 : 1)}
+                    className="py-2"
                   >
-                    Αγορά
+                    Προβολή <span className="text-purple-600 font-bold px-1 text-lg">{viewColumns}</span>
                   </button>
                 </div>
               </div>
-              
-              ) )}
             </div>
+
+            {/* Loading and Error States */}
+            {loading && (
+              <div className="flex justify-center items-center py-16">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+              </div>
+            )}
+            
+            {error && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                {error}
+              </div>
+            )}
+
+            {/* Phone Grid */}
+            {!loading && !error && (
+              <>
+                {sortedPhones.length === 0 ? (
+                  <div className="text-center py-16 text-gray-500 dark:text-gray-400">
+                    <p className="text-xl">Δεν βρέθηκαν διαθέσιμα κινητά</p>
+                    <p className="mt-2">Δοκιμάστε να αλλάξετε τα φίλτρα αναζήτησης ή ελέγξτε ξανά αργότερα.</p>
+                  </div>
+                ) : (
+                  <div className={`grid grid-cols-1 sm:grid-cols-${Math.min(viewColumns, 2)} md:grid-cols-${viewColumns} gap-6`}>
+                    {sortedPhones.map((phone) => (
+                      <div 
+                        key={phone.id} 
+                        className="shadow-md bg-white dark:bg-gray-800 rounded-xl overflow-hidden hover:shadow-md transition-shadow flex flex-col cursor-pointer"
+                        onClick={() => handlePhoneClick(phone)}
+                      >
+                        <div className="relative h-48">
+                          <Image
+                            src={getFirstImageFromString(phone.images)}
+                            alt={`${phone.brand} ${phone.model}`}
+                            fill
+                            className="object-cover w-full h-full"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            priority={false}
+                            quality={75}
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.src = "/images/default-phone.jpg";
+                            }}
+                          />
+                        </div>
+                        <div className="p-4 flex flex-col flex-grow">
+                          <h3 className="font-semibold text-lg mb-2 text-gray-800 dark:text-white">
+                            {phone.brand} {phone.model}
+                          </h3>
+                          <p className="text-blue-600 dark:text-blue-400 text-xl font-bold mb-2">
+                            {phone.price}€
+                          </p>
+                          <div className="text-sm text-gray-600 dark:text-gray-400 flex-grow">
+                            <p>Κατάσταση: {phone.condition}</p>
+                            <p>Αποθηκευτικός Χώρος: {phone.storage}</p>
+                            <p>Χρώμα: {phone.color}</p>
+                          </div>
+                          <div
+                            className="w-full mt-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors dark:bg-purple-700 dark:hover:bg-purple-800 text-center"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleBuyClick(phone);
+                            }}
+                          >
+                            Αγορά
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Phone Detail Modal */}
+            {showDetailModal && selectedPhone && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-75" onClick={() => setShowDetailModal(false)}>
+                <div 
+                  className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {/* Modal Close Button */}
+                  <button 
+                    className="absolute top-4 right-4 z-10 bg-white dark:bg-gray-800 rounded-full p-2 shadow-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    onClick={() => setShowDetailModal(false)}
+                  >
+                    <FaTimes className="w-5 h-5" />
+                  </button>
+
+                  <div className="flex flex-col md:flex-row">
+                    {/* Image Gallery */}
+                    <div className="w-full md:w-1/2 p-4 relative">
+                      <div className="relative h-64 sm:h-80 md:h-96 mb-4">
+                        <Image
+                          src={phoneImages[currentImageIndex]}
+                          alt={`${selectedPhone.brand} ${selectedPhone.model}`}
+                          fill
+                          className="object-contain"
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                          quality={90}
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = "/images/default-phone.jpg";
+                          }}
+                        />
+                        
+                        {/* Navigation Arrows */}
+                        {phoneImages.length > 1 && (
+                          <>
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                prevImage();
+                              }}
+                              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                            >
+                              <FaChevronLeft className="w-5 h-5" />
+                            </button>
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                nextImage();
+                              }}
+                              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                            >
+                              <FaChevronRight className="w-5 h-5" />
+                            </button>
+                          </>
+                        )}
+                      </div>
+
+                      {/* Thumbnail Gallery */}
+                      {phoneImages.length > 1 && (
+                        <div className="flex overflow-x-auto gap-2 py-2 pb-4">
+                          {phoneImages.map((img, index) => (
+                            <div 
+                              key={index}
+                              className={`relative w-16 h-16 flex-shrink-0 cursor-pointer border-2 rounded ${
+                                currentImageIndex === index ? 'border-purple-600' : 'border-transparent'
+                              }`}
+                              onClick={() => setCurrentImageIndex(index)}
+                            >
+                              <Image
+                                src={img}
+                                alt={`Thumbnail ${index + 1}`}
+                                fill
+                                className="object-cover rounded"
+                                sizes="64px"
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  target.src = "/images/default-phone.jpg";
+                                }}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Phone Details */}
+                    <div className="w-full md:w-1/2 p-5 pb-6">
+                      <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+                        {selectedPhone.brand} {selectedPhone.model}
+                      </h2>
+                      
+                      <div className="flex items-center mb-4">
+                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${getConditionClass(selectedPhone.condition)}`}>
+                          {selectedPhone.condition}
+                        </span>
+                        {selectedPhone.year && (
+                          <span className="ml-3 text-sm text-gray-500 dark:text-gray-400">
+                            Έτος: {selectedPhone.year}
+                          </span>
+                        )}
+                      </div>
+                      
+                      <p className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-6">
+                        {selectedPhone.price}€
+                      </p>
+                      
+                      <div className="space-y-4 mb-6">
+                        <div className="flex items-center">
+                          <FaMobileAlt className="text-purple-600 w-5 h-5 mr-3" />
+                          <span className="text-gray-700 dark:text-gray-300">
+                            <strong>Κατάσταση:</strong> {selectedPhone.condition}
+                          </span>
+                        </div>
+                        
+                        <div className="flex items-center">
+                          <FaMemory className="text-purple-600 w-5 h-5 mr-3" />
+                          <span className="text-gray-700 dark:text-gray-300">
+                            <strong>Αποθηκευτικός Χώρος:</strong> {selectedPhone.storage}
+                          </span>
+                        </div>
+                        
+                        <div className="flex items-center">
+                          <FaPaintBrush className="text-purple-600 w-5 h-5 mr-3" />
+                          <span className="text-gray-700 dark:text-gray-300">
+                            <strong>Χρώμα:</strong> {selectedPhone.color}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      {selectedPhone.description && (
+                        <div className="mb-6">
+                          <h3 className="font-semibold text-gray-800 dark:text-white mb-2">Περιγραφή</h3>
+                          <p className="text-gray-600 dark:text-gray-400 whitespace-pre-wrap">
+                            {selectedPhone.description}
+                          </p>
+                        </div>
+                      )}
+                      
+                      <div className="mt-6 flex gap-3">
+                        <button
+                          onClick={() => handleBuyClick(selectedPhone)}
+                          className="flex-1 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors dark:bg-purple-700 dark:hover:bg-purple-800 text-center"
+                        >
+                          Αγορά Τώρα
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </>
         ) : (
           <PaymentSection
@@ -286,22 +563,7 @@ export default function PurchasePage() {
                 price: selectedPhone?.price || 0
               }
             ]}
-            onComplete={( data ) => {
-              console.log( 'Η παραγγελία ολοκληρώθηκε:', {
-                device: {
-                  brand: selectedPhone?.brand,
-                  model: selectedPhone?.model
-                },
-                issues: 'purchase',
-                orderDetails: {
-                  condition: selectedPhone?.condition,
-                  storage: selectedPhone?.storage,
-                  price: selectedPhone?.price
-                },
-                booking: data
-              } );
-              // Handle completion
-            }}
+            onComplete={(data) => handlePurchaseComplete(data as BookingData)}
             pageId={pageId} // Pass pageId === 2 to PaymentSection
           />
         )}

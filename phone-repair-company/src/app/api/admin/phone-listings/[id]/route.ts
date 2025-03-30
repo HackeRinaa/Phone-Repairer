@@ -55,14 +55,19 @@ export async function PATCH(
     
     // Check if user is authenticated and is an admin
     if (!session?.user || (session.user as ExtendedUser).role !== 'admin') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      // Also allow access via adminKey for our hardcoded admin
+      const { searchParams } = new URL(request.url);
+      const adminKey = searchParams.get('adminKey');
+      if (adminKey !== 'admin123') {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
     }
     
     const { id } = params;
     const { status } = await request.json();
 
     // Validate status
-    if (!['pending', 'approved', 'sold', 'rejected'].includes(status.toLowerCase())) {
+    if (!['pending', 'approved', 'sold', 'rejected', 'not_available'].includes(status.toLowerCase())) {
       return NextResponse.json(
         { error: 'Invalid status value' },
         { status: 400 }

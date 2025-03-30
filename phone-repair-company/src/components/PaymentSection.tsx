@@ -263,7 +263,7 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
         
         <p className="text-gray-600 dark:text-gray-400 mb-6">
           Η αγγελία σας για το {phoneDetails.brand} {phoneDetails.model} έχει υποβληθεί και βρίσκεται υπό έγκριση. 
-          Θα σας ενημερώσουμε μόλις εγκριθεί.
+          Θα σας ενημερώσουμε μέσω email μόλις εγκριθεί.
         </p>
         
         <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg mb-6">
@@ -273,7 +273,7 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
         </div>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link href="/" className="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+          <Link href="/" className="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 border border-purple-600 dark:text-white rounded-lg hover:bg-purple-200 dark:hover:bg-gray-600 transition-colors">
             Επιστροφή στην Αρχική
           </Link>
         </div>
@@ -413,7 +413,7 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
                     className="mr-3"
                   />
                   <div>
-                    <div className="font-medium">Πληρωμή στο Κατάστημα</div>
+                    <div className="font-medium">Πληρωμή κατά την παράδοση</div>
                     <div className="text-sm text-gray-500">Μετρητά ή κάρτα</div>
                   </div>
                 </label>

@@ -73,7 +73,7 @@ export const SwipeCarousel: React.FC = () => {
   };
 
   return (
-    <div className="relative h-[calc(100vh-140px)] overflow-hidden bg-white/50 dark:bg-gray-900 rounded-xl">
+    <div className="relative h-[calc(100vh-140px)] overflow-hidden bg-gray-900 rounded-3xl">
       <motion.div
         drag="x"
         dragConstraints={{
@@ -121,13 +121,7 @@ export const SwipeCarousel: React.FC = () => {
               transition={SPRING_OPTIONS}
               className="aspect-video h-full w-screen shrink-0 rounded-xl dark:bg-gray-900 bg-white/50 object-cover flex items-center justify-center"
             >
-              <div className="text-center p-8 rounded-lg w-[500px] backdrop-blur-md">
-                <h2 className="text-4xl font-bold text-purple-700">{card.heading}</h2>
-                <p className="mt-4 text-lg dark:text-white text-gray-600">{card.description}</p>
-                <button className="mt-6 px-6 py-3 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-700 transition-colors">
-                  {card.button}
-                </button>
-              </div>
+              
             </motion.div>
           );
         })}

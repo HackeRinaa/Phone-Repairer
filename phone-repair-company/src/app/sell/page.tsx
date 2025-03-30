@@ -115,11 +115,11 @@ const stepTitles: Record<number, string> = {
 };
 
 const stepDescriptions: Record<number, string> = {
-  1: "Επιλέξτε τη μάρκα του κινητού σας για να ξεκινήσετε",
+  1: "Επιλέξτε τη εταιρία του κινητού σας για να ξεκινήσετε",
   2: "Επιλέξτε το μοντέλο του κινητού σας",
   3: "Συμπληρώστε τις λεπτομέρειες της συσκευής σας",
   4: "Συμπληρώστε τα στοιχεία σας για να ολοκληρώσετε την αγγελία",
-  5: "Η αγγελία σας υποβλήθηκε με επιτυχία",
+  5: "Η παραγγελία σας υποβλήθηκε με επιτυχία",
 };
 
 // Define the BookingData interface to match the one in PaymentSection
@@ -306,7 +306,7 @@ const SellPhonePage: React.FC = () => {
       
       // Move to success step
       setStep(5);
-      toast.success("Η αγγελία σας υποβλήθηκε με επιτυχία!");
+      toast.success("Η παραγγελία σας υποβλήθηκε με επιτυχία!");
     } catch (error) {
       console.error("Error submitting listing:", error);
       toast.error(error instanceof Error ? error.message : "Σφάλμα κατά την υποβολή της αγγελίας");
@@ -449,27 +449,6 @@ const SellPhonePage: React.FC = () => {
                 </div>
               </div>
               
-              <div>
-                <label htmlFor="price" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
-                  Τιμή (Προτεινόμενη: {estimatedPrice}€)
-                </label>
-                <div className="relative">
-                  <input
-                    id="price"
-                    name="price"
-                    type="number"
-                    value={phoneDetails.price}
-                    onChange={handleChange}
-                    className="w-full p-3 pl-8 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-600 dark:text-white"
-                    placeholder="Εισάγετε την τιμή"
-                    required
-                  />
-                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">€</span>
-                </div>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                  Η προτεινόμενη τιμή βασίζεται στις τρέχουσες τιμές της αγοράς
-                </p>
-              </div>
               
               <div>
                 <label htmlFor="description" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
@@ -623,7 +602,7 @@ const SellPhonePage: React.FC = () => {
                       Υποβολή...
                     </span>
                   ) : (
-                    "Υποβολή Αγγελίας"
+                    "Υποβολή"
                   )}
                 </button>
               </div>
@@ -661,12 +640,12 @@ const SellPhonePage: React.FC = () => {
               </div>
               
               <h2 className="text-2xl font-bold mb-4 dark:text-white text-gray-600">
-                Η αγγελία σας υποβλήθηκε με επιτυχία!
+                Η παραγγελία σας υποβλήθηκε με επιτυχία!
               </h2>
               
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Η αγγελία σας για το {phoneDetails.brand} {phoneDetails.model} έχει υποβληθεί και βρίσκεται υπό έγκριση. 
-                Θα σας ενημερώσουμε μόλις εγκριθεί.
+                Η παραγγελία σας για το {phoneDetails.brand} {phoneDetails.model} έχει υποβληθεί και βρίσκεται υπό έγκριση. 
+                Θα σας ενημερώσουμε μέσω email μόλις εγκριθεί.
               </p>
               
               <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg mb-6">
@@ -706,7 +685,7 @@ const SellPhonePage: React.FC = () => {
         {step < 5 && (
           <div className="max-w-2xl mx-auto mb-12">
             <div className="flex justify-between mb-2">
-              {["Μάρκα", "Μοντέλο", "Λεπτομέρειες", "Ολοκλήρωση"].map((label, index) => (
+              {["Εταιρεία", "Μοντέλο", "Λεπτομέρειες", "Ολοκλήρωση"].map((label, index) => (
                 <div
                   key={label}
                   className={`text-sm ${

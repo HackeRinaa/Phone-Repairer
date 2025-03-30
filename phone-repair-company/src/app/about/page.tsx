@@ -34,7 +34,7 @@ export default function AboutPage() {
         {/* Hero Section */}
         <div className="text-center mb-20">
           <h1 className="text-4xl sm:text-5xl font-bold mb-6">
-          Επισκεύασε, Μεταπώλησε ή Αγόρασε <br/>Μεταχειρισμένη Συσκευή <span className="text-purple-600"> Άμεσα!</span>  
+          Επισκεύασε, Πούλησε ή Αγόρασε <br/>Μεταχειρισμένη Συσκευή <span className="text-purple-600"> Άμεσα!</span>  
           </h1>
         </div>
 
@@ -61,7 +61,7 @@ export default function AboutPage() {
         <div className="text-center bg-purple-600 text-white rounded-2xl p-12 shadow-md">
           <h2 className="text-3xl font-bold mb-4">Έτοιμος να Ξεκινήσεις;</h2>
           <p className="mb-8 text-lg text-gray-100">
-            Στείλε μας το κινητό σου ή δες τις διαθέσιμες μεταχειρισμένες συσκευές μας!
+            Επισκεύασε το κινητό σου ή Δες τις διαθέσιμες μεταχειρισμένες συσκευές μας!
           </p>
           <button className="transition-all duration-300  hover:scale-105 bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
             <Link href="/repair">Ζήτησε Δωρεάν Εκτίμηση</Link>

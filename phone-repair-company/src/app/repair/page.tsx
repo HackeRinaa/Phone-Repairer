@@ -175,7 +175,7 @@ const stepTitles: Record<number,string> = {
 };
 
 const stepDescriptions: Record<number,string> = {
-  1: "Επιλέξτε τη μάρκα του κινητού σας για να ξεκινήσετε",
+  1: "Επιλέξτε την εταιρεία του κινητού σας για να ξεκινήσετε",
   2: "Επιλέξτε το μοντέλο του κινητού σας",
   3: "Επιλέξτε το πρόβλημα που αντιμετωπίζετε",
   4: "Συμπληρώστε τα στοιχεία σας για να ολοκληρώσετε την κράτηση",
@@ -289,7 +289,7 @@ export default function RepairPage() {
                   className={`p-6 rounded-xl text-left transition-all hover:shadow-md hover:scale-105 dark:hover:bg-purple-900
                   ${
                     selectedIssues.includes(issue.title)
-                      ? "bg-purple-100 dark:bg-purple-900 border-2 border-purple-500"
+                      ? "bg-purple-200 dark:bg-purple-900 border-2 border-purple-500 scale-105"
                       : "bg-white dark:bg-gray-800 hover:shadow-md"
                   }`}
                 >
@@ -386,7 +386,7 @@ export default function RepairPage() {
 
         <div className="max-w-2xl mx-auto mb-12">
           <div className="flex justify-between mb-2">
-            {["Μάρκα", "Μοντέλο", "Βλάβες", "Κράτηση"].map((label, index) => (
+            {["Εταιρεία", "Μοντέλο", "Βλάβες", "Κράτηση"].map((label, index) => (
               <div
                 key={label}
                 className={`text-sm ${

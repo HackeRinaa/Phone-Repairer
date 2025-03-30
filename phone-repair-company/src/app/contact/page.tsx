@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
-import { FaPhone, FaEnvelope, FaInstagram, FaFacebook, FaTiktok } from "react-icons/fa";
+import { FaPhone, FaEnvelope, FaInstagram, FaFacebook, FaTiktok, FaWhatsapp } from "react-icons/fa";
 import Link from "next/link";
 
 interface ContactForm {
@@ -29,11 +29,24 @@ export default function ContactPage() {
     setIsSubmitting(true);
     
     try {
-      // Simulate form submission
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulated API call
+      // Send form data to our API endpoint
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to send message');
+      }
+      
       setSubmitStatus('success');
       setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
-    } catch  {
+    } catch (error) {
+      console.error('Error submitting contact form:', error);
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
@@ -144,6 +157,13 @@ export default function ContactPage() {
                   <FaPhone className="text-purple-600 text-xl" />
                   <div>
                     <p className="font-semibold text-purple-600">Τηλέφωνο</p>
+                    <p className="text-gray-600 dark:text-gray-400">+30 210 1234567</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <FaWhatsapp className="text-purple-600 text-xl" />
+                  <div>
+                    <p className="font-semibold text-purple-600">WhatsApp</p>
                     <p className="text-gray-600 dark:text-gray-400">+30 210 1234567</p>
                   </div>
                 </div>

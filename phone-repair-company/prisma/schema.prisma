@@ -68,4 +68,21 @@ model User {
   role      String   @default("user") // "user" or "admin"
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// Add new model for phones available for purchase
+model PhoneForSale {
+  id          String   @id @default(uuid())
+  brand       String
+  model       String
+  price       Float
+  condition   String
+  storage     String
+  color       String
+  description String?
+  images      String   // JSON string of image URLs or file paths
+  year        Int?
+  status      String   @default("AVAILABLE") // AVAILABLE, SOLD, NOT_AVAILABLE
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 } 
