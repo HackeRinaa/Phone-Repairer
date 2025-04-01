@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import { PaymentSection } from "@/components/PaymentSection";
 import Link from "next/link";
 import { getFirstImageFromString, getAllImagesFromString } from "@/lib/imageUtils";
+import "@/components/Calendar.css"; // Import Calendar styles
 // Import icons
 import { FaChevronLeft, FaChevronRight, FaTimes, FaMemory, FaMobileAlt, FaPaintBrush } from "react-icons/fa";
 
@@ -55,8 +56,7 @@ export default function PurchasePage() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [phoneImages, setPhoneImages] = useState<string[]>([]);
 
-  // Set pageId to 2 for payment functionality
-  const pageId = 2;
+
 
   // Fetch phones from API
   useEffect(() => {
@@ -564,7 +564,7 @@ export default function PurchasePage() {
               }
             ]}
             onComplete={(data) => handlePurchaseComplete(data as BookingData)}
-            pageId={pageId} // Pass pageId === 2 to PaymentSection
+            pageId={1} // Pass pageId === 2 to PaymentSection
           />
         )}
       </main>

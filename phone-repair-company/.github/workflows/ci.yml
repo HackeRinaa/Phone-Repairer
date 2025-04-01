@@ -31,9 +31,7 @@ jobs:
       - run: npm ci
       - run: npm run build
         env:
-          DATABASE_URL: ${{ secrets.TEST_DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/testdb' }}
-          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_test_sample' }}
-          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY || 'sk_test_sample' }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/phonerepair' }}
           JWT_SECRET: ${{ secrets.JWT_SECRET || 'test-secret' }}
 
   deploy:

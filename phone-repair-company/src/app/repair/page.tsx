@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
-import "react-calendar/dist/Calendar.css";
+import "@/components/Calendar.css";
 import { PaymentSection } from "@/components/PaymentSection";
 import Link from "next/link";
 

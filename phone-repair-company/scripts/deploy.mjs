@@ -14,9 +14,7 @@ const rootDir = path.join(__dirname, '..');
 // Required environment variables for production
 const requiredEnvVars = [
   'DATABASE_URL',
-  'JWT_SECRET',
-  'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY',
-  'STRIPE_SECRET_KEY'
+  'JWT_SECRET'
 ];
 
 // Function to check environment variables through Vercel CLI

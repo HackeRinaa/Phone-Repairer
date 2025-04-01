@@ -1,21 +1,9 @@
 "use client";
 import { useState } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
 import Calendar from 'react-calendar';
 import './Calendar.css';
-import {
-  Elements,
-  PaymentElement,
-  useStripe,
-  useElements,
-} from '@stripe/react-stripe-js';
 import Link from 'next/link';
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY!);
-
-interface PaymentFormProps {
-  onSuccess: () => void;
-}
 
 interface PaymentSectionProps {
   totalAmount: number;
@@ -38,47 +26,7 @@ interface BookingData {
   paymentMethod: 'online' | 'instore';
 }
 
-function PaymentForm({ onSuccess}: PaymentFormProps) {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [error, setError] = useState<string>('');
-  const [processing, setProcessing] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!stripe || !elements) return;
-
-    setProcessing(true);
-
-    const { error: submitError } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: `${window.location.origin}/payment/success`,
-      },
-    });
-
-    if (submitError) {
-      setError(submitError.message || 'Payment processing error');
-      setProcessing(false);
-    } else {
-      onSuccess();
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto bg-white dark:bg-gray-800 p-6 rounded-xl">
-      <PaymentElement />
-      {error && <div className="text-red-600 mt-2">{error}</div>}
-      <button
-        type="submit"
-        disabled={!stripe || processing}
-        className="w-full mt-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400"
-      >
-        {processing ? 'Processing...' : 'Pay Now'}
-      </button>
-    </form>
-  );
-}
 
 export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }: PaymentSectionProps) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -101,8 +49,7 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
   const [phoneDetails, setPhoneDetails] = useState<{brand?: string, model?: string}>({});
 
   const [isProcessing, setIsProcessing] = useState(false);
-  const [showStripePayment, setShowStripePayment] = useState(false);
-  const [clientSecret, setClientSecret] = useState<string>('');
+
 
   const handleInputChange = (field: keyof BookingData['contactInfo'], value: string) => {
     let isValid = true;
@@ -143,7 +90,6 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
     setIsProcessing(true);
 
     try {
-      if (pageId === 1) {
         // For repair booking without payment
         const response = await fetch('/api/create-booking', {
           method: 'POST',
@@ -196,111 +142,8 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
         });
         setListingId(data.listing?.id || 'N/A');
         setNextStep(true);
-      } else if (pageId === 2) {
-        // For phone purchase bookings
-        
-        // If using cash on delivery (payment method is 'instore')
-        if (bookingData.paymentMethod === 'instore') {
-          try {
-            const requestData = {
-              bookingData: {
-                ...bookingData,
-                date: selectedDate,
-                timeSlot: selectedTime
-              },
-              itemDetails: itemDetails
-            };
-            
-            console.log('Sending purchase booking data:', JSON.stringify(requestData));
-            
-            const response = await fetch('/api/purchase-booking', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(requestData),
-            });
-  
-            console.log('Response status:', response.status);
-            
-            if (!response.ok) {
-              const responseText = await response.text();
-              console.error('Error response:', responseText);
-              try {
-                const errorData = JSON.parse(responseText);
-                throw new Error(errorData.error || `Failed to create booking: ${response.status}`);
-              } catch {
-                // Parse error - response is not valid JSON
-                throw new Error(`Failed to create booking: ${response.status} - ${responseText.substring(0, 100)}...`);
-              }
-            }
-  
-            const data = await response.json();
-            console.log('Purchase booking created:', data);
-            
-            // Set phone details from the first item
-            if (itemDetails && itemDetails.length > 0) {
-              const firstItem = itemDetails[0];
-              const titleParts = firstItem.title.split(' - ');
-              
-              // Extract brand and model more carefully with defaults
-              let brand = 'Συσκευή';
-              let model = '';
-              
-              if (titleParts.length > 0 && titleParts[0].trim() !== '') {
-                const parts = titleParts[0].split(' ');
-                if (parts.length > 0) {
-                  brand = parts[0];
-                  if (parts.length > 1) {
-                    model = parts.slice(1).join(' ');
-                  }
-                }
-              }
-              
-              console.log('Extracted phone details:', { brand, model });
-              setPhoneDetails({ brand, model });
-            }
-            
-            // Complete the purchase process
-            onComplete({
-              ...bookingData,
-              date: selectedDate,
-              timeSlot: selectedTime
-            });
-            setListingId(data.booking?.id || 'N/A');
-            setNextStep(true);
-          } catch (error) {
-            console.error('Error:', error);
-            setErrors({ form: error instanceof Error ? error.message : 'An unexpected error occurred' });
-          }
-        } else {
-          // For online payment (using Stripe)
-          const response = await fetch('/api/create-payment-intent', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              items: itemDetails,
-              bookingData: {
-                ...bookingData,
-                date: selectedDate,
-                timeSlot: selectedTime
-              }
-            }),
-          });
-  
-          if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Failed to create payment intent');
-          }
-  
-          const data = await response.json();
-          if (data.error) {
-            throw new Error(data.error);
-          }
-  
-          setClientSecret(data.clientSecret);
-          setShowStripePayment(true);
-        }
-      }
-    } catch (error) {
+      } 
+     catch (error) {
       console.error('Error:', error);
       setErrors({ form: error instanceof Error ? error.message : 'An unexpected error occurred' });
     } finally {
@@ -308,29 +151,6 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
     }
   };
 
-  if (showStripePayment && clientSecret) {
-    return (
-      <div className="max-w-md mx-auto">
-        <button
-          onClick={() => setShowStripePayment(false)}
-          className="mb-4 text-blue-600 hover:text-blue-800"
-        >
-          ← Επιστροφή στην φόρμα κράτησης
-        </button>
-        <Elements stripe={stripePromise} options={{ clientSecret }}>
-          <PaymentForm
-            onSuccess={() => {
-              onComplete({
-                ...bookingData,
-                date: selectedDate,
-                timeSlot: selectedTime
-              });
-            }}
-          />
-        </Elements>
-      </div>
-    );
-  }
 
   return nextStep ? (
     <div className="w-[80%] mx-auto text-center">
@@ -392,7 +212,14 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
             onChange={(value) => setSelectedDate(value as Date)}
             value={selectedDate}
             minDate={new Date()}
-            className="w-full border-0 rounded-lg mb-6"
+            className="w-full border-0 rounded-lg mb-6 calendar-container"
+            formatShortWeekday={(locale, date) => 
+              date.toLocaleDateString('el', { weekday: 'short' }).substring(0, 3)
+            }
+            nextLabel="→"
+            prevLabel="←"
+            next2Label={null}
+            prev2Label={null}
           />
           
           {selectedDate && (
