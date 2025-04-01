@@ -52,7 +52,7 @@ export async function POST(request: Request) {
           // Try parsing to see if it's valid JSON
           JSON.parse(data.images);
           processedImages = data.images;
-        } catch (_) {
+        } catch {
           // If not valid JSON, treat as a single image URL
           processedImages = JSON.stringify([data.images]);
         }

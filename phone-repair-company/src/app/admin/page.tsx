@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { getAllImagesFromString, imagesToJsonString } from '@/lib/imageUtils';
+import Image from 'next/image';
 
 interface Booking {
   id: string;
@@ -115,26 +116,16 @@ export default function AdminDashboard() {
     }
   };
 
-  useEffect(() => {
-    // Check if admin is already authenticated
-    const isAuth = localStorage.getItem('adminAuthenticated') === 'true';
-    setIsAuthenticated(isAuth);
-    
-    if (isAuth) {
-      fetchData();
-    }
-  }, []);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      
+  
       // Execute all fetches in parallel but handle errors individually
       await Promise.allSettled([
         fetchBookings(),
         fetchPhoneListings(),
-        fetchPhonesForSale()
+        fetchPhonesForSale(),
       ]);
     } catch (err) {
       console.error('Error fetching data:', err);
@@ -142,7 +133,16 @@ export default function AdminDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []); // Empty array ensures fetchData is memoized and doesn't change on re-renders
+  
+  useEffect(() => {
+    const isAuth = localStorage.getItem('adminAuthenticated') === 'true';
+    setIsAuthenticated(isAuth);
+  
+    if (isAuth) {
+      fetchData();
+    }
+  }, [fetchData]); 
 
   const fetchBookings = async () => {
     try {
@@ -191,7 +191,7 @@ export default function AdminDashboard() {
         });
         
         if (!publicResponse.ok) {
-          throw new Error('Failed to fetch phone listings');
+        throw new Error('Failed to fetch phone listings');
         }
         
         const data = await publicResponse.json();
@@ -589,31 +589,31 @@ export default function AdminDashboard() {
             >
               Καθαρισμός Βάσης
             </button>
-            <button
-              onClick={() => {
-                localStorage.removeItem('adminAuthenticated');
-                setIsAuthenticated(false);
-              }}
-              className="py-2 px-4 bg-red-600 text-white rounded-lg hover:bg-red-700"
-            >
-              Logout
-            </button>
-          </div>
+          <button
+            onClick={() => {
+              localStorage.removeItem('adminAuthenticated');
+              setIsAuthenticated(false);
+            }}
+            className="py-2 px-4 bg-red-600 text-white rounded-lg hover:bg-red-700"
+          >
+            Logout
+          </button>
         </div>
-        
+          </div>
+
         <div className="flex mb-6 border-b border-gray-300 dark:border-gray-700">
-          <button
-            onClick={() => setActiveTab('bookings')}
+              <button
+                onClick={() => setActiveTab('bookings')}
             className={`px-4 py-2 text-gray-600 dark:text-white ${activeTab === 'bookings' ? 'border-b-2 border-purple-500 text-purple-500' : ''}`}
-          >
-            Bookings
-          </button>
-          <button
-            onClick={() => setActiveTab('listings')}
+              >
+                Bookings
+              </button>
+              <button
+                onClick={() => setActiveTab('listings')}
             className={`px-4 py-2 text-gray-600 dark:text-white ${activeTab === 'listings' ? 'border-b-2 border-purple-500 text-purple-500' : ''}`}
-          >
-            Phone Listings
-          </button>
+              >
+                Phone Listings
+              </button>
           <button
             onClick={() => setActiveTab('phonesForSale')}
             className={`px-4 py-2 text-gray-600 dark:text-white ${activeTab === 'phonesForSale' ? 'border-b-2 border-purple-500 text-purple-500' : ''}`}
@@ -667,23 +667,23 @@ export default function AdminDashboard() {
                               onClick={() => setExpandedBookingId(expandedBookingId === booking.id ? null : booking.id)}
                             >
                               <td className="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-white">
-                                <div>{formatDate(booking.date)}</div>
-                                <div className="text-sm text-gray-500 dark:text-gray-400">{booking.timeSlot}</div>
-                              </td>
+                              <div>{formatDate(booking.date)}</div>
+                              <div className="text-sm text-gray-500 dark:text-gray-400">{booking.timeSlot}</div>
+                            </td>
                               <td className="px-6 py-4 text-gray-600 dark:text-white">
-                                <div>{booking.name}</div>
-                                <div className="text-sm text-gray-500 dark:text-gray-400">{booking.email}</div>
-                                <div className="text-sm text-gray-500 dark:text-gray-400">{booking.phone}</div>
-                              </td>
+                              <div>{booking.name}</div>
+                              <div className="text-sm text-gray-500 dark:text-gray-400">{booking.email}</div>
+                              <div className="text-sm text-gray-500 dark:text-gray-400">{booking.phone}</div>
+                            </td>
                               <td className="px-6 py-4 text-gray-600 dark:text-white">
-                                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                  booking.type === 'REPAIR' 
-                                    ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' 
-                                    : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                                }`}>
-                                  {booking.type}
-                                </span>
-                              </td>
+                              <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                booking.type === 'REPAIR' 
+                                  ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' 
+                                  : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                              }`}>
+                                {booking.type}
+                              </span>
+                            </td>
                               <td className="px-6 py-4 text-gray-600 dark:text-white">
                                 <div>{extractDeviceDetails(booking.notes).brand} {extractDeviceDetails(booking.notes).model}</div>
                                 {booking.type === 'REPAIR' && extractDeviceDetails(booking.notes).issues.length > 0 && (
@@ -693,38 +693,38 @@ export default function AdminDashboard() {
                                 )}
                               </td>
                               <td className="px-6 py-4 text-gray-600 dark:text-white">
-                                {booking.totalAmount ? `${booking.totalAmount}€` : 'N/A'}
+                              {booking.totalAmount ? `${booking.totalAmount}€` : 'N/A'}
                                 {booking.paymentStatus && (
                                   <div className="text-sm text-gray-500 dark:text-gray-400">{booking.paymentStatus}</div>
                                 )}
-                              </td>
-                              <td className="px-6 py-4">
+                            </td>
+                            <td className="px-6 py-4">
                                 <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full text-gray-600 dark:text-white ${
-                                  booking.status === 'PENDING' 
-                                    ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' 
-                                    : booking.status === 'CONFIRMED'
-                                      ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-                                      : booking.status === 'COMPLETED'
-                                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                                        : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                                }`}>
-                                  {booking.status}
-                                </span>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <select
-                                  value={booking.status}
+                                booking.status === 'PENDING' 
+                                  ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' 
+                                  : booking.status === 'CONFIRMED'
+                                    ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                                    : booking.status === 'COMPLETED'
+                                      ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                                      : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                              }`}>
+                                {booking.status}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                              <select
+                                value={booking.status}
                                   onClick={(e) => e.stopPropagation()}
-                                  onChange={(e) => handleBookingStatusChange(booking.id, e.target.value)}
+                                onChange={(e) => handleBookingStatusChange(booking.id, e.target.value)}
                                   className="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm text-gray-600 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                >
-                                  <option value="PENDING">Pending</option>
-                                  <option value="CONFIRMED">Confirmed</option>
-                                  <option value="COMPLETED">Completed</option>
-                                  <option value="CANCELLED">Cancelled</option>
-                                </select>
-                              </td>
-                            </tr>
+                              >
+                                <option value="PENDING">Pending</option>
+                                <option value="CONFIRMED">Confirmed</option>
+                                <option value="COMPLETED">Completed</option>
+                                <option value="CANCELLED">Cancelled</option>
+                              </select>
+                            </td>
+                          </tr>
                             
                             {/* Expanded Booking Details */}
                             {expandedBookingId === booking.id && (
@@ -897,29 +897,29 @@ export default function AdminDashboard() {
                     Add New Listing
                   </button>
                 </div>
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                      <thead className="bg-gray-50 dark:bg-gray-700">
-                        <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Phone</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Seller</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Price</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Condition</th>
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead className="bg-gray-50 dark:bg-gray-700">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Phone</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Seller</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Price</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Condition</th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Date Listed</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                        {phoneListings.length === 0 ? (
-                          <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                      {phoneListings.length === 0 ? (
+                        <tr>
                             <td colSpan={7} className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                              No phone listings found
-                            </td>
-                          </tr>
-                        ) : (
-                          phoneListings.map((listing) => (
+                            No phone listings found
+                          </td>
+                        </tr>
+                      ) : (
+                        phoneListings.map((listing) => (
                             <React.Fragment key={listing.id}>
                               <tr 
                                 className={`hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer ${
@@ -928,53 +928,53 @@ export default function AdminDashboard() {
                                 onClick={() => setExpandedListingId(expandedListingId === listing.id ? null : listing.id)}
                               >
                                 <td className="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-white">
-                                  <div>{listing.brand} {listing.model}</div>
-                                  <div className="text-sm text-gray-500 dark:text-gray-400">{listing.storage}</div>
-                                </td>
+                              <div>{listing.brand} {listing.model}</div>
+                              <div className="text-sm text-gray-500 dark:text-gray-400">{listing.storage}</div>
+                            </td>
                                 <td className="px-6 py-4 text-gray-600 dark:text-white">
-                                  <div>{listing.name}</div>
-                                  <div className="text-sm text-gray-500 dark:text-gray-400">{listing.email}</div>
-                                  <div className="text-sm text-gray-500 dark:text-gray-400">{listing.phone}</div>
-                                </td>
+                              <div>{listing.name}</div>
+                              <div className="text-sm text-gray-500 dark:text-gray-400">{listing.email}</div>
+                              <div className="text-sm text-gray-500 dark:text-gray-400">{listing.phone}</div>
+                            </td>
                                 <td className="px-6 py-4 text-gray-600 dark:text-white">
-                                  {listing.price}€
-                                </td>
+                              {listing.price}€
+                            </td>
                                 <td className="px-6 py-4 text-gray-600 dark:text-white">
-                                  {listing.condition}
-                                </td>
+                              {listing.condition}
+                            </td>
                                 <td className="px-6 py-4 text-gray-600 dark:text-white">
                                   {formatDate(listing.createdAt)}
-                                </td>
-                                <td className="px-6 py-4">
-                                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                    listing.status === 'PENDING' 
-                                      ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' 
-                                      : listing.status === 'APPROVED'
-                                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                                        : listing.status === 'SOLD'
-                                          ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                listing.status === 'PENDING' 
+                                  ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' 
+                                  : listing.status === 'APPROVED'
+                                    ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                                    : listing.status === 'SOLD'
+                                      ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
                                           : listing.status === 'NOT_AVAILABLE'
                                             ? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
-                                            : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                                  }`}>
-                                    {listing.status}
-                                  </span>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                  <select
-                                    value={listing.status}
+                                      : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                              }`}>
+                                {listing.status}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                              <select
+                                value={listing.status}
                                     onClick={(e) => e.stopPropagation()}
-                                    onChange={(e) => handleListingStatusChange(listing.id, e.target.value)}
+                                onChange={(e) => handleListingStatusChange(listing.id, e.target.value)}
                                     className="block w-full py-2 px-3 border border-gray-300 text-gray-600 dark:text-white bg-white rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600"
-                                  >
-                                    <option value="PENDING">Pending</option>
-                                    <option value="APPROVED">Approved</option>
-                                    <option value="SOLD">Sold</option>
+                              >
+                                <option value="PENDING">Pending</option>
+                                <option value="APPROVED">Approved</option>
+                                <option value="SOLD">Sold</option>
                                     <option value="NOT_AVAILABLE">Not Available</option>
-                                    <option value="REJECTED">Rejected</option>
-                                  </select>
-                                </td>
-                              </tr>
+                                <option value="REJECTED">Rejected</option>
+                              </select>
+                            </td>
+                          </tr>
                               
                               {/* Expanded Listing Details */}
                               {expandedListingId === listing.id && (
@@ -1024,10 +1024,12 @@ export default function AdminDashboard() {
                                             <div className="grid grid-cols-3 gap-2">
                                               {tryParseJsonImages(listing.images).map((image: string, index: number) => (
                                                 <div key={index} className="h-24 w-full rounded-lg overflow-hidden">
-                                                  <img 
+                                                  <Image 
                                                     src={image} 
                                                     alt={`${listing.brand} ${listing.model} - ${index + 1}`} 
                                                     className="w-full h-full object-cover"
+                                                    width= {200}
+                                                    height= {200}
                                                   />
                                                 </div>
                                               ))}

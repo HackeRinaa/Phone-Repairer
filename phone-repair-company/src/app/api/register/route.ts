@@ -39,8 +39,10 @@ export async function POST(req: Request) {
       },
     });
     
-    // Remove password from response
-    const { password: _, ...userWithoutPassword } = user;
+    // Create a new object without the password field
+    const userWithoutPassword = { ...user };
+    // @ts-expect-error - Deleting a property from an object that might have readonly properties
+    delete userWithoutPassword.password;
     
     return NextResponse.json(
       { user: userWithoutPassword, message: 'User registered successfully' },

@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "reset-admin": "node scripts/reset-admin.js"
+    "reset-admin": "node src/scripts/reset-admin.mjs",
+    "create-admin": "node src/scripts/create-admin.mjs",
+    "export": "next build && next export -o out",
+    "build-static": "next build"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",

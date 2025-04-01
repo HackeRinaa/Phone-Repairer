@@ -6,41 +6,8 @@ if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('STRIPE_SECRET_KEY is not set in environment variables');
 }
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2023-10-16' as any // Type assertion to avoid TypeScript error
-});
-
-// Define types for items and booking data
-interface Item {
-  title: string;
-  price: number;
-}
-
-interface BookingFormData {
-  date: string | null;
-  timeSlot: string;
-  contactInfo: {
-    name: string;
-    email: string;
-    phone: string;
-    address: string;
-    notes: string;
-  };
-  paymentMethod: 'online' | 'instore';
-}
-
-// Extended user type to include id
-interface ExtendedUser {
-  name?: string | null;
-  email?: string | null;
-  image?: string | null;
-  id: string;
-}
-
-// Helper function to calculate amount in cents
-function calculateAmount(items: Item[]): number {
-  return items.reduce((total, item) => total + (item.price * 100), 0);
-}
+// Use type assertion to avoid API version constraints
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
 export async function POST(request: Request) {
   try {

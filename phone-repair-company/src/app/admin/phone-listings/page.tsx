@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
 // Admin layout component
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
@@ -299,21 +300,25 @@ export default function PhoneListingsAdmin() {
                   <div>
                     {selectedListing.images.length > 0 ? (
                       <div>
-                        <img
+                        <Image
                           src={selectedListing.images[0]}
                           alt={`${selectedListing.brand} ${selectedListing.model}`}
                           className="w-full h-60 object-cover rounded-lg mb-4"
+                          width={200}
+                          height={200}
                         />
                         
                         {/* Thumbnail images */}
                         {selectedListing.images.length > 1 && (
                           <div className="grid grid-cols-4 gap-2">
                             {selectedListing.images.slice(1).map((image, index) => (
-                              <img
+                              <Image
                                 key={index}
                                 src={image}
                                 alt={`${selectedListing.brand} ${selectedListing.model} ${index + 2}`}
                                 className="w-full h-20 object-cover rounded-lg"
+                                width={200}
+                                height={200}
                               />
                             ))}
                           </div>
@@ -485,10 +490,12 @@ export default function PhoneListingsAdmin() {
                       <div className="flex items-center">
                         <div className="h-10 w-10 flex-shrink-0 mr-3">
                           {listing.images.length > 0 ? (
-                            <img
+                            <Image
                               src={listing.images[0]}
                               alt={`${listing.brand} ${listing.model}`}
                               className="h-10 w-10 rounded-full object-cover"
+                              width={200}
+                              height={200}
                             />
                           ) : (
                             <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center text-gray-500 dark:text-gray-400">

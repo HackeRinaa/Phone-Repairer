@@ -212,7 +212,7 @@ const SellPhonePage: React.FC = () => {
       // If user manually sets price, use that instead
       setPhoneDetails({ ...phoneDetails, [name]: parseInt(value) || 0 });
     } else {
-      setPhoneDetails({ ...phoneDetails, [name]: value });
+    setPhoneDetails({ ...phoneDetails, [name]: value });
       
       // Only update estimated price if not manually setting price
       if (name === "condition" || name === "storage") {
@@ -385,7 +385,7 @@ const SellPhonePage: React.FC = () => {
         );
 
       case 3:
-        return (
+  return (
           <div className="w-[80%] mx-auto">
             <h2 className="text-2xl font-semibold mb-6 text-center dark:text-white text-gray-600">
               {stepTitles[3]}
@@ -422,7 +422,7 @@ const SellPhonePage: React.FC = () => {
                   </div>
                 </div>
                 
-                <div>
+          <div>
                   <label htmlFor="storage" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Αποθηκευτικός Χώρος</label>
                   <div className="grid grid-cols-2 gap-3">
                     {storageOptions.map((option) => (
@@ -434,7 +434,7 @@ const SellPhonePage: React.FC = () => {
                             : "hover:bg-gray-50 dark:hover:bg-gray-700"
                         }`}
                       >
-                        <input
+            <input
                           type="radio"
                           name="storage"
                           value={option}
@@ -458,14 +458,14 @@ const SellPhonePage: React.FC = () => {
                   id="description"
                   name="description"
                   value={phoneDetails.description}
-                  onChange={handleChange}
+              onChange={handleChange}
                   rows={4}
                   className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-600 dark:text-white"
                   placeholder="Περιγράψτε τη συσκευή σας (προαιρετικά)"
-                />
-              </div>
-              
-              <div>
+            />
+          </div>
+
+          <div>
                 <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
                   Φωτογραφίες
                 </label>
@@ -523,31 +523,31 @@ const SellPhonePage: React.FC = () => {
                     <label htmlFor="name" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                       Ονοματεπώνυμο
                     </label>
-                    <input
+            <input
                       id="name"
                       name="name"
-                      type="text"
+              type="text"
                       className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-600 dark:text-white"
                       placeholder="Το ονοματεπώνυμό σας"
-                      required
-                    />
-                  </div>
-                  
-                  <div>
+              required
+            />
+          </div>
+
+          <div>
                     <label htmlFor="email" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                       Email
                     </label>
-                    <input
+            <input
                       id="email"
                       name="email"
                       type="email"
                       className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-600 dark:text-white"
                       placeholder="Το email σας"
-                      required
-                    />
-                  </div>
-                  
-                  <div>
+              required
+            />
+          </div>
+
+          <div>
                     <label htmlFor="phone" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                       Τηλέφωνο
                     </label>
@@ -557,15 +557,15 @@ const SellPhonePage: React.FC = () => {
                       type="tel"
                       className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-600 dark:text-white"
                       placeholder="Το τηλέφωνό σας"
-                      required
+              required
                     />
-                  </div>
-                  
-                  <div>
+          </div>
+
+          <div>
                     <label htmlFor="address" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                       Διεύθυνση
                     </label>
-                    <input
+            <input
                       id="address"
                       name="address"
                       type="text"
@@ -574,8 +574,8 @@ const SellPhonePage: React.FC = () => {
                     />
                   </div>
                 </div>
-              </div>
-              
+          </div>
+
               <div className="flex justify-between items-center pt-4">
                 <button
                   type="button"
@@ -584,8 +584,8 @@ const SellPhonePage: React.FC = () => {
                 >
                   ← Πίσω στα μοντέλα
                 </button>
-                <button
-                  type="submit"
+            <button
+              type="submit"
                   disabled={!phoneDetails.condition || !phoneDetails.storage || phoneDetails.price <= 0 || isSubmitting}
                   className={`px-8 py-3 rounded-lg ${
                     phoneDetails.condition && phoneDetails.storage && phoneDetails.price > 0 && !isSubmitting
@@ -604,9 +604,9 @@ const SellPhonePage: React.FC = () => {
                   ) : (
                     "Υποβολή"
                   )}
-                </button>
-              </div>
-            </form>
+            </button>
+          </div>
+        </form>
           </div>
         );
 

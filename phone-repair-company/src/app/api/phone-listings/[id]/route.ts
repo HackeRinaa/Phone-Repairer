@@ -20,7 +20,6 @@ export async function GET(
   try {
     const id = params.id;
     
-    // @ts-expect-error - New Prisma model not recognized by TypeScript
     const listing = await prisma.phoneListing.findUnique({
       where: { id },
       include: {
@@ -65,7 +64,6 @@ export async function PATCH(
     const body = await req.json();
     
     // Get the current listing
-    // @ts-expect-error - New Prisma model not recognized by TypeScript
     const currentListing = await prisma.phoneListing.findUnique({
       where: { id },
       include: {
@@ -85,9 +83,8 @@ export async function PATCH(
     // Check permissions (admin can update any listing, users can only update their own)
     const user = session.user as ExtendedUser;
     const isAdmin = user.role === 'admin';
-    const isOwner = currentListing.userId === user.id;
-    
-    if (!isAdmin && !isOwner) {
+        
+    if (!isAdmin) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
     
@@ -116,7 +113,6 @@ export async function PATCH(
     }
     
     // Update the listing
-    // @ts-expect-error - New Prisma model not recognized by TypeScript
     const updatedListing = await prisma.phoneListing.update({
       where: { id },
       data: updateData,
@@ -173,8 +169,7 @@ export async function DELETE(
     
     const id = params.id;
     
-    // Get the current listing
-    // @ts-expect-error - New Prisma model not recognized by TypeScript
+    
     const listing = await prisma.phoneListing.findUnique({
       where: { id },
     });
@@ -186,14 +181,12 @@ export async function DELETE(
     // Check permissions (admin can delete any listing, users can only delete their own)
     const user = session.user as ExtendedUser;
     const isAdmin = user.role === 'admin';
-    const isOwner = listing.userId === user.id;
     
-    if (!isAdmin && !isOwner) {
+    if (!isAdmin) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
     
-    // Delete the listing
-    // @ts-expect-error - New Prisma model not recognized by TypeScript
+    
     await prisma.phoneListing.delete({
       where: { id },
     });

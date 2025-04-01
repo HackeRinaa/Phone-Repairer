@@ -3,11 +3,17 @@ import { stripe } from '@/lib/stripe';
 import { prisma } from '@/lib/db';
 import { sendMail } from '@/lib/mail';
 
-async function handlePaymentSuccess(paymentIntent: any) {
+// Define a more specific type for PaymentIntent with index signature
+type PaymentIntent = Record<string, unknown> & {
+  id: string;
+  metadata: Record<string, string>;
+};
+
+async function handlePaymentSuccess(paymentIntent: PaymentIntent) {
   try {
     // Update booking status
     const booking = await prisma.booking.update({
-      where: { paymentId: paymentIntent.id },
+      where: { stripePaymentIntentId: paymentIntent.id },
       data: { 
         paymentStatus: 'completed',
         status: 'confirmed'
@@ -42,15 +48,23 @@ async function handlePaymentSuccess(paymentIntent: any) {
 
 export async function POST(req: Request) {
   const body = await req.text();
-  const headers = await req.headers;
-
+  const headers = req.headers;
   const signature = headers.get('stripe-signature');
 
   try {
-    const event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET);
+    // Safely handle potentially null signature 
+    if (!signature || !process.env.STRIPE_WEBHOOK_SECRET) {
+      throw new Error('Missing signature or webhook secret');
+    }
+    
+    const event = stripe.webhooks.constructEvent(
+      body, 
+      signature, 
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
 
     if (event.type === 'payment_intent.succeeded') {
-      const paymentIntent = event.data.object;
+      const paymentIntent = event.data.object as PaymentIntent;
       await handlePaymentSuccess(paymentIntent);
     }
 
