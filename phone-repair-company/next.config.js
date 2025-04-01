@@ -2,7 +2,7 @@
 const nextConfig = {
   // NOTE: Static export disabled temporarily for successful build
   // output: 'export',
-  // basePath: '/phone-repair-company',
+  // basePath: '/irescue',
   // trailingSlash: true,
   
   typescript: {

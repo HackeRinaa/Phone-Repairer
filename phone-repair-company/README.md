@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# iRescue - Phone Repair & Service App
+
+iRescue is a comprehensive mobile phone repair and service application that allows users to:
+
+- Schedule phone repairs
+- Purchase refurbished devices
+- Sell their used devices
+- Manage repair bookings and track status
+
+## Features
+
+- **Repair Service:** Schedule repair appointments for various phone issues
+- **Purchase Section:** Browse and buy refurbished phones
+- **Sell Your Device:** Get quotes and sell your used phones
+- **Admin Dashboard:** Manage repair requests, inventory, and bookings
+- **Secure Authentication:** User accounts and admin access
+- **Payment Integration:** Secure online payments with Stripe
+- **Responsive Design:** Works on mobile, tablet, and desktop
+
+## Technologies
+
+- Next.js 15+
+- React 19
+- Prisma ORM
+- NextAuth.js
+- Stripe Payment Integration
+- Tailwind CSS
+- TypeScript
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Configure environment variables (see below)
+4. Run the development server: `npm run dev`
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Environment Variables
+
+Create a `.env` file with the following variables:
+
+```env
+# Database
+DATABASE_URL="your-database-url"
+
+# NextAuth
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="your-nextauth-secret"
+
+# Stripe
+STRIPE_SECRET_KEY="your-stripe-secret-key"
+STRIPE_WEBHOOK_SECRET="your-stripe-webhook-secret"
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Admin Setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Run the admin setup script to create an admin user:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run create-admin
+```
 
-## Learn More
+## Deployment
 
-To learn more about Next.js, take a look at the following resources:
+The app is configured for easy deployment on Vercel:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run build
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## License
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is licensed under the MIT License.
