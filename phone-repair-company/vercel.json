@@ -8,7 +8,7 @@
   ],
   "build": {
     "env": {
-      "DATABASE_URL": "@database_url"
+      "DATABASE_URL": "postgresql://postegres:6XPrmeosIfX9OBtl@db.axfhfudhsladgdaqxhsq.supabase.co:5432/postgresschema=public"
     }
   },
   "framework": "nextjs",
