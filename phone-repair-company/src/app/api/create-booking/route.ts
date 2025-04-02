@@ -3,9 +3,10 @@ import { prisma } from '@/lib/prisma';
 
 export async function POST(request: Request) {
   try {
-    const { bookingData, itemDetails } = await request.json();
+    const { bookingData, itemDetails, type = 'REPAIR' } = await request.json();
     console.log('Received booking data:', bookingData);
     console.log('Received item details:', itemDetails);
+    console.log('Booking type:', type);
 
     // Validate required fields
     if (!bookingData.date || !bookingData.timeSlot || !bookingData.contactInfo.name) {
@@ -41,6 +42,15 @@ export async function POST(request: Request) {
           if (parts.length > 1) {
             issues.push(parts[1]);
           }
+        } else if (parts.length === 1) {
+          // Handle case where there's no issue part (like in purchases)
+          const deviceParts = parts[0].split(' ');
+          if (!brand && deviceParts.length > 0) {
+            brand = deviceParts[0];
+          }
+          if (!model && deviceParts.length > 1) {
+            model = deviceParts.slice(1).join(' ');
+          }
         }
       });
     }
@@ -60,6 +70,9 @@ export async function POST(request: Request) {
       deviceDetails
     });
 
+    // Set default status based on booking type
+    const status = type === 'PRODUCT' ? 'CONFIRMED' : 'PENDING';
+    
     // Create the booking in the database
     const booking = await prisma.booking.create({
       data: {
@@ -70,8 +83,15 @@ export async function POST(request: Request) {
         phone: bookingData.contactInfo.phone,
         address: bookingData.contactInfo.address || '',
         notes: notesWithDeviceDetails,
-        status: 'PENDING',
-        type: 'REPAIR'
+        status: status,
+        type: type, // Use the provided type
+        brand: brand,
+        model: model,
+        totalAmount: type === 'PRODUCT' ? 
+          itemDetails.reduce((sum: number, item: { price: number }) => sum + (item.price || 0), 0) : 
+          null,
+        paymentMethod: bookingData.paymentMethod || 'instore',
+        paymentStatus: type === 'PRODUCT' ? 'PENDING' : null
       }
     });
 

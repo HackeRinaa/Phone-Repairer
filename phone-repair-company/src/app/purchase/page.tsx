@@ -564,7 +564,7 @@ export default function PurchasePage() {
               }
             ]}
             onComplete={(data) => handlePurchaseComplete(data as BookingData)}
-            pageId={1} // Pass pageId === 2 to PaymentSection
+            pageId={2} // Pass pageId === 2 to PaymentSection
           />
         )}
       </main>

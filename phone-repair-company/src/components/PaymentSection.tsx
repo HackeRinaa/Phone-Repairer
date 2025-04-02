@@ -3,6 +3,7 @@ import { useState } from 'react';
 import Calendar from 'react-calendar';
 import './Calendar.css';
 import Link from 'next/link';
+import { v4 as uuidv4 } from 'uuid';
 
 
 interface PaymentSectionProps {
@@ -90,8 +91,16 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
     setIsProcessing(true);
 
     try {
-        // For repair booking without payment
-        const response = await fetch('/api/create-booking', {
+        // Use a single API endpoint with better type handling
+        const apiEndpoint = '/api/create-booking';
+        
+        // Determine the booking type based on pageId
+        // pageId 1 = listing/repair, pageId 2 = purchase
+        const bookingType = pageId === 1 ? 'REPAIR' : 'PRODUCT';
+        
+        console.log(`Creating ${bookingType} booking via ${apiEndpoint}`);
+        
+        const response = await fetch(apiEndpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -100,7 +109,8 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
               date: selectedDate,
               timeSlot: selectedTime
             },
-            itemDetails: itemDetails
+            itemDetails: itemDetails,
+            type: bookingType // Pass the type explicitly
           }),
         });
 
@@ -110,7 +120,7 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
         }
 
         const data = await response.json();
-        console.log(`data from post id=1 ${data}`);
+        console.log(`Booking created successfully:`, data);
         
         // Set phone details from the first item
         if (itemDetails && itemDetails.length > 0) {
@@ -135,16 +145,20 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
           setPhoneDetails({ brand, model });
         }
         
+        // Complete the process and notify parent component
         onComplete({
           ...bookingData,
           date: selectedDate,
           timeSlot: selectedTime
         });
-        setListingId(data.listing?.id || 'N/A');
+        
+        // Get the booking ID from the response
+        const uid = uuidv4();
+        setListingId(data.booking?.id || uid);
         setNextStep(true);
       } 
      catch (error) {
-      console.error('Error:', error);
+      console.error('Error during submission:', error);
       setErrors({ form: error instanceof Error ? error.message : 'An unexpected error occurred' });
     } finally {
       setIsProcessing(false);
@@ -316,22 +330,7 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
             {/* Payment Method Selection */}
             <div className="md:col-span-1">
               <h3 className="text-xl font-semibold mb-4">Τρόπος Πληρωμής</h3>
-              <div className="space-y-3">
-                <label className="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="online"
-                    checked={bookingData.paymentMethod === 'online'}
-                    onChange={() => setBookingData({ ...bookingData, paymentMethod: 'online' })}
-                    className="mr-3"
-                  />
-                  <div>
-                    <div className="font-medium">Online Πληρωμή</div>
-                    <div className="text-sm text-gray-500">Πληρώστε με κάρτα</div>
-                  </div>
-                </label>
-
+              <div className="flex flex-col justify-center">
                 <label className="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
                   <input
                     type="radio"
