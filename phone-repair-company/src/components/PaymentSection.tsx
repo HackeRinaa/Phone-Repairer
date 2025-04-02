@@ -1,5 +1,5 @@
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
 import './Calendar.css';
 import Link from 'next/link';
@@ -32,6 +32,8 @@ interface BookingData {
 export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }: PaymentSectionProps) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string>('');
+  const [availableHours, setAvailableHours] = useState<string[]>([]);
+  const [loadingHours, setLoadingHours] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [bookingData, setBookingData] = useState<BookingData>({
     date: null,
@@ -51,6 +53,30 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
 
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // Fetch available hours from API
+  useEffect(() => {
+    const fetchAvailableHours = async () => {
+      try {
+        setLoadingHours(true);
+        const response = await fetch('/api/available-hours');
+        if (response.ok) {
+          const data = await response.json();
+          setAvailableHours(data.hours);
+        } else {
+          // Fallback to default hours
+          setAvailableHours(['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00']);
+        }
+      } catch (error) {
+        console.error('Error fetching available hours:', error);
+        // Fallback to default hours
+        setAvailableHours(['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00']);
+      } finally {
+        setLoadingHours(false);
+      }
+    };
+
+    fetchAvailableHours();
+  }, []);
 
   const handleInputChange = (field: keyof BookingData['contactInfo'], value: string) => {
     let isValid = true;
@@ -204,7 +230,7 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
         
         <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg mb-6">
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            {pageId === 1 ? 'Αριθμός Αγγελίας:' : 'Αριθμός Παραγγελίας:'} <span className="font-medium text-gray-700 dark:text-gray-300">{listingId}</span>
+            {'Αριθμός Παραγγελίας:'} <span className="font-medium text-gray-700 dark:text-gray-300">{listingId}</span>
           </p>
         </div>
         
@@ -239,22 +265,28 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
           {selectedDate && (
             <div className="mt-6">
               <h4 className="font-medium mb-3 dark:text-white text-gray-600">Διαθέσιμες Ώρες</h4>
-              <div className="grid grid-cols-3 gap-2 dark:text-white text-gray-600">
-                {['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'].map((time) => (
-                  <button
-                    key={time}
-                    type="button"
-                    onClick={() => setSelectedTime(time)}
-                    className={`p-3 text-sm rounded-lg transition-colors ${
-                      selectedTime === time 
-                        ? 'bg-purple-100 dark:bg-purple-900 border-2 border-purple-500' 
-                        : 'bg-gray-50 dark:bg-gray-700 hover:shadow-md transition-all hover:scale-105 dark:hover:bg-purple-600'
-                    }`}
-                  >
-                    {time}
-                  </button>
-                ))}
-              </div>
+              {loadingHours ? (
+                <div className="flex justify-center py-4">
+                  <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-purple-500"></div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-3 gap-2 dark:text-white text-gray-600">
+                  {availableHours.map((time) => (
+                    <button
+                      key={time}
+                      type="button"
+                      onClick={() => setSelectedTime(time)}
+                      className={`p-3 text-sm rounded-lg transition-colors ${
+                        selectedTime === time 
+                          ? 'bg-purple-100 dark:bg-purple-900 border-2 border-purple-500' 
+                          : 'bg-gray-50 dark:bg-gray-700 hover:shadow-md transition-all hover:scale-105 dark:hover:bg-purple-600'
+                      }`}
+                    >
+                      {time}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -330,7 +362,23 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
             {/* Payment Method Selection */}
             <div className="md:col-span-1">
               <h3 className="text-xl font-semibold mb-4">Τρόπος Πληρωμής</h3>
-              <div className="flex flex-col justify-center">
+              <div className="space-y-3">
+                 <label className="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+                   <input
+                     type="radio"
+                     name="paymentMethod"
+                     value="online"
+                     checked={bookingData.paymentMethod === 'online'}
+                     onChange={() => setBookingData({ ...bookingData, paymentMethod: 'online' })}
+                     className="mr-3"
+                   />
+                   <div>
+                     <div className="font-medium">Online Πληρωμή</div>
+                     <div className="text-sm text-gray-500">Πληρώστε με κάρτα</div>
+                   </div>
+                 </label>
+              </div>
+              <div className="space-y-3">
                 <label className="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
                   <input
                     type="radio"

@@ -19,7 +19,8 @@
     "db-setup": "npm run fix-migrations && node prisma/setup-database.mjs",
     "vercel-build": "prisma generate && next build",
     "deploy": "node scripts/deploy.mjs",
-    "db-test": "node src/lib/db-test.mjs"
+    "db-test": "node src/lib/db-test.mjs",
+    "apply-migration": "prisma db execute --file ./prisma/migrations/20250402_add_available_hours/migration.sql"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",

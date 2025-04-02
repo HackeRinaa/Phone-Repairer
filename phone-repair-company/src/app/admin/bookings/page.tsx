@@ -107,6 +107,9 @@ export default function BookingsAdmin() {
   const [loading, setLoading] = useState(true);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [phoneFilter, setPhoneFilter] = useState('');
+  const [editingNotes, setEditingNotes] = useState(false);
+  const [notesValue, setNotesValue] = useState('');
   
   // Check if user is admin
   useEffect(() => {
@@ -208,9 +211,46 @@ export default function BookingsAdmin() {
   };
   
   // Filter bookings based on status
-  const filteredBookings = filterStatus === "all" 
+  const filteredBookings = (filterStatus === "all" 
     ? bookings 
-    : bookings.filter(booking => booking.status.toUpperCase() === filterStatus.toUpperCase());
+    : bookings.filter(booking => booking.status.toUpperCase() === filterStatus.toUpperCase()))
+    .filter(booking => 
+      phoneFilter === '' || 
+      booking.phone.toLowerCase().includes(phoneFilter.toLowerCase())
+    );
+
+  // Add handler for notes update
+  const handleNotesUpdate = async (bookingId: string, notes: string) => {
+    try {
+      const response = await fetch(`/api/admin/bookings/${bookingId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ notes }),
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to update booking notes");
+      }
+      
+      // Update bookings
+      setBookings(bookings.map(booking => 
+        booking.id === bookingId ? { ...booking, notes } : booking
+      ));
+      
+      // Update selected booking if needed
+      if (selectedBooking?.id === bookingId) {
+        setSelectedBooking({ ...selectedBooking, notes });
+      }
+      
+      setEditingNotes(false);
+      toast.success("Booking notes updated successfully");
+    } catch (error) {
+      console.error("Error updating booking notes:", error);
+      toast.error("Failed to update booking notes");
+    }
+  };
   
   if (status === "loading" || (status === "authenticated" && !session?.user)) {
     return (
@@ -224,14 +264,33 @@ export default function BookingsAdmin() {
   
   return (
     <AdminLayout>
-      <div className="mb-8 flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Bookings</h1>
+      <div className="mb-8 p-4 bg-white shadow-sm rounded-lg">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h1 className="text-2xl font-bold text-gray-800">Bookings</h1>
         
-        <div className="flex space-x-2">
+        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search by phone..."
+              value={phoneFilter}
+              onChange={(e) => setPhoneFilter(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-md w-full"
+            />
+            {phoneFilter && (
+              <button
+                onClick={() => setPhoneFilter('')}
+                className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+          
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="px-4 py-2 border rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200"
+            className="px-4 py-2 border border-gray-300 rounded-md"
           >
             <option value="all">All Statuses</option>
             <option value="pending">Pending</option>
@@ -241,6 +300,7 @@ export default function BookingsAdmin() {
           </select>
         </div>
       </div>
+    </div>
       
       {loading ? (
         <div className="flex items-center justify-center h-64">
@@ -354,9 +414,53 @@ export default function BookingsAdmin() {
                     )}
                     
                     <div className="mb-6">
-                      <h3 className="text-md font-semibold text-gray-600 dark:text-gray-300 mb-2">Additional Information</h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Notes</p>
-                      <p className="text-gray-900 dark:text-white whitespace-pre-wrap">{selectedBooking.notes || "No notes provided"}</p>
+                      <h3 className="text-md font-semibold text-gray-600 dark:text-gray-300 mb-2">
+                        Additional Information
+                        {!editingNotes && (
+                          <button 
+                            onClick={() => {
+                              setNotesValue(selectedBooking.notes || "");
+                              setEditingNotes(true);
+                            }}
+                            className="ml-2 text-blue-500 hover:text-blue-700 text-sm font-normal"
+                          >
+                            Edit Notes
+                          </button>
+                        )}
+                      </h3>
+                      
+                      {editingNotes ? (
+                        <div>
+                          <textarea
+                            value={notesValue}
+                            onChange={(e) => setNotesValue(e.target.value)}
+                            className="w-full p-2 border rounded-md bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 mb-2"
+                            rows={5}
+                            placeholder="Add notes about this booking..."
+                          />
+                          <div className="flex justify-end space-x-2">
+                            <button
+                              onClick={() => setEditingNotes(false)}
+                              className="px-3 py-1 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              onClick={() => handleNotesUpdate(selectedBooking.id, notesValue)}
+                              className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+                            >
+                              Save Notes
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">Notes</p>
+                          <p className="text-gray-900 dark:text-white whitespace-pre-wrap">
+                            {selectedBooking.notes || "No notes provided"}
+                          </p>
+                        </>
+                      )}
                     </div>
                   </div>
                   

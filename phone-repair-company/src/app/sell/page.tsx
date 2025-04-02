@@ -59,29 +59,6 @@ const phoneOptions = {
     "Pixel 4 XL",
     "Pixel 4",
   ],
-  Huawei: [
-    "Mate 60 Pro",
-    "Mate 50 Pro",
-    "Mate 40 Pro",
-    "P60 Pro",
-    "P50 Pro",
-    "P40 Pro",
-    "Nova 11",
-    "Nova 10",
-    "Nova 9",
-  ],
-  Xiaomi: [
-    "Mi 13 Pro",
-    "Mi 13",
-    "Mi 12 Pro",
-    "Mi 12",
-    "Redmi Note 12 Pro",
-    "Redmi Note 12",
-    "Redmi Note 11",
-    "Poco F5",
-    "Poco X5 Pro",
-    "Poco X5",
-  ],
   OnePlus: [
     "11 5G",
     "10 Pro",
@@ -91,7 +68,9 @@ const phoneOptions = {
     "Nord N30",
     "Nord N20",
   ],
-  // Other brands can be included as needed
+  Αλλο : [
+    
+  ]
 };
 
 // Storage options
@@ -169,8 +148,60 @@ const SellPhonePage: React.FC = () => {
     setPhoneDetails({ ...phoneDetails, model });
     setStep(3);
     
-    // Set an estimated price based on model (this would be replaced with actual logic)
-    const basePrice = model.includes("Pro") ? 500 : 300;
+    // Set an estimated price based on brand and model
+    let basePrice = 0;
+    
+    // Determine base price by brand and model features
+    if (selectedBrand === "Apple") {
+      basePrice = model.includes("Pro Max") ? 800 : 
+                 model.includes("Pro") ? 700 : 
+                 model.includes("Plus") || model.includes("+") ? 600 :
+                 model.includes("Max") ? 650 : 
+                 model.includes("mini") ? 350 : 500;
+                 
+      // Newer models are worth more
+      if (model.includes("15")) basePrice += 200;
+      else if (model.includes("14")) basePrice += 150;
+      else if (model.includes("13")) basePrice += 100;
+      else if (model.includes("12")) basePrice += 50;
+      
+      // SE models are cheaper
+      if (model.includes("SE")) basePrice = 250;
+    } 
+    else if (selectedBrand === "Samsung") {
+      basePrice = model.includes("Ultra") ? 700 : 
+                 model.includes("+") ? 600 : 
+                 model.includes("Fold") ? 800 :
+                 model.includes("Flip") ? 600 : 
+                 model.startsWith("Galaxy S") ? 500 :
+                 model.startsWith("Galaxy A") ? 300 : 250;
+                 
+      // Newer models are worth more
+      if (model.includes("23")) basePrice += 200;
+      else if (model.includes("22")) basePrice += 150;
+      else if (model.includes("21")) basePrice += 100;
+      
+      // Z Fold/Flip models are premium
+      if (model.includes("Z Fold 5") || model.includes("Z Flip 5")) basePrice += 100;
+    }
+    else if (selectedBrand === "Google") {
+      basePrice = model.includes("Pro") ? 600 : 500;
+      
+      // Newer models are worth more
+      if (model.includes("8")) basePrice += 150;
+      else if (model.includes("7")) basePrice += 100;
+      else if (model.includes("6")) basePrice += 50;
+    }
+    else if (selectedBrand === "OnePlus") {
+      basePrice = model.startsWith("11") ? 500 :
+                 model.startsWith("10") ? 450 :
+                 model.includes("Nord") ? 250 : 350;
+    }
+    else {
+      // Generic base price for other brands
+      basePrice = 250;
+    }
+    
     setEstimatedPrice(basePrice);
   };
 
@@ -185,25 +216,32 @@ const SellPhonePage: React.FC = () => {
       const conditionMultipliers: Record<string, number> = {
         "Excellent": 1,
         "VeryGood": 0.85,
-        "Good": 0.7,
-        "Fair": 0.5
+        "Good": 0.70,
+        "Fair": 0.50
       };
       priceAdjustment = Math.round(estimatedPrice * (conditionMultipliers[value] || 1));
     }
     
     if (name === "storage") {
-      const storageAdditions: Record<string, number> = {
-        "64GB": 0,
-        "128GB": 50,
-        "256GB": 100,
-        "512GB": 150,
-        "1TB": 200
+      // First, remove any existing storage adjustment
+      const previousStorage = phoneDetails.storage;
+      
+      // Storage price adjustments based on brand
+      const getStorageValue = (storage: string, brand: string) => {
+        const isApple = brand === "Apple";
+        switch(storage) {
+          case "64GB": return 0;
+          case "128GB": return isApple ? 50 : 30;
+          case "256GB": return isApple ? 100 : 60;
+          case "512GB": return isApple ? 200 : 100;
+          case "1TB": return isApple ? 300 : 150;
+          default: return 0;
+        }
       };
       
-      // Remove previous storage adjustment before adding new one
-      const previousStorage = phoneDetails.storage;
-      const previousAdjustment = previousStorage ? storageAdditions[previousStorage] || 0 : 0;
-      const newAdjustment = storageAdditions[value] || 0;
+      // Get previous and new storage values
+      const previousAdjustment = previousStorage ? getStorageValue(previousStorage, phoneDetails.brand) : 0;
+      const newAdjustment = getStorageValue(value, phoneDetails.brand);
       
       priceAdjustment = priceAdjustment - previousAdjustment + newAdjustment;
     }
@@ -212,7 +250,7 @@ const SellPhonePage: React.FC = () => {
       // If user manually sets price, use that instead
       setPhoneDetails({ ...phoneDetails, [name]: parseInt(value) || 0 });
     } else {
-    setPhoneDetails({ ...phoneDetails, [name]: value });
+      setPhoneDetails({ ...phoneDetails, [name]: value });
       
       // Only update estimated price if not manually setting price
       if (name === "condition" || name === "storage") {
@@ -385,7 +423,7 @@ const SellPhonePage: React.FC = () => {
         );
 
       case 3:
-  return (
+        return (
           <div className="w-[80%] mx-auto">
             <h2 className="text-2xl font-semibold mb-6 text-center dark:text-white text-gray-600">
               {stepTitles[3]}
@@ -422,7 +460,7 @@ const SellPhonePage: React.FC = () => {
                   </div>
                 </div>
                 
-          <div>
+                <div>
                   <label htmlFor="storage" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Αποθηκευτικός Χώρος</label>
                   <div className="grid grid-cols-2 gap-3">
                     {storageOptions.map((option) => (
@@ -434,7 +472,7 @@ const SellPhonePage: React.FC = () => {
                             : "hover:bg-gray-50 dark:hover:bg-gray-700"
                         }`}
                       >
-            <input
+                        <input
                           type="radio"
                           name="storage"
                           value={option}
@@ -449,6 +487,87 @@ const SellPhonePage: React.FC = () => {
                 </div>
               </div>
               
+              <div className="mt-6 p-4 bg-purple-50 dark:bg-purple-900/30 rounded-lg border border-purple-200 dark:border-purple-800">
+                <div className="flex justify-between items-center mb-2">
+                  <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Εκτιμώμενη Τιμή</h3>
+                  <span className="text-xl font-bold text-purple-600 dark:text-purple-400">{estimatedPrice}€</span>
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                  Η τιμή είναι ενδεικτική και βασίζεται στα στοιχεία που έχετε επιλέξει. 
+                  Η τελική τιμή θα καθοριστεί μετά από επιθεώρηση της συσκευής από τους τεχνικούς μας.
+                </p>
+                
+                {/* Price breakdown details */}
+                <div className="mt-2 text-sm">
+                  <details>
+                    <summary className="cursor-pointer text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">
+                      Δείτε ανάλυση τιμής
+                    </summary>
+                    <div className="mt-2 pl-2 border-l-2 border-purple-200 dark:border-purple-700">
+                      <div className="grid grid-cols-2 gap-1">
+                        <span className="text-gray-600 dark:text-gray-400">Βασική τιμή συσκευής:</span>
+                        <span className="text-right font-medium text-gray-800 dark:text-gray-200">
+                          {estimatedPrice / (
+                            phoneDetails.condition === "Excellent" ? 1 :
+                            phoneDetails.condition === "VeryGood" ? 0.85 :
+                            phoneDetails.condition === "Good" ? 0.70 :
+                            phoneDetails.condition === "Fair" ? 0.50 : 1
+                          )}€
+                        </span>
+                        
+                        {phoneDetails.condition && (
+                          <>
+                            <span className="text-gray-600 dark:text-gray-400">
+                              Προσαρμογή κατάστασης ({
+                                phoneDetails.condition === "Excellent" ? "Άριστη" :
+                                phoneDetails.condition === "VeryGood" ? "Πολύ Καλή" :
+                                phoneDetails.condition === "Good" ? "Καλή" :
+                                phoneDetails.condition === "Fair" ? "Μέτρια" : phoneDetails.condition
+                              }):
+                            </span>
+                            <span className={`text-right font-medium ${
+                              phoneDetails.condition !== "Excellent" ? "text-orange-600 dark:text-orange-400" : "text-gray-800 dark:text-gray-200"
+                            }`}>
+                              {phoneDetails.condition === "Excellent" ? "0€" : 
+                               `-${Math.round(estimatedPrice / (
+                                 phoneDetails.condition === "VeryGood" ? 0.85 :
+                                 phoneDetails.condition === "Good" ? 0.70 :
+                                 phoneDetails.condition === "Fair" ? 0.50 : 1
+                               ) * (1 - (
+                                 phoneDetails.condition === "VeryGood" ? 0.85 :
+                                 phoneDetails.condition === "Good" ? 0.70 :
+                                 phoneDetails.condition === "Fair" ? 0.50 : 1
+                               )))}€`}
+                            </span>
+                          </>
+                        )}
+                        
+                        {phoneDetails.storage && (
+                          <>
+                            <span className="text-gray-600 dark:text-gray-400">
+                              Προσαύξηση αποθηκευτικού χώρου ({phoneDetails.storage}):
+                            </span>
+                            <span className="text-right font-medium text-green-600 dark:text-green-400">
+                              {phoneDetails.storage === "64GB" ? "0€" : `+${
+                                (phoneDetails.brand === "Apple" ? 
+                                  (phoneDetails.storage === "128GB" ? 50 :
+                                   phoneDetails.storage === "256GB" ? 100 :
+                                   phoneDetails.storage === "512GB" ? 200 :
+                                   phoneDetails.storage === "1TB" ? 300 : 0) :
+                                  (phoneDetails.storage === "128GB" ? 30 :
+                                   phoneDetails.storage === "256GB" ? 60 :
+                                   phoneDetails.storage === "512GB" ? 100 :
+                                   phoneDetails.storage === "1TB" ? 150 : 0)
+                                )
+                              }€`}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </details>
+                </div>
+              </div>
               
               <div>
                 <label htmlFor="description" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
@@ -458,14 +577,14 @@ const SellPhonePage: React.FC = () => {
                   id="description"
                   name="description"
                   value={phoneDetails.description}
-              onChange={handleChange}
+                  onChange={handleChange}
                   rows={4}
                   className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-600 dark:text-white"
                   placeholder="Περιγράψτε τη συσκευή σας (προαιρετικά)"
-            />
-          </div>
+                />
+              </div>
 
-          <div>
+              <div>
                 <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
                   Φωτογραφίες
                 </label>
@@ -523,31 +642,31 @@ const SellPhonePage: React.FC = () => {
                     <label htmlFor="name" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                       Ονοματεπώνυμο
                     </label>
-            <input
+                    <input
                       id="name"
                       name="name"
-              type="text"
+                      type="text"
                       className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-600 dark:text-white"
                       placeholder="Το ονοματεπώνυμό σας"
-              required
-            />
-          </div>
+                      required
+                    />
+                  </div>
 
-          <div>
+                  <div>
                     <label htmlFor="email" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                       Email
                     </label>
-            <input
+                    <input
                       id="email"
                       name="email"
                       type="email"
                       className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-600 dark:text-white"
                       placeholder="Το email σας"
-              required
-            />
-          </div>
+                      required
+                    />
+                  </div>
 
-          <div>
+                  <div>
                     <label htmlFor="phone" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                       Τηλέφωνο
                     </label>
@@ -557,15 +676,15 @@ const SellPhonePage: React.FC = () => {
                       type="tel"
                       className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-600 dark:text-white"
                       placeholder="Το τηλέφωνό σας"
-              required
+                      required
                     />
-          </div>
+                  </div>
 
-          <div>
+                  <div>
                     <label htmlFor="address" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                       Διεύθυνση
                     </label>
-            <input
+                    <input
                       id="address"
                       name="address"
                       type="text"
@@ -574,7 +693,7 @@ const SellPhonePage: React.FC = () => {
                     />
                   </div>
                 </div>
-          </div>
+              </div>
 
               <div className="flex justify-between items-center pt-4">
                 <button
@@ -584,8 +703,8 @@ const SellPhonePage: React.FC = () => {
                 >
                   ← Πίσω στα μοντέλα
                 </button>
-            <button
-              type="submit"
+                <button
+                  type="submit"
                   disabled={!phoneDetails.condition || !phoneDetails.storage || phoneDetails.price <= 0 || isSubmitting}
                   className={`px-8 py-3 rounded-lg ${
                     phoneDetails.condition && phoneDetails.storage && phoneDetails.price > 0 && !isSubmitting
@@ -604,9 +723,9 @@ const SellPhonePage: React.FC = () => {
                   ) : (
                     "Υποβολή"
                   )}
-            </button>
-          </div>
-        </form>
+                </button>
+              </div>
+            </form>
           </div>
         );
 
@@ -623,7 +742,7 @@ const SellPhonePage: React.FC = () => {
               },
             ]}
             onComplete={handleContactSubmit}
-            pageId={1} // Using pageId 1 to skip payment processing
+            pageId={2} // Using pageId 1 to skip payment processing
           />
         );
         

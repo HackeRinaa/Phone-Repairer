@@ -33,13 +33,18 @@ export default function Navbar() {
     <nav className="z-50 sticky top-0 w-full shadow-sm px-8 h-20 flex items-center justify-between border-b border-gray-300 dark:border-gray-800 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
       {/* Logo */}
       <div className="flex items-center justify-center">
-      <Image
-        src="/irescue-logo.png"
-        alt="logo"
-        width={60}
-        height={60}
-      />
-      <Link href="/" className="flex items-center gap-2">
+      <Link href="/" passHref legacyBehavior>
+      <a className="block transition-transform hover:scale-105">
+        <Image
+          src="/irescue-logo.png"
+          alt="iRescue Logo"
+          width={60}
+          height={60}
+          className="hover:opacity-90"
+        />
+      </a>
+    </Link>
+      <Link href="/" className="hidden sm:flex items-center gap-2">
         <span className="text-4xl font-bold text-purple-600">iRescue</span>
       </Link>
       </div>

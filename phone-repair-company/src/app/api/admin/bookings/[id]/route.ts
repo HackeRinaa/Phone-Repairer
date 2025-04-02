@@ -7,12 +7,25 @@ export async function PATCH(
 ) {
   try {
     const { id } = params;
-    const { status } = await request.json();
+    const { status, notes } = await request.json();
 
     // Validate status
-    if (!['PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED'].includes(status)) {
+    if (status && !['PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED'].includes(status)) {
       return NextResponse.json(
         { error: 'Invalid status value' },
+        { status: 400 }
+      );
+    }
+
+    // Prepare update data
+    const updateData: { status?: string; notes?: string } = {};
+    if (status) updateData.status = status;
+    if (notes !== undefined) updateData.notes = notes;
+
+    // Validate that we have something to update
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json(
+        { error: 'No valid fields to update' },
         { status: 400 }
       );
     }
@@ -20,7 +33,7 @@ export async function PATCH(
     // Update booking
     const updatedBooking = await prisma.booking.update({
       where: { id },
-      data: { status }
+      data: updateData
     });
 
     return NextResponse.json({ booking: updatedBooking });
