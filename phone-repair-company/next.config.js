@@ -5,17 +5,19 @@ const nextConfig = {
   // basePath: '/irescue',
   // trailingSlash: true,
   
+  // Type checking and linting handled by Vercel build pipeline
   typescript: {
     // Dangerously allow production builds to successfully complete even if
     // your project has type errors.
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: process.env.SKIP_TYPE_CHECK === 'true',
   },
   eslint: {
     // Allow production builds to successfully complete even if
     // your project has ESLint errors.
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: process.env.NEXT_SKIP_TYPESCRIPT_AND_ESL_CHECK === 'true',
   },
   
+  // Image optimization for better performance
   images: {
     // unoptimized: true, // Required for static export
     domains: [
@@ -40,7 +42,25 @@ const nextConfig = {
         hostname: '**',
       },
     ],
+    // Optimization settings
+    formats: ['image/webp'],
+    minimumCacheTTL: 60,
   },
+
+  // Production optimizations
+  reactStrictMode: true,
+  poweredByHeader: false,
+  
+  // For faster builds in production
+  experimental: {
+    // Only enable these in production
+    ...(process.env.NODE_ENV === 'production' && {
+      // Now we can enable optimizeCss since we've installed critters
+      optimizeCss: true,
+      optimizeServerReact: true,
+      serverMinification: true,
+    }),
+  }
 }
 
 module.exports = nextConfig 

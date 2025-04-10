@@ -66,16 +66,18 @@ export const createTransporter = () => {
     if (emailUser.includes('@gmail.com')) {
       console.log('Using Gmail transport configuration');
       return nodemailer.createTransport({
-        service: 'gmail',
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true, // Use SSL
         auth: {
           user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASSWORD,
+          pass: process.env.EMAIL_PASSWORD, // This should be an App Password for Gmail
         },
-        tls: {
-          rejectUnauthorized: false // For development environments with self-signed certificates
-        },
-        debug: true, // Enable debug logging
-        logger: true // Log SMTP traffic
+        // Don't use debug/logger in production
+        ...(process.env.NODE_ENV !== 'production' && {
+          debug: true,
+          logger: true
+        })
       });
     }
     
