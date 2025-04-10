@@ -55,7 +55,7 @@ export default function FAQPage() {
   };
 
   return (
-    <div className="w-full flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-100">
+    <div className="w-full flex flex-col min-h-[100dvh] overflow-hidden bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-100">
         <Navbar/>
       <main className="flex-grow w-[80%] mx-auto px-4 py-12">
         <h1 className="text-4xl sm:text-5xl font-bold mb-8 text-center dark:text-white text-gray-600">

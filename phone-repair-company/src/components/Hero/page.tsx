@@ -114,12 +114,13 @@ export const SwipeCarousel: React.FC = () => {
                 backgroundImage: `url(/${idx + 1}.png)`, // Dynamic background image
                 backgroundSize: "contain",
                 backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
               }}
               animate={{
                 scale: cardIndex === idx ? 0.95 : 0.85,
               }}
               transition={SPRING_OPTIONS}
-              className="aspect-video h-full w-screen shrink-0 rounded-xl dark:bg-gray-900 bg-white/50 object-cover flex items-center justify-center"
+              className="aspect-video h-full w-screen shrink-0 rounded-xl bg-gray-900 object-cover flex items-center justify-center"
             >
               
             </motion.div>

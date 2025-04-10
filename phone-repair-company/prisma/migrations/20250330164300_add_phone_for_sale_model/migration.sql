@@ -14,3 +14,11 @@ CREATE TABLE "PhoneForSale" (
     "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP NOT NULL
 );
+
+model AvailableHours {
+  id        String   @id @default(cuid())
+  hours     String[] // Array of available hours (e.g., ["09:00", "10:00", "11:00"])
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+} 

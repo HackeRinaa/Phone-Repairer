@@ -6,10 +6,7 @@ import { SwipeCarousel } from "@/components/Hero/page";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 relative">
-      
-      {/* Wrap existing content in a relative container with higher z-index */}
-      <div className="relative z-10 grid grid-rows-[80px_1fr_60px] min-h-screen">
+    <div className="flex flex-col min-h-[100dvh] overflow-hidden bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
         <Navbar />
  
         <main className="flex-1 overflow-hidden">
@@ -22,6 +19,6 @@ export default function Home() {
           <Link href="/faq" className="hover:text-purple-600 dark:hover:text-purple-400">Συχνές Ερωτήσεις</Link>
         </footer>
       </div>
-    </div>
+    
   );
 }

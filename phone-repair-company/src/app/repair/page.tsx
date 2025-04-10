@@ -95,12 +95,582 @@ const phoneOptions = {
   ],
 };
 
+// Pricing data structure
+type PriceInfo = {
+  part: number;
+  price: number;
+};
+
+type ScreenRepairOptions = {
+  [key: string]: PriceInfo;
+};
+
+type RepairPricing = {
+  screenRepair?: ScreenRepairOptions;
+  battery?: PriceInfo;
+  chargingPort?: PriceInfo;
+  camera?: PriceInfo;
+  backCover?: PriceInfo;
+  waterDamage?: PriceInfo;
+  microphoneSpeaker?: PriceInfo;
+};
+
+type BrandPricing = {
+  [model: string]: RepairPricing;
+};
+
+
+// Google Pricing Structure
+const googlePricing: BrandPricing = {
+  "Pixel 8 Pro": {
+    screenRepair: {
+      original: { part: 228, price: 265.2 }
+    },
+    battery: { part: 30.48, price: 67.68 },
+    chargingPort: { part: 28.76, price: 65.96 },
+    backCover: { part: 37.85, price: 75.05 },
+    waterDamage: { part: 70, price: 109 },
+    microphoneSpeaker: { part: 42, price: 79.2 },
+    camera: { part: 58, price: 95.2 }
+  },
+  "Pixel 8": {
+    screenRepair: {
+      original: { part: 198, price: 235.2 }
+    },
+    battery: { part: 28.48, price: 65.68 },
+    chargingPort: { part: 26.76, price: 63.96 },
+    backCover: { part: 35.85, price: 73.05 },
+    waterDamage: { part: 65, price: 104 },
+    microphoneSpeaker: { part: 40, price: 77.2 },
+    camera: { part: 53, price: 90.2 }
+  }
+};
+
+// Huawei Pricing Structure
+const huaweiPricing: BrandPricing = {
+  "Mate 60 Pro": {
+    screenRepair: {
+      original: { part: 218, price: 255.2 }
+    },
+    battery: { part: 29.48, price: 66.68 },
+    chargingPort: { part: 27.76, price: 64.96 },
+    backCover: { part: 36.85, price: 74.05 },
+    waterDamage: { part: 68, price: 107 },
+    microphoneSpeaker: { part: 41, price: 78.2 },
+    camera: { part: 56, price: 93.2 }
+  }
+};
+
+// Xiaomi Pricing Structure
+const xiaomiPricing: BrandPricing = {
+  "Mi 13 Pro": {
+    screenRepair: {
+      original: { part: 208, price: 245.2 }
+    },
+    battery: { part: 27.48, price: 64.68 },
+    chargingPort: { part: 25.76, price: 62.96 },
+    backCover: { part: 34.85, price: 72.05 },
+    waterDamage: { part: 65, price: 104 },
+    microphoneSpeaker: { part: 39, price: 76.2 },
+    camera: { part: 52, price: 89.2 }
+  }
+};
+
+// OnePlus Pricing Structure
+const oneplusPricing: BrandPricing = {
+  "11 5G": {
+    screenRepair: {
+      original: { part: 198, price: 235.2 }
+    },
+    battery: { part: 28.48, price: 65.68 },
+    chargingPort: { part: 26.76, price: 63.96 },
+    backCover: { part: 35.85, price: 73.05 },
+    waterDamage: { part: 63, price: 102 },
+    microphoneSpeaker: { part: 38, price: 75.2 },
+    camera: { part: 51, price: 88.2 }
+  }
+};
+
+// iPhone Pricing Structure
+const iphonePricing: BrandPricing = {
+  "iPhone 15 Pro Max": {
+    screenRepair: {
+      hq: { part: 369, price: 369 },
+      standard: { part: 369, price: 369 }
+    },
+    battery: { part: 79, price: 79 },
+    chargingPort: { part: 189, price: 189 },
+    camera: { part: 179, price: 179 },
+    backCover: { part: 179, price: 179 },
+    waterDamage: { part: 99, price: 99 },
+    microphoneSpeaker: { part: 79, price: 79 }
+  },
+  "iPhone 15 Pro": {
+    screenRepair: {
+      hq: { part: 319, price: 319 },
+      standard: { part: 319, price: 319 }
+    },
+    battery: { part: 79, price: 79 },
+    chargingPort: { part: 179, price: 179 },
+    camera: { part: 179, price: 179 },
+    backCover: { part: 169, price: 169 },
+    waterDamage: { part: 99, price: 99 },
+    microphoneSpeaker: { part: 79, price: 79 }
+  },
+  "iPhone 15": {
+    screenRepair: {
+      hq: { part: 249, price: 249 },
+      standard: { part: 249, price: 249 }
+    },
+    battery: { part: 79, price: 79 },
+    chargingPort: { part: 159, price: 159 },
+    camera: { part: 149, price: 149 },
+    backCover: { part: 149, price: 149 },
+    waterDamage: { part: 99, price: 99 },
+    microphoneSpeaker: { part: 79, price: 79 }
+  },
+  "iPhone 15 Plus": {
+    screenRepair: {
+      hq: { part: 279, price: 279 },
+      standard: { part: 279, price: 279 }
+    },
+    battery: { part: 79, price: 79 },
+    chargingPort: { part: 169, price: 169 },
+    camera: { part: 149, price: 149 },
+    backCover: { part: 159, price: 159 },
+    waterDamage: { part: 99, price: 99 },
+    microphoneSpeaker: { part: 79, price: 79 }
+  },
+  "iPhone 14 Pro Max": {
+    screenRepair: {
+      hq: { part: 339, price: 339 },
+      standard: { part: 339, price: 339 }
+    },
+    battery: { part: 69, price: 69 },
+    chargingPort: { part: 85, price: 85 },
+    camera: { part: 259, price: 259 },
+    backCover: { part: 319, price: 319 },
+    waterDamage: { part: 99, price: 99 },
+    microphoneSpeaker: { part: 79, price: 79 }
+  },
+  "iPhone 14 Pro": {
+    screenRepair: {
+      hq: { part: 299, price: 299 },
+      standard: { part: 299, price: 299 }
+    },
+    battery: { part: 69, price: 69 },
+    chargingPort: { part: 85, price: 85 },
+    camera: { part: 259, price: 259 },
+    backCover: { part: 299, price: 299 },
+    waterDamage: { part: 99, price: 99 },
+    microphoneSpeaker: { part: 79, price: 79 }
+  },
+  "iPhone 14": {
+    screenRepair: {
+      hq: { part: 199, price: 199 },
+      standard: { part: 199, price: 199 }
+    },
+    battery: { part: 69, price: 69 },
+    chargingPort: { part: 89, price: 89 },
+    camera: { part: 249, price: 249 },
+    backCover: { part: 139, price: 139 },
+    waterDamage: { part: 99, price: 99 },
+    microphoneSpeaker: { part: 79, price: 79 }
+  },
+  "iPhone 14 Plus": {
+    screenRepair: {
+      hq: { part: 219, price: 219 },
+      standard: { part: 219, price: 219 }
+    },
+    battery: { part: 69, price: 69 },
+    chargingPort: { part: 79, price: 79 },
+    camera: { part: 249, price: 249 },
+    backCover: { part: 129, price: 129 },
+    waterDamage: { part: 99, price: 99 },
+    microphoneSpeaker: { part: 79, price: 79 }
+  },
+  "iPhone 13 Pro Max": {
+    screenRepair: {
+      hq: { part: 279, price: 279 },
+      standard: { part: 279, price: 279 }
+    },
+    battery: { part: 55, price: 55 },
+    chargingPort: { part: 89, price: 89 },
+    camera: { part: 169, price: 169 },
+    backCover: { part: 179, price: 179 },
+    waterDamage: { part: 99, price: 99 },
+    microphoneSpeaker: { part: 79, price: 79 }
+  },
+  "iPhone 13 Pro": {
+    screenRepair: {
+      hq: { part: 249, price: 249 },
+      standard: { part: 249, price: 249 }
+    },
+    battery: { part: 55, price: 55 },
+    chargingPort: { part: 89, price: 89 },
+    camera: { part: 219, price: 219 },
+    backCover: { part: 219, price: 219 },
+    waterDamage: { part: 99, price: 99 },
+    microphoneSpeaker: { part: 79, price: 79 }
+  },
+  "iPhone 13": {
+    screenRepair: {
+      hq: { part: 179, price: 179 },
+      standard: { part: 179, price: 179 }
+    },
+    battery: { part: 55, price: 55 },
+    chargingPort: { part: 79, price: 79 },
+    camera: { part: 239, price: 239 },
+    backCover: { part: 199, price: 199 },
+    waterDamage: { part: 99, price: 99 },
+    microphoneSpeaker: { part: 79, price: 79 }
+  },
+  "iPhone 13 mini": {
+    screenRepair: {
+      hq: { part: 169, price: 169 },
+      standard: { part: 169, price: 169 }
+    },
+    battery: { part: 55, price: 55 },
+    chargingPort: { part: 79, price: 79 },
+    camera: { part: 119, price: 119 },
+    backCover: { part: 149, price: 149 },
+    waterDamage: { part: 99, price: 99 },
+    microphoneSpeaker: { part: 79, price: 79 }
+  },
+  "iPhone 12 Pro Max": {
+    screenRepair: {
+      hq: { part: 219, price: 219 },
+      standard: { part: 219, price: 219 }
+    },
+    battery: { part: 55, price: 55 },
+    chargingPort: { part: 69, price: 69 },
+    camera: { part: 159, price: 159 },
+    backCover: { part: 179, price: 179 },
+    waterDamage: { part: 99, price: 99 },
+    microphoneSpeaker: { part: 79, price: 79 }
+  },
+  "iPhone 12 Pro": {
+    screenRepair: {
+      hq: { part: 189, price: 189 },
+      standard: { part: 189, price: 189 }
+    },
+    battery: { part: 49, price: 49 },
+    chargingPort: { part: 69, price: 69 },
+    camera: { part: 99, price: 99 },
+    backCover: { part: 159, price: 159 },
+    waterDamage: { part: 99, price: 99 },
+    microphoneSpeaker: { part: 79, price: 79 }
+  },
+  "iPhone 12": {
+    screenRepair: {
+      hq: { part: 189, price: 189 },
+      standard: { part: 189, price: 189 }
+    },
+    battery: { part: 49, price: 49 },
+    chargingPort: { part: 69, price: 69 },
+    camera: { part: 99, price: 99 },
+    backCover: { part: 149, price: 149 },
+    waterDamage: { part: 99, price: 99 },
+    microphoneSpeaker: { part: 79, price: 79 }
+  },
+  "iPhone 12 mini": {
+    screenRepair: {
+      hq: { part: 149, price: 149 },
+      standard: { part: 149, price: 149 }
+    },
+    battery: { part: 49, price: 49 },
+    chargingPort: { part: 69, price: 69 },
+    camera: { part: 159, price: 159 },
+    backCover: { part: 139, price: 139 },
+    waterDamage: { part: 99, price: 99 },
+    microphoneSpeaker: { part: 79, price: 79 }
+  },
+  "iPhone 11 Pro Max": {
+    screenRepair: {
+      hq: { part: 159, price: 159 },
+      standard: { part: 159, price: 159 }
+    },
+    battery: { part: 55, price: 55 },
+    chargingPort: { part: 69, price: 69 },
+    camera: { part: 109, price: 109 },
+    backCover: { part: 139, price: 139 },
+    waterDamage: { part: 99, price: 99 },
+    microphoneSpeaker: { part: 79, price: 79 }
+  },
+  "iPhone 11 Pro": {
+    screenRepair: {
+      hq: { part: 129, price: 129 },
+      standard: { part: 129, price: 129 }
+    },
+    battery: { part: 55, price: 55 },
+    chargingPort: { part: 69, price: 69 },
+    camera: { part: 109, price: 109 },
+    backCover: { part: 119, price: 119 },
+    waterDamage: { part: 99, price: 99 },
+    microphoneSpeaker: { part: 79, price: 79 }
+  },
+  "iPhone 11": {
+    screenRepair: {
+      hq: { part: 69, price: 69 },
+      standard: { part: 69, price: 69 }
+    },
+    battery: { part: 49, price: 49 },
+    chargingPort: { part: 49, price: 49 },
+    camera: { part: 69, price: 69 },
+    backCover: { part: 99, price: 99 },
+    waterDamage: { part: 99, price: 99 },
+    microphoneSpeaker: { part: 79, price: 79 }
+  },
+  "iPhone SE (2022)": {
+    screenRepair: {
+      hq: { part: 59, price: 59 },
+      standard: { part: 59, price: 59 }
+    },
+    battery: { part: 59, price: 59 },
+    chargingPort: { part: 69, price: 69 },
+    camera: { part: 69, price: 69 },
+    backCover: { part: 69, price: 69 },
+    waterDamage: { part: 99, price: 99 },
+    microphoneSpeaker: { part: 79, price: 79 }
+  },
+  "iPhone SE (2020)": {
+    screenRepair: {
+      hq: { part: 59, price: 59 },
+      standard: { part: 59, price: 59 }
+    },
+    battery: { part: 59, price: 59 },
+    chargingPort: { part: 69, price: 69 },
+    camera: { part: 69, price: 69 },
+    backCover: { part: 69, price: 69 },
+    waterDamage: { part: 99, price: 99 },
+    microphoneSpeaker: { part: 79, price: 79 }
+  }
+};
+
+// Samsung Pricing Structure
+const samsungPricing: BrandPricing = {
+  "Galaxy S23 Ultra": {
+    screenRepair: {
+      original: { part: 439, price: 439 },
+      withFrame: { part: 439, price: 439 }
+    },
+    battery: { part: 89, price: 89 },
+    chargingPort: { part: 79, price: 79 },
+    backCover: { part: 79, price: 79 },
+    waterDamage: { part: 109, price: 109 },
+    microphoneSpeaker: { part: 82.2, price: 82.2 },
+    camera: { part: 40, price: 47.2 } // 40 + VAT (18%) = 47.2
+  },
+  "Galaxy S23+": {
+    screenRepair: {
+      original: { part: 239, price: 239 },
+      withFrame: { part: 239, price: 239 }
+    },
+    battery: { part: 79, price: 79 },
+    chargingPort: { part: 75, price: 75 },
+    backCover: { part: 69, price: 69 },
+    waterDamage: { part: 109, price: 109 },
+    microphoneSpeaker: { part: 80.2, price: 80.2 },
+    camera: { part: 40, price: 47.2 }
+  },
+  "Galaxy S23": {
+    screenRepair: {
+      original: { part: 229, price: 229 },
+      withFrame: { part: 229, price: 229 }
+    },
+    battery: { part: 79, price: 79 },
+    chargingPort: { part: 69, price: 69 },
+    backCover: { part: 69, price: 69 },
+    waterDamage: { part: 109, price: 109 },
+    microphoneSpeaker: { part: 78.2, price: 78.2 },
+    camera: { part: 40, price: 47.2 }
+  },
+  "Galaxy S22 Ultra": {
+    screenRepair: {
+      original: { part: 310, price: 310 },
+      withFrame: { part: 310, price: 310 }
+    },
+    battery: { part: 79, price: 79 },
+    chargingPort: { part: 69, price: 69 },
+    backCover: { part: 79, price: 79 },
+    waterDamage: { part: 109, price: 109 },
+    microphoneSpeaker: { part: 82.2, price: 82.2 },
+    camera: { part: 40, price: 47.2 }
+  },
+  "Galaxy S22+": {
+    screenRepair: {
+      original: { part: 215, price: 215 },
+      withFrame: { part: 215, price: 215 }
+    },
+    battery: { part: 69, price: 69 },
+    chargingPort: { part: 69, price: 69 },
+    backCover: { part: 69, price: 69 },
+    waterDamage: { part: 109, price: 109 },
+    microphoneSpeaker: { part: 80.2, price: 80.2 },
+    camera: { part: 40, price: 47.2 }
+  },
+  "Galaxy S22": {
+    screenRepair: {
+      original: { part: 209, price: 209 },
+      withFrame: { part: 209, price: 209 }
+    },
+    battery: { part: 69, price: 69 },
+    chargingPort: { part: 65, price: 65 },
+    backCover: { part: 69, price: 69 },
+    waterDamage: { part: 109, price: 109 },
+    microphoneSpeaker: { part: 78.2, price: 78.2 },
+    camera: { part: 40, price: 47.2 }
+  },
+  "Galaxy S21 Ultra": {
+    screenRepair: {
+      original: { part: 349, price: 349 },
+      withFrame: { part: 349, price: 349 }
+    },
+    battery: { part: 69, price: 69 },
+    chargingPort: { part: 65, price: 65 },
+    backCover: { part: 79, price: 79 },
+    waterDamage: { part: 109, price: 109 },
+    microphoneSpeaker: { part: 82.2, price: 82.2 },
+    camera: { part: 40, price: 47.2 }
+  },
+  "Galaxy S21+": {
+    screenRepair: {
+      original: { part: 229, price: 229 },
+      withFrame: { part: 229, price: 229 }
+    },
+    battery: { part: 69, price: 69 },
+    chargingPort: { part: 60, price: 60 },
+    backCover: { part: 59, price: 59 },
+    waterDamage: { part: 109, price: 109 },
+    microphoneSpeaker: { part: 80.2, price: 80.2 },
+    camera: { part: 40, price: 47.2 }
+  },
+  "Galaxy S21": {
+    screenRepair: {
+      original: { part: 219, price: 219 },
+      withFrame: { part: 219, price: 219 }
+    },
+    battery: { part: 65, price: 65 },
+    chargingPort: { part: 60, price: 60 },
+    backCover: { part: 69, price: 69 },
+    waterDamage: { part: 109, price: 109 },
+    microphoneSpeaker: { part: 78.2, price: 78.2 },
+    camera: { part: 40, price: 47.2 }
+  },
+  "Galaxy Z Fold 5": {
+    screenRepair: {
+      original: { part: 669, price: 669 }, // inner screen
+      withFrame: { part: 180, price: 180 } // outer screen
+    },
+    battery: { part: 89, price: 89 },
+    chargingPort: { part: 79, price: 79 },
+    backCover: { part: 79, price: 79 },
+    waterDamage: { part: 109, price: 109 },
+    microphoneSpeaker: { part: 82.2, price: 82.2 },
+    camera: { part: 40, price: 47.2 }
+  },
+  "Galaxy Z Flip 5": {
+    screenRepair: {
+      original: { part: 480, price: 480 },
+      withFrame: { part: 480, price: 480 }
+    },
+    battery: { part: 89, price: 89 },
+    chargingPort: { part: 79, price: 79 },
+    backCover: { part: 79, price: 79 },
+    waterDamage: { part: 109, price: 109 },
+    microphoneSpeaker: { part: 82.2, price: 82.2 },
+    camera: { part: 40, price: 47.2 }
+  },
+  "Galaxy Z Fold 4": {
+    screenRepair: {
+      original: { part: 699, price: 699 }, // inner screen
+      withFrame: { part: 210, price: 210 } // outer screen
+    },
+    battery: { part: 89, price: 89 },
+    chargingPort: { part: 79, price: 79 },
+    backCover: { part: 79, price: 79 },
+    waterDamage: { part: 109, price: 109 },
+    microphoneSpeaker: { part: 82.2, price: 82.2 },
+    camera: { part: 40, price: 47.2 }
+  },
+  "Galaxy Z Flip 4": {
+    screenRepair: {
+      original: { part: 480, price: 480 },
+      withFrame: { part: 480, price: 480 }
+    },
+    battery: { part: 89, price: 89 },
+    chargingPort: { part: 79, price: 79 },
+    backCover: { part: 79, price: 79 },
+    waterDamage: { part: 109, price: 109 },
+    microphoneSpeaker: { part: 82.2, price: 82.2 },
+    camera: { part: 40, price: 47.2 }
+  },
+  "Galaxy A54": {
+    screenRepair: {
+      original: { part: 150, price: 150 }, // Average from "120 έως 200"
+      withFrame: { part: 150, price: 150 }
+    },
+    battery: { part: 70, price: 70 }, // Average from "60 έως 80"
+    chargingPort: { part: 70, price: 70 }, // Average from "60 έως 80"
+    backCover: { part: 70, price: 70 }, // Average from "60 έως 80"
+    waterDamage: { part: 109, price: 109 },
+    microphoneSpeaker: { part: 78.2, price: 78.2 },
+    camera: { part: 40, price: 47.2 }
+  },
+  "Galaxy A34": {
+    screenRepair: {
+      original: { part: 150, price: 150 },
+      withFrame: { part: 150, price: 150 }
+    },
+    battery: { part: 70, price: 70 },
+    chargingPort: { part: 70, price: 70 },
+    backCover: { part: 70, price: 70 },
+    waterDamage: { part: 109, price: 109 },
+    microphoneSpeaker: { part: 78.2, price: 78.2 },
+    camera: { part: 40, price: 47.2 }
+  },
+  "Galaxy A14": {
+    screenRepair: {
+      original: { part: 150, price: 150 },
+      withFrame: { part: 150, price: 150 }
+    },
+    battery: { part: 70, price: 70 },
+    chargingPort: { part: 70, price: 70 },
+    backCover: { part: 70, price: 70 },
+    waterDamage: { part: 109, price: 109 },
+    microphoneSpeaker: { part: 78.2, price: 78.2 },
+    camera: { part: 40, price: 47.2 }
+  }
+};
+
+// Combined pricing data
+const pricingData = {
+  Apple: iphonePricing,
+  Samsung: samsungPricing,
+  Google: googlePricing,
+  Huawei: huaweiPricing,
+  Xiaomi: xiaomiPricing,
+  OnePlus: oneplusPricing
+};
+
+// Issue-to-property mapping
+const issueToProperty = {
+  "Επισκευή Οθόνης": "screenRepair",
+  "Αντικατάσταση Μπαταρίας": "battery",
+  "Βλάβη από Νερό": "waterDamage",
+  "Επισκευή Κάμερας": "camera",
+  "Επισκευή Μικροφώνου / Ηχείου": "microphoneSpeaker",
+  "Πισω καπακι/πλαίσιο": "backCover"
+};
+
+// Issue mapping
 const commonIssues = [
   { title: "Επισκευή Οθόνης", icon: "🔧", price: "από 89€" },
   { title: "Αντικατάσταση Μπαταρίας", icon: "🔋", price: "από 49€" },
   { title: "Βλάβη από Νερό", icon: "💧", price: "από 99€" },
-  { title: "Επισκευή Κάμερας", icon: "📸", price: "από 69€" },
+  { title: "Επισκευή Κάμερας", icon: "📸", price: "από 47€" },
   { title: "Επισκευή Μικροφώνου / Ηχείου", icon: "🎙️", price: "από 69€" },
+  { title: "Πισω καπακι/πλαισιο", icon: "🔧", price: "από 69€" },
 ];
 
 // Step titles and descriptions
@@ -118,6 +688,20 @@ const stepDescriptions: Record<number,string> = {
   4: "Συμπληρώστε τα στοιχεία σας για να ολοκληρώσετε την κράτηση",
 };
 
+// Near the top of the file, before the component definition, add this type
+interface BookingData {
+  date: Date | null;
+  timeSlot: string;
+  contactInfo: {
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    notes: string;
+  };
+  paymentMethod: 'online' | 'instore';
+}
+
 export default function RepairPage() {
   const [selectedBrand, setSelectedBrand] = useState<string>("");
   const [selectedModel, setSelectedModel] = useState<string>("");
@@ -126,10 +710,63 @@ export default function RepairPage() {
   const [otherIssueSelected, setOtherIssueSelected] = useState<boolean>(false);
   const [otherIssueDescription, setOtherIssueDescription] = useState<string>("");
 
+  // Get price for a specific issue based on the selected device
+  const getPriceForIssue = (issue: string): number => {
+    if (selectedBrand === "Αλλο") {
+      return 0; // "Ας το δούμε μαζί" case
+    }
+
+    const brand = selectedBrand as keyof typeof pricingData;
+    const brandPricing = pricingData[brand];
+    if (!brandPricing) return getDefaultPriceForIssue(issue);
+
+    const modelPricing = brandPricing[selectedModel];
+    if (!modelPricing) return getDefaultPriceForIssue(issue);
+
+    const propertyName = issueToProperty[issue as keyof typeof issueToProperty];
+    if (!propertyName || !modelPricing[propertyName as keyof RepairPricing]) {
+      return getDefaultPriceForIssue(issue);
+    }
+
+    const repairInfo = modelPricing[propertyName as keyof RepairPricing];
+    
+    // Handle screen repair which has multiple options
+    if (propertyName === "screenRepair" && typeof repairInfo === "object" && !("price" in repairInfo)) {
+      // Choose the first option available for screen repair
+      const firstOption = Object.values(repairInfo as ScreenRepairOptions)[0];
+      return firstOption.price;
+    }
+    
+    return (repairInfo as PriceInfo).price;
+  };
+
+  // Default price fallback for issues
+  const getDefaultPriceForIssue = (issue: string): number => {
+    const defaultPrices: Record<string, number> = {
+      "Επισκευή Οθόνης": 89,
+      "Αντικατάσταση Μπαταρίας": 49,
+      "Βλάβη από Νερό": 99,
+      "Επισκευή Κάμερας": 69,
+      "Επισκευή Μικροφώνου / Ηχείου": 69,
+      "Πισω καπακι/πλαισιο": 69
+    };
+    return defaultPrices[issue] || 0;
+  };
+
+  // Get price display for an issue
+  const getPriceDisplay = (issue: string): string => {
+    if (selectedBrand === "Αλλο") {
+      return "Ας το δούμε μαζί";
+    }
+    
+    const price = getPriceForIssue(issue);
+    return price > 0 ? `${price}€` : "Ας το δούμε μαζί";
+  };
+
   const calculateTotal = () => {
     return selectedIssues.reduce((total, issue) => {
-      const issuePrice = commonIssues.find((i) => i.title === issue)?.price || "0";
-      return total + parseInt(issuePrice.replace(/\D/g, ""));
+      if (selectedBrand === "Αλλο") return total;
+      return total + getPriceForIssue(issue);
     }, 0);
   };
 
@@ -151,6 +788,43 @@ export default function RepairPage() {
     if (description) {
       setOtherIssueSelected(true);
       setOtherIssueDescription(issue);
+    }
+  };
+
+  // Update the function to use the BookingData type instead of any
+  const handleRepairComplete = async (data: BookingData) => {
+    console.log("Η κράτηση ολοκληρώθηκε:", {
+      device: { brand: selectedBrand, model: selectedModel },
+      issues: selectedIssues,
+      booking: data,
+    });
+
+    // Send notification to admin about the new repair request
+    try {
+      const response = await fetch('/api/notifications/repair', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          brand: selectedBrand,
+          model: selectedModel,
+          issues: selectedIssues,
+          customerName: data.contactInfo.name,
+          customerEmail: data.contactInfo.email,
+          customerPhone: data.contactInfo.phone,
+          date: data.date,
+          timeSlot: data.timeSlot,
+          totalAmount: calculateTotal(),
+          notes: data.contactInfo.notes,
+        }),
+      });
+
+      if (!response.ok) {
+        console.error('Failed to send admin notification');
+      }
+    } catch (error) {
+      console.error('Error sending admin notification:', error);
     }
   };
 
@@ -234,7 +908,7 @@ export default function RepairPage() {
                   <h3 className="font-medium mb-2 dark:text-white text-gray-600">
                     {issue.title}
                   </h3>
-                  <p className="text-purple-600 dark:text-purple-500">{issue.price}</p>
+                  <p className="text-purple-600 dark:text-purple-500">{getPriceDisplay(issue.title)}</p>
                 </button>
               ))}
               <button
@@ -257,6 +931,9 @@ export default function RepairPage() {
                 />
                 <p className="text-purple-600 dark:text-purple-500">Ας το δούμε μαζί!</p>
               </button>
+            </div>
+            <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg text-sm text-gray-700 dark:text-gray-300 mb-6">
+              <p>* Οι παραπάνω τιμές είναι ενδεικτικές. Η τελική τιμή θα διαμορφωθεί βάσει της διαθεσιμότητας του ανταλλακτικού.</p>
             </div>
             <div className="flex justify-between items-center">
               <button
@@ -286,16 +963,10 @@ export default function RepairPage() {
             totalAmount={calculateTotal()}
             itemDetails={selectedIssues.map((issue) => ({
               title: `${selectedBrand} ${selectedModel} - ${issue}`,
-              price: parseInt(
-                commonIssues.find((i) => i.title === issue)?.price.replace(/\D/g, "") || "0"
-              ),
+              price: selectedBrand === "Αλλο" ? 0 : getPriceForIssue(issue),
             }))}
             onComplete={(data) => {
-              console.log("Η κράτηση ολοκληρώθηκε:", {
-                device: { brand: selectedBrand, model: selectedModel },
-                issues: selectedIssues,
-                booking: data,
-              });
+              handleRepairComplete(data);
             }}
             pageId={1}
             repair={true}
@@ -308,7 +979,7 @@ export default function RepairPage() {
   };
 
   return (
-    <div className="w-full flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-100">
+    <div className="overflow-hidden w-full flex flex-col justify-center items-center  min-h-[100dvh] bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-100">
       <Navbar />
 
       <main className="flex-grow max-w-7xl mx-auto px-4 py-12 w-full">

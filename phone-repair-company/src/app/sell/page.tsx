@@ -342,6 +342,35 @@ const SellPhonePage: React.FC = () => {
       // Store the listing ID for reference
       setListingId(data.listing.id);
       
+      // Send notification to admin about the new listing
+      try {
+        const notificationResponse = await fetch('/api/notifications/listing', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: data.listing.id,
+            brand: phoneDetails.brand,
+            model: phoneDetails.model,
+            storage: phoneDetails.storage,
+            condition: phoneDetails.condition,
+            price: estimatedPrice,
+            description: phoneDetails.description,
+            customerName: contactInfo.name,
+            customerEmail: contactInfo.email,
+            customerPhone: contactInfo.phone,
+            customerAddress: contactInfo.address,
+          }),
+        });
+        
+        if (!notificationResponse.ok) {
+          console.error('Failed to send admin notification about new listing');
+        }
+      } catch (notificationError) {
+        console.error('Error sending admin notification about new listing:', notificationError);
+      }
+      
       // Move to success step
       setStep(5);
       toast.success("Η παραγγελία σας υποβλήθηκε με επιτυχία!");

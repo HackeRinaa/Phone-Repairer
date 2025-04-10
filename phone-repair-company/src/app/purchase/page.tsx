@@ -193,6 +193,36 @@ export default function PurchasePage() {
           // Remove the phone from the displayed list without resetting the UI
           // This will allow the confirmation page to remain visible
           setPhones(phones.filter((phone) => phone.id !== selectedPhone.id));
+          
+          // Send notification to admin about the purchase
+          try {
+            const notificationResponse = await fetch('/api/notifications/purchase', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                brand: selectedPhone.brand,
+                model: selectedPhone.model,
+                price: selectedPhone.price,
+                condition: selectedPhone.condition,
+                storage: selectedPhone.storage,
+                color: selectedPhone.color,
+                customerName: data.contactInfo.name,
+                customerEmail: data.contactInfo.email,
+                customerPhone: data.contactInfo.phone,
+                customerAddress: data.contactInfo.address,
+                paymentMethod: data.paymentMethod,
+                notes: data.contactInfo.notes,
+              }),
+            });
+            
+            if (!notificationResponse.ok) {
+              console.error('Failed to send admin notification about purchase');
+            }
+          } catch (notificationError) {
+            console.error('Error sending admin notification about purchase:', notificationError);
+          }
         }
       } catch (err) {
         console.error("Error updating phone status:", err);
@@ -249,7 +279,7 @@ export default function PurchasePage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-100">
+    <div className="flex flex-col overflow-hidden min-h-[100dvh] bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-100">
       <Navbar />
 
       <main className="flex-grow max-w-7xl mx-auto px-4 py-12">
@@ -661,7 +691,7 @@ export default function PurchasePage() {
               },
             ]}
             onComplete={(data) => handlePurchaseComplete(data as BookingData)}
-            pageId={2} // Pass pageId === 2 to PaymentSection
+            pageId={3} // Pass pageId === 2 to PaymentSection
           />
         )}
       </main>

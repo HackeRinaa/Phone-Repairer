@@ -16,6 +16,7 @@ iRescue is a comprehensive mobile phone repair and service application that allo
 - **Secure Authentication:** User accounts and admin access
 - **Payment Integration:** Secure online payments with Stripe
 - **Responsive Design:** Works on mobile, tablet, and desktop
+- **Admin Notifications:** Receive notifications for new requests
 
 ## Technologies
 
@@ -54,6 +55,13 @@ STRIPE_WEBHOOK_SECRET="your-stripe-webhook-secret"
 
 # Time slots
 AVAILABLE_TIME_SLOTS="10:00-10:30,10:30-11:00,11:00-11:30,11:30-12:00,12:00-12:30,12:30-13:00,13:00-13:30,13:30-14:00,14:00-14:30,14:30-15:00,15:00-15:30,15:30-16:00,16:00-16:30,16:30-17:00,17:00-17:30,17:30-18:00,18:00-18:30,18:30-19:00,19:00-19:30,19:30-20:00"
+
+# Admin email for notifications
+ADMIN_EMAIL=your_admin_email@example.com
+EMAIL_PASSWORD=your_email_password
+
+# Site URL for admin links in emails
+NEXT_PUBLIC_SITE_URL=https://your-website.com
 ```
 
 ## Admin Setup
@@ -100,6 +108,24 @@ The deployment process will automatically:
 2. Set up the database schema if needed
 3. Generate the Prisma client
 4. Build and deploy the application
+
+## Email Notifications
+
+The website sends email notifications to the administrator (configured in `.env.local`) for the following events:
+
+1. **Contact Form Submissions** - When a customer submits the contact form
+2. **Repair Requests** - When a customer books a repair service
+3. **Phone Purchases** - When a customer buys a phone
+4. **New Phone Listings** - When a customer lists a phone for sale
+
+The emails contain all relevant information and link to the admin dashboard for further action.
+
+### Email Configuration
+
+- The system automatically detects the email provider based on the ADMIN_EMAIL (Gmail, Outlook, Yahoo, etc.)
+- For Gmail, you might need to enable "Less secure app access" or use an app password
+- For Outlook, consider using an app password as Microsoft has disabled basic authentication
+- If you use a different email provider, you can specify custom SMTP settings using the optional variables
 
 ## License
 

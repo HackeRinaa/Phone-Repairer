@@ -356,28 +356,12 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
         </div>
       </div>
 
-      {pageId !== 1 && (
+      {pageId === 3 && (
         <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm w-full">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Payment Method Selection */}
             <div className="md:col-span-1">
               <h3 className="text-xl font-semibold mb-4">Τρόπος Πληρωμής</h3>
-              <div className="space-y-3">
-                 <label className="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
-                   <input
-                     type="radio"
-                     name="paymentMethod"
-                     value="online"
-                     checked={bookingData.paymentMethod === 'online'}
-                     onChange={() => setBookingData({ ...bookingData, paymentMethod: 'online' })}
-                     className="mr-3"
-                   />
-                   <div>
-                     <div className="font-medium">Online Πληρωμή</div>
-                     <div className="text-sm text-gray-500">Πληρώστε με κάρτα</div>
-                   </div>
-                 </label>
-              </div>
               <div className="space-y-3">
                 <label className="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
                   <input
@@ -434,7 +418,7 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
         </div>
       )}
 
-      {pageId === 1 && (
+      {pageId === 1 &&  (
         <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm w-full">
           <button
             onClick={handleSubmit}

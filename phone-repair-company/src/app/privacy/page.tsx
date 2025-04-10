@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function PrivacyPolicyPage() {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-100">
+    <div className="min-h-[100dvh] overflow-hidden bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-100">
       <Navbar/>
       <main className="max-w-6xl mx-auto px-4 py-12">
         <h1 className="text-4xl sm:text-5xl font-bold mb-8 text-center dark:text-white text-gray-600">
