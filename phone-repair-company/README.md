@@ -130,3 +130,39 @@ The emails contain all relevant information and link to the admin dashboard for 
 ## License
 
 This project is licensed under the MIT License.
+
+# Vercel Deployment Troubleshooting
+
+If you encounter issues deploying to Vercel, try the following:
+
+## Common Issues and Solutions
+
+### Build Failures
+
+1. **Node.js Version**: Make sure Vercel is using Node.js 18.x (we've added `.nvmrc` and engine specification)
+2. **Prisma Issues**: If you see Prisma errors, try these steps:
+   - Check that your DATABASE_URL is correctly formatted
+   - Make sure pgbouncer is enabled with `?pgbouncer=true&connection_limit=1` in your connection string
+   - Ensure the database is accessible from Vercel's IP ranges
+
+### Environment Variables
+
+Make sure the following environment variables are correctly set in Vercel:
+
+- `DATABASE_URL` - Your Supabase PostgreSQL connection string
+- `NEXTAUTH_SECRET` 
+- `NEXTAUTH_URL` (set to your Vercel deployment URL)
+- `JWT_SECRET`
+- `EMAIL_USER` 
+- `EMAIL_PASSWORD` (App Password for Gmail)
+- `NEXT_PUBLIC_APP_URL` (your Vercel deployment URL)
+
+### Manual Deployment Steps
+
+If automatic GitHub deployment doesn't work, try deploying manually:
+
+1. Install Vercel CLI: `npm i -g vercel`
+2. Login: `vercel login`
+3. Deploy from your project root: `vercel --prod`
+
+See the full deployment guide in [DEPLOYMENT.md](./DEPLOYMENT.md)

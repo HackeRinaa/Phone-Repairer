@@ -1,12 +1,6 @@
 {
   "version": 2,
   "framework": "nextjs",
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/next"
-    }
-  ],
   "build": {
     "env": {
       "DATABASE_URL": "@DATABASE_URL",
@@ -18,8 +12,6 @@
       "NEXT_PUBLIC_APP_URL": "@NEXT_PUBLIC_APP_URL"
     }
   },
-  "installCommand": "npm install",
-  "buildCommand": "npm run vercel-build",
   "headers": [
     {
       "source": "/api/(.*)",
@@ -47,5 +39,9 @@
         { "key": "Cache-Control", "value": "public, max-age=604800" }
       ]
     }
-  ]
+  ],
+  "env": {
+    "POSTGRES_PRISMA_URL": "${env.DATABASE_URL}?pgbouncer=true&connection_limit=1",
+    "POSTGRES_URL_NON_POOLING": "${env.DATABASE_URL}"
+  }
 }

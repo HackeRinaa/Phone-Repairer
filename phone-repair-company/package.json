@@ -2,6 +2,9 @@
   "name": "irescue",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "18.x"
+  },
   "prisma": {
     "postinstall": "prisma generate"
   },
@@ -17,7 +20,7 @@
     "postinstall": "prisma generate",
     "fix-migrations": "node prisma/fix-migrations.mjs",
     "db-setup": "npm run fix-migrations && node prisma/setup-database.mjs",
-    "vercel-build": "prisma generate && next build",
+    "vercel-build": "prisma generate && prisma migrate deploy && next build",
     "deploy": "node scripts/deploy.mjs",
     "db-test": "node src/lib/db-test.mjs",
     "apply-migration": "prisma db execute --file ./prisma/migrations/20250402_add_available_hours/migration.sql"
