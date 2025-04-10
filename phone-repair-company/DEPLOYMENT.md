@@ -119,4 +119,53 @@ For additional performance:
 
 1. Consider enabling Vercel Edge Functions for faster global response times
 2. Use Vercel Analytics to monitor performance metrics
-3. Enable Vercel's Image Optimization API for better image loading 
+3. Enable Vercel's Image Optimization API for better image loading
+
+# Important Note About Database Deployment
+
+In the Vercel deployment process, the build phase happens in an isolated environment where environment variables from the Vercel dashboard are **not available**. This means that `DATABASE_URL` and other environment variables aren't available during the build.
+
+We've configured the project to handle this by:
+
+1. Using a dummy `DATABASE_URL` in `.env.production` for the build phase
+2. Skipping database migrations during the build phase
+3. Running migrations in a post-deploy hook when the real `DATABASE_URL` is available
+
+## Vercel Environment Variable Setup
+
+When setting up your project in Vercel, make sure to add all environment variables in the Vercel dashboard:
+
+1. Go to your project in the Vercel dashboard
+2. Navigate to Settings > Environment Variables
+3. Add all required variables:
+   - `DATABASE_URL` (your actual Supabase PostgreSQL connection string)
+   - `NEXTAUTH_SECRET`
+   - `NEXTAUTH_URL` (should be your Vercel deployment URL)
+   - `JWT_SECRET`
+   - `EMAIL_USER`
+   - `EMAIL_PASSWORD`
+   - `NEXT_PUBLIC_APP_URL`
+
+## Troubleshooting Database Connection Issues
+
+If your database isn't connecting after deployment:
+
+1. Verify the format of your `DATABASE_URL` environment variable
+2. Make sure your database allows connections from Vercel's IP ranges
+3. Add `?connection_limit=1` to your database URL if using Supabase
+4. Add `?schema=public` if your database requires a specific schema
+
+Example DATABASE_URL format for Supabase:
+```
+postgresql://postgres.user:password@aws-0-eu-central-1.pooler.supabase.com:5432/postgres?pgbouncer=true&connection_limit=1&schema=public
+```
+
+## Manual Database Migration
+
+If automatic migrations aren't working, you can manually apply them:
+
+1. Install the Vercel CLI: `npm i -g vercel`
+2. Log in: `vercel login`
+3. Pull environment variables: `vercel env pull`
+4. Run migrations manually: `npx prisma migrate deploy`
+5. Deploy again: `vercel --prod` 

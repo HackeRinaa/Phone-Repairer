@@ -1,17 +1,8 @@
 {
   "version": 2,
   "framework": "nextjs",
-  "build": {
-    "env": {
-      "DATABASE_URL": "@DATABASE_URL",
-      "NEXTAUTH_SECRET": "@NEXTAUTH_SECRET",
-      "NEXTAUTH_URL": "@NEXTAUTH_URL",
-      "JWT_SECRET": "@JWT_SECRET",
-      "EMAIL_USER": "@EMAIL_USER",
-      "EMAIL_PASSWORD": "@EMAIL_PASSWORD",
-      "NEXT_PUBLIC_APP_URL": "@NEXT_PUBLIC_APP_URL"
-    }
-  },
+  "buildCommand": "npm run vercel-build",
+  "outputDirectory": ".next",
   "headers": [
     {
       "source": "/api/(.*)",
@@ -39,9 +30,5 @@
         { "key": "Cache-Control", "value": "public, max-age=604800" }
       ]
     }
-  ],
-  "env": {
-    "POSTGRES_PRISMA_URL": "${env.DATABASE_URL}?pgbouncer=true&connection_limit=1",
-    "POSTGRES_URL_NON_POOLING": "${env.DATABASE_URL}"
-  }
+  ]
 }

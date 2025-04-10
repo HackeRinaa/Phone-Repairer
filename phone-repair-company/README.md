@@ -137,13 +137,35 @@ If you encounter issues deploying to Vercel, try the following:
 
 ## Common Issues and Solutions
 
-### Build Failures
+### Database URL Issues (Most Common)
 
-1. **Node.js Version**: Make sure Vercel is using Node.js 18.x (we've added `.nvmrc` and engine specification)
-2. **Prisma Issues**: If you see Prisma errors, try these steps:
-   - Check that your DATABASE_URL is correctly formatted
-   - Make sure pgbouncer is enabled with `?pgbouncer=true&connection_limit=1` in your connection string
-   - Ensure the database is accessible from Vercel's IP ranges
+The most common problem is that Vercel needs the DATABASE_URL environment variable during runtime, but not during build time. We've solved this by:
+
+1. Using a dummy DATABASE_URL in .env.production for the build
+2. Skipping migrations during the build process
+3. Running migrations separately after deployment (via our post-build script)
+
+### To Fix Database Issues:
+
+1. **Check Your Environment Variables in Vercel Dashboard**:
+   - Go to Project Settings > Environment Variables
+   - Make sure DATABASE_URL is correctly set with the format:
+   ```
+   postgresql://postgres.user:password@host:5432/postgres?pgbouncer=true&connection_limit=1
+   ```
+
+2. **Run Migrations Manually** (if needed):
+   ```bash
+   # Pull Vercel environment variables
+   vercel env pull
+   
+   # Then run migrations
+   npm run deploy-migrations
+   ```
+
+### Node.js Version
+
+Make sure Vercel is using Node.js 18.x (we've added `.nvmrc` and engine specification)
 
 ### Environment Variables
 
