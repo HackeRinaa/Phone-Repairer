@@ -53,6 +53,24 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
 
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // Add onBack prop handler
+  const handleBack = () => {
+    // When pageId is 1, go back to repair step 3
+    if (pageId === 1) {
+      // Navigate back to repair page with step=3 parameter
+      window.location.href = '/repair?step=3';
+    }
+    // When pageId is 3, go back to purchase step
+    else if (pageId === 3) {
+      // Navigate back to purchase page with step=3 parameter
+      window.location.href = '/purchase?step=3';
+    }
+    // Default fallback
+    else {
+      window.history.back();
+    }
+  };
+
   // Fetch available hours from API
   useEffect(() => {
     const fetchAvailableHours = async () => {
@@ -206,11 +224,11 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
         {pageId === 1 ? (
           <>
             <h2 className="text-2xl font-bold mb-4 dark:text-white text-gray-600">
-              Η αγγελία σας υποβλήθηκε με επιτυχία!
+              Η παραγγελία σας υποβλήθηκε με επιτυχία!
             </h2>
             
             <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Η αγγελία σας {phoneDetails.brand && phoneDetails.model ? `για το ${phoneDetails.brand} ${phoneDetails.model}` : 'για τη συσκευή σας'} έχει υποβληθεί και βρίσκεται υπό έγκριση. 
+              Η παραγγελία σας {phoneDetails.brand && phoneDetails.model ? `για το ${phoneDetails.brand} ${phoneDetails.model}` : 'για τη συσκευή σας'} έχει υποβληθεί και βρίσκεται υπό έγκριση. 
               Θα σας ενημερώσουμε μέσω email μόλις εγκριθεί.
             </p>
           </>
@@ -358,6 +376,17 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
 
       {pageId === 3 && (
         <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm w-full">
+          <div className="flex flex-col sm:flex-row gap-4 justify-between mb-4">
+            <button
+              onClick={handleBack}
+              className="px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-white rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+              </svg>
+              Πίσω
+            </button>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Payment Method Selection */}
             <div className="md:col-span-1">
@@ -415,28 +444,52 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
               </button>
             </div>
           </div>
+          
+          <div className="flex justify-start mt-4">
+            <button
+              onClick={handleBack}
+              className="px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-white rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+              </svg>
+              Πίσω
+            </button>
+          </div>
         </div>
       )}
 
       {pageId === 1 &&  (
         <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm w-full">
-          <button
-            onClick={handleSubmit}
-            disabled={!selectedDate || !selectedTime || !bookingData.contactInfo.name || isProcessing}
-            className="w-full mt-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:bg-gray-400"
-          >
-            {isProcessing ? (
-              <span className="flex items-center justify-center">
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Επεξεργασία...
-              </span>
-            ) : (
-              'Κράτηση Ημερομηνίας'
-            )}
-          </button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-between">
+            <button
+              onClick={handleBack}
+              className="px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-white rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+              </svg>
+              Πίσω
+            </button>
+            
+            <button
+              onClick={handleSubmit}
+              disabled={!selectedDate || !selectedTime || !bookingData.contactInfo.name || isProcessing}
+              className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:bg-gray-400 flex-grow sm:flex-grow-0"
+            >
+              {isProcessing ? (
+                <span className="flex items-center justify-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Επεξεργασία...
+                </span>
+              ) : (
+                'Κράτηση Ημερομηνίας'
+              )}
+            </button>
+          </div>
         </div>
       )}
 

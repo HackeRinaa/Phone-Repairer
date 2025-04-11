@@ -9,18 +9,26 @@ import toast from "react-hot-toast";
 // Phone brands and models (reusing from repair page)
 const phoneOptions = {
   Apple: [
+    "iPhone 16 Pro Max",
+    "iPhone 16 Pro",
+    "iPhone 16 Plus",
+    "iPhone 16",
     "iPhone 15 Pro Max",
     "iPhone 15 Pro",
     "iPhone 15",
+    "iPhone 15 Plus",
     "iPhone 14 Pro Max",
     "iPhone 14 Pro",
     "iPhone 14",
+    "iPhone 14 Plus",
     "iPhone 13 Pro Max",
     "iPhone 13 Pro",
     "iPhone 13",
+    "iPhone 13 mini",
     "iPhone 12 Pro Max",
     "iPhone 12 Pro",
     "iPhone 12",
+    "iPhone 12 mini",
     "iPhone 11 Pro Max",
     "iPhone 11 Pro",
     "iPhone 11",
@@ -28,6 +36,9 @@ const phoneOptions = {
     "iPhone SE (2020)",
   ],
   Samsung: [
+    "Galaxy S24 Ultra",
+    "Galaxy S24+",
+    "Galaxy S24",
     "Galaxy S23 Ultra",
     "Galaxy S23+",
     "Galaxy S23",
@@ -94,7 +105,7 @@ const stepTitles: Record<number, string> = {
 };
 
 const stepDescriptions: Record<number, string> = {
-  1: "Επιλέξτε τη εταιρία του κινητού σας για να ξεκινήσετε",
+  1: "Επιλέξτε την εταιρία του κινητού σας για να ξεκινήσετε",
   2: "Επιλέξτε το μοντέλο του κινητού σας",
   3: "Συμπληρώστε τις λεπτομέρειες της συσκευής σας",
   4: "Συμπληρώστε τα στοιχεία σας για να ολοκληρώσετε την αγγελία",
@@ -151,56 +162,61 @@ const SellPhonePage: React.FC = () => {
     // Set an estimated price based on brand and model
     let basePrice = 0;
     
-    // Determine base price by brand and model features
+    // Determine base price by brand and model features with lower starting values
     if (selectedBrand === "Apple") {
-      basePrice = model.includes("Pro Max") ? 800 : 
-                 model.includes("Pro") ? 700 : 
-                 model.includes("Plus") || model.includes("+") ? 600 :
-                 model.includes("Max") ? 650 : 
-                 model.includes("mini") ? 350 : 500;
+      basePrice = model.includes("Pro Max") ? 380 : 
+                 model.includes("Pro") ? 340 : 
+                 model.includes("Plus") || model.includes("+") ? 300 :
+                 model.includes("Max") ? 320 : 
+                 model.includes("mini") ? 220 : 280;
                  
       // Newer models are worth more
-      if (model.includes("15")) basePrice += 200;
-      else if (model.includes("14")) basePrice += 150;
-      else if (model.includes("13")) basePrice += 100;
-      else if (model.includes("12")) basePrice += 50;
+      if (model.includes("16")) basePrice += 100;
+      else if (model.includes("15")) basePrice += 80;
+      else if (model.includes("14")) basePrice += 60;
+      else if (model.includes("13")) basePrice += 40;
+      else if (model.includes("12")) basePrice += 20;
       
       // SE models are cheaper
-      if (model.includes("SE")) basePrice = 250;
+      if (model.includes("SE")) basePrice = 150;
     } 
     else if (selectedBrand === "Samsung") {
-      basePrice = model.includes("Ultra") ? 700 : 
-                 model.includes("+") ? 600 : 
-                 model.includes("Fold") ? 800 :
-                 model.includes("Flip") ? 600 : 
-                 model.startsWith("Galaxy S") ? 500 :
-                 model.startsWith("Galaxy A") ? 300 : 250;
+      basePrice = model.includes("Ultra") ? 350 : 
+                 model.includes("+") ? 300 : 
+                 model.includes("Fold") ? 400 :
+                 model.includes("Flip") ? 320 : 
+                 model.startsWith("Galaxy S") ? 250 :
+                 model.startsWith("Galaxy A") ? 150 : 100;
                  
       // Newer models are worth more
-      if (model.includes("23")) basePrice += 200;
-      else if (model.includes("22")) basePrice += 150;
-      else if (model.includes("21")) basePrice += 100;
+      if (model.includes("24")) basePrice += 100;
+      else if (model.includes("23")) basePrice += 80;
+      else if (model.includes("22")) basePrice += 60;
+      else if (model.includes("21")) basePrice += 40;
       
       // Z Fold/Flip models are premium
-      if (model.includes("Z Fold 5") || model.includes("Z Flip 5")) basePrice += 100;
+      if (model.includes("Z Fold 5") || model.includes("Z Flip 5")) basePrice += 50;
     }
     else if (selectedBrand === "Google") {
-      basePrice = model.includes("Pro") ? 600 : 500;
+      basePrice = model.includes("Pro") ? 280 : 220;
       
       // Newer models are worth more
-      if (model.includes("8")) basePrice += 150;
-      else if (model.includes("7")) basePrice += 100;
-      else if (model.includes("6")) basePrice += 50;
+      if (model.includes("8")) basePrice += 80;
+      else if (model.includes("7")) basePrice += 60;
+      else if (model.includes("6")) basePrice += 30;
     }
     else if (selectedBrand === "OnePlus") {
-      basePrice = model.startsWith("11") ? 500 :
-                 model.startsWith("10") ? 450 :
-                 model.includes("Nord") ? 250 : 350;
+      basePrice = model.startsWith("11") ? 250 :
+                 model.startsWith("10") ? 200 :
+                 model.includes("Nord") ? 120 : 150;
     }
     else {
       // Generic base price for other brands
-      basePrice = 250;
+      basePrice = 120;
     }
+    
+    // Ensure the price is within the 50-600 range
+    basePrice = Math.min(Math.max(basePrice, 50), 600);
     
     setEstimatedPrice(basePrice);
   };
@@ -215,9 +231,9 @@ const SellPhonePage: React.FC = () => {
     if (name === "condition") {
       const conditionMultipliers: Record<string, number> = {
         "Excellent": 1,
-        "VeryGood": 0.85,
-        "Good": 0.70,
-        "Fair": 0.50
+        "VeryGood": 0.8,
+        "Good": 0.65,
+        "Fair": 0.45
       };
       priceAdjustment = Math.round(estimatedPrice * (conditionMultipliers[value] || 1));
     }
@@ -226,15 +242,15 @@ const SellPhonePage: React.FC = () => {
       // First, remove any existing storage adjustment
       const previousStorage = phoneDetails.storage;
       
-      // Storage price adjustments based on brand
+      // Storage price adjustments based on brand - more moderate adjustments
       const getStorageValue = (storage: string, brand: string) => {
         const isApple = brand === "Apple";
         switch(storage) {
           case "64GB": return 0;
-          case "128GB": return isApple ? 50 : 30;
-          case "256GB": return isApple ? 100 : 60;
-          case "512GB": return isApple ? 200 : 100;
-          case "1TB": return isApple ? 300 : 150;
+          case "128GB": return isApple ? 30 : 20;
+          case "256GB": return isApple ? 60 : 40;
+          case "512GB": return isApple ? 90 : 60;
+          case "1TB": return isApple ? 120 : 80;
           default: return 0;
         }
       };
@@ -246,9 +262,14 @@ const SellPhonePage: React.FC = () => {
       priceAdjustment = priceAdjustment - previousAdjustment + newAdjustment;
     }
     
+    // Ensure the price stays within 50-600 range
+    priceAdjustment = Math.min(Math.max(priceAdjustment, 50), 600);
+    
     if (name === "price") {
-      // If user manually sets price, use that instead
-      setPhoneDetails({ ...phoneDetails, [name]: parseInt(value) || 0 });
+      // If user manually sets price, use that instead but keep within range
+      const manualPrice = parseInt(value) || 0;
+      const adjustedPrice = Math.min(Math.max(manualPrice, 50), 600);
+      setPhoneDetails({ ...phoneDetails, [name]: adjustedPrice });
     } else {
       setPhoneDetails({ ...phoneDetails, [name]: value });
       
@@ -446,7 +467,7 @@ const SellPhonePage: React.FC = () => {
               onClick={() => setStep(1)}
               className="mt-6 text-purple-600 hover:text-purple-700"
             >
-              ← Πίσω στις μάρκες
+              ← Πίσω στις εταιρίες
             </button>
           </div>
         );
@@ -538,9 +559,9 @@ const SellPhonePage: React.FC = () => {
                         <span className="text-right font-medium text-gray-800 dark:text-gray-200">
                           {estimatedPrice / (
                             phoneDetails.condition === "Excellent" ? 1 :
-                            phoneDetails.condition === "VeryGood" ? 0.85 :
-                            phoneDetails.condition === "Good" ? 0.70 :
-                            phoneDetails.condition === "Fair" ? 0.50 : 1
+                            phoneDetails.condition === "VeryGood" ? 0.8 :
+                            phoneDetails.condition === "Good" ? 0.65 :
+                            phoneDetails.condition === "Fair" ? 0.45 : 1
                           )}€
                         </span>
                         
@@ -559,13 +580,13 @@ const SellPhonePage: React.FC = () => {
                             }`}>
                               {phoneDetails.condition === "Excellent" ? "0€" : 
                                `-${Math.round(estimatedPrice / (
-                                 phoneDetails.condition === "VeryGood" ? 0.85 :
-                                 phoneDetails.condition === "Good" ? 0.70 :
-                                 phoneDetails.condition === "Fair" ? 0.50 : 1
+                                 phoneDetails.condition === "VeryGood" ? 0.8 :
+                                 phoneDetails.condition === "Good" ? 0.65 :
+                                 phoneDetails.condition === "Fair" ? 0.45 : 1
                                ) * (1 - (
-                                 phoneDetails.condition === "VeryGood" ? 0.85 :
-                                 phoneDetails.condition === "Good" ? 0.70 :
-                                 phoneDetails.condition === "Fair" ? 0.50 : 1
+                                 phoneDetails.condition === "VeryGood" ? 0.8 :
+                                 phoneDetails.condition === "Good" ? 0.65 :
+                                 phoneDetails.condition === "Fair" ? 0.45 : 1
                                )))}€`}
                             </span>
                           </>
@@ -579,14 +600,14 @@ const SellPhonePage: React.FC = () => {
                             <span className="text-right font-medium text-green-600 dark:text-green-400">
                               {phoneDetails.storage === "64GB" ? "0€" : `+${
                                 (phoneDetails.brand === "Apple" ? 
-                                  (phoneDetails.storage === "128GB" ? 50 :
-                                   phoneDetails.storage === "256GB" ? 100 :
-                                   phoneDetails.storage === "512GB" ? 200 :
-                                   phoneDetails.storage === "1TB" ? 300 : 0) :
                                   (phoneDetails.storage === "128GB" ? 30 :
                                    phoneDetails.storage === "256GB" ? 60 :
-                                   phoneDetails.storage === "512GB" ? 100 :
-                                   phoneDetails.storage === "1TB" ? 150 : 0)
+                                   phoneDetails.storage === "512GB" ? 90 :
+                                   phoneDetails.storage === "1TB" ? 120 : 0) :
+                                  (phoneDetails.storage === "128GB" ? 20 :
+                                   phoneDetails.storage === "256GB" ? 40 :
+                                   phoneDetails.storage === "512GB" ? 60 :
+                                   phoneDetails.storage === "1TB" ? 80 : 0)
                                 )
                               }€`}
                             </span>

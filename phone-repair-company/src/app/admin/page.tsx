@@ -182,7 +182,7 @@ export default function AdminDashboard() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     // For simplicity, hardcoded credentials - in a real app, use proper authentication
-    if (username === "admin" && password === "admin123") {
+    if (username === "iRescue2025" && password === "Jerryjojo840!") {
       setIsAuthenticated(true);
       localStorage.setItem("adminAuthenticated", "true");
       
