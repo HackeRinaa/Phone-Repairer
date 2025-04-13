@@ -61,6 +61,67 @@ export default function PrivacyPolicyPage() {
             </div>
           </section>
         </div>
+        
+        {/* Document Links Section */}
+        <section className="mt-12 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
+          <h2 className="text-2xl font-semibold mb-4 dark:text-white text-gray-600">
+            Σχετικά Έγγραφα
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <a 
+              href="/documents/ΣυμμόρφωσηΕΝ.ΠροστασίαΔεδομένων.ΠολιτικήCookies.ΕΝΟΜΙΚΟΣΥΜΒΟΥΛΟ.pdf" 
+              target="_blank"
+              className="flex items-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors"
+            >
+              <div className="mr-3 text-purple-600 dark:text-purple-400">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <span className="dark:text-white text-gray-600">Προστασία Δεδομένων και Cookies</span>
+            </a>
+
+
+            <a 
+              href="/documents/ΑναφοράΠροβλήματοςΠαράδοσηςΣυσκευής.pdf" 
+              target="_blank"
+              className="flex items-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors"
+            >
+              <div className="mr-3 text-purple-600 dark:text-purple-400">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <span className="dark:text-white text-gray-600">Αναφορά προβλήματος παράδοσης</span>
+            </a>
+            
+            <a 
+              href="/documents/ΌροικΠροϋποθέσειςΥπηρεσίαςΠαραλαβήςκΕπιστροφήςΣυσκευών.pdf" 
+              target="_blank"
+              className="flex items-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors"
+            >
+              <div className="mr-3 text-purple-600 dark:text-purple-400">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <span className="dark:text-white text-gray-600">Όροι Παραλαβής και Επιστροφής</span>
+            </a>
+            
+            <a 
+              href="/documents/ΌροικΠροϋποθέσειςΥπηρεσίαςΠαράδοσηςΜεταχειρισμένωνΣυσκευών.pdf" 
+              target="_blank"
+              className="flex items-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors"
+            >
+              <div className="mr-3 text-purple-600 dark:text-purple-400">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <span className="dark:text-white text-gray-600">Όροι Παράδωσης Συσκευής</span>
+            </a>
+          </div>
+        </section>
       </main>
       <footer className="py-5 flex items-center justify-center gap-8 text-sm text-gray-700 dark:text-gray-400 border-t border-gray-300 dark:border-gray-800 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
         <Link href="/privacy" className="hover:text-purple-600 dark:hover:text-purple-400">Πολιτική Απορρήτου & Όροι Χρήσης</Link>

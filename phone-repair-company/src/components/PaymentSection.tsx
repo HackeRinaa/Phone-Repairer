@@ -2,9 +2,20 @@
 import { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
 import './Calendar.css';
+import './CalendarFix.css';
 import Link from 'next/link';
 import { v4 as uuidv4 } from 'uuid';
 
+// Define interface for available day from API
+interface AvailableDayResponse {
+  id: string;
+  date: string;
+  fullDay?: boolean;
+  fullday?: boolean;
+  note: string | null;
+  isActive?: boolean;
+  isactive?: boolean;
+}
 
 interface PaymentSectionProps {
   totalAmount: number;
@@ -27,7 +38,36 @@ interface BookingData {
   paymentMethod: 'online' | 'instore';
 }
 
+// Helper function to format date for consistent display
+const formatDateForDisplay = (date: Date): string => {
+  return date.toISOString().split('T')[0];
+};
 
+// Helper function to parse date from string safely
+const parseDateString = (dateStr: string): Date => {
+  let date;
+  try {
+    // Try to parse the date string
+    if (dateStr.includes('T')) {
+      // ISO format
+      date = new Date(dateStr);
+    } else {
+      // Date only format (YYYY-MM-DD)
+      date = new Date(dateStr + 'T00:00:00');
+    }
+    
+    // Ensure it's a valid date
+    if (isNaN(date.getTime())) {
+      throw new Error('Invalid date');
+    }
+  } catch (error) {
+    console.error('Error parsing date:', error);
+    // Default to current date if parsing fails
+    date = new Date();
+  }
+  
+  return date;
+}
 
 export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }: PaymentSectionProps) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -53,6 +93,16 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
 
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // Add new state for available days
+  const [availableDays, setAvailableDays] = useState<Array<{
+    id: string;
+    date: string;
+    fullDay: boolean;
+    note: string | null;
+    isActive: boolean;
+  }>>([]);
+  const [loadingDays, setLoadingDays] = useState(false);
+
   // Add onBack prop handler
   const handleBack = () => {
     // When pageId is 1, go back to repair step 3
@@ -70,6 +120,58 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
       window.history.back();
     }
   };
+
+  // Fetch available days from API
+  useEffect(() => {
+    const fetchAvailableDays = async () => {
+      try {
+        setLoadingDays(true);
+        console.log('Fetching available days...');
+        const response = await fetch('/api/available-days');
+        
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Available days data:', data);
+          
+          if (data.days && Array.isArray(data.days)) {
+            // Make sure to normalize the property names and parse dates correctly
+            const normalizedDays = data.days.map((day: AvailableDayResponse) => {
+              // Parse the date to ensure it's properly formatted
+              const parsedDate = parseDateString(day.date);
+              
+              return {
+                id: day.id,
+                date: parsedDate.toISOString(), // Store as ISO string for consistency
+                fullDay: day.fullDay !== undefined ? day.fullDay : day.fullday,
+                note: day.note,
+                isActive: day.isActive !== undefined ? day.isActive : day.isactive
+              };
+            });
+            
+            setAvailableDays(normalizedDays);
+            console.log(`Normalized ${normalizedDays.length} available days`);
+          } else {
+            console.warn('No available days data received or invalid format');
+            setAvailableDays([]);
+          }
+        } else {
+          // Log error details
+          const errorText = await response.text();
+          console.error('Failed to fetch available days. Status:', response.status, 'Response:', errorText);
+          
+          // Fallback - if no days configured, all days will be available
+          setAvailableDays([]);
+        }
+      } catch (error) {
+        console.error('Error fetching available days:', error);
+        setAvailableDays([]);
+      } finally {
+        setLoadingDays(false);
+      }
+    };
+
+    fetchAvailableDays();
+  }, []);
 
   // Fetch available hours from API
   useEffect(() => {
@@ -95,6 +197,91 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
 
     fetchAvailableHours();
   }, []);
+
+  // Function to check if a date is available
+  const isDateAvailable = (date: Date): boolean => {
+    // If no days are configured, all days are available
+    if (availableDays.length === 0) {
+      return true;
+    }
+    
+    // Format the input date to YYYY-MM-DD to ignore time part
+    const dateString = formatDateForDisplay(date);
+    
+    // Log for debugging
+    console.log(`Checking availability for ${dateString}, available days: ${availableDays.length}`);
+    
+    // Check if this date exists in available days and is active
+    const isAvailable = availableDays.some(day => {
+      // Parse the stored date for consistent formatting
+      const availableDayDate = parseDateString(day.date);
+      const availableDate = formatDateForDisplay(availableDayDate);
+      
+      const matches = availableDate === dateString && day.isActive;
+      
+      if (availableDate === dateString) {
+        console.log(`Found matching date: ${availableDate} with isActive: ${day.isActive}`);
+      }
+      
+      return matches;
+    });
+    
+    if (!isAvailable) {
+      console.log(`No available days found for ${dateString}`);
+    }
+    
+    return isAvailable;
+  };
+
+  // Function to filter available hours based on current time 
+  // (if booking for today, only show hours that are at least 1 hour in the future)
+  const getFilteredHours = (): string[] => {
+    if (!selectedDate) return [];
+    
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const selectedDay = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
+    
+    // If selected date is today, filter hours
+    if (selectedDay.getTime() === today.getTime()) {
+      const currentHour = now.getHours();
+      const currentMinutes = now.getMinutes();
+      
+      return availableHours.filter(hour => {
+        const [hourStr, minuteStr] = hour.split(':');
+        const bookingHour = parseInt(hourStr, 10);
+        const bookingMinute = parseInt(minuteStr, 10);
+        
+        // Allow booking if the time is at least 1 hour in the future
+        if (bookingHour > currentHour + 1) {
+          return true;
+        } else if (bookingHour === currentHour + 1) {
+          return bookingMinute >= currentMinutes;
+        }
+        return false;
+      });
+    }
+    
+    // For future dates, return all available hours
+    return availableHours;
+  };
+
+  // Calendar tileDisabled function to disable unavailable dates
+  const tileDisabled = ({ date, view }: { date: Date; view: string }) => {
+    // Disable dates in month view only
+    if (view !== 'month') return false;
+    
+    // Disable past dates
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    if (date < today) return true;
+    
+    // For debugging - show date we're checking
+    console.log(`Checking calendar tile: ${formatDateForDisplay(date)}`);
+    
+    // If available days are configured, check if this date is in the list
+    return !isDateAvailable(date);
+  };
 
   const handleInputChange = (field: keyof BookingData['contactInfo'], value: string) => {
     let isValid = true;
@@ -266,19 +453,33 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
         {/* Left Column - Calendar & Time Slots */}
         <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm w-full">
           <h3 className="text-xl font-semibold mb-4 dark:text-white text-gray-600">Επιλέξτε Ημερομηνία & Ώρα</h3>
-          <Calendar
-            onChange={(value) => setSelectedDate(value as Date)}
-            value={selectedDate}
-            minDate={new Date()}
-            className="w-full border-0 rounded-lg mb-6 calendar-container"
-            formatShortWeekday={(locale, date) => 
-              date.toLocaleDateString('el', { weekday: 'short' }).substring(0, 3)
-            }
-            nextLabel="→"
-            prevLabel="←"
-            next2Label={null}
-            prev2Label={null}
-          />
+          {loadingDays ? (
+            <div className="flex justify-center py-4">
+              <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-purple-500"></div>
+            </div>
+          ) : (
+            <Calendar
+              onChange={(value) => {
+                setSelectedDate(value as Date);
+                setSelectedTime(''); // Reset time when date changes
+              }}
+              value={selectedDate}
+              minDate={new Date()}
+              className="w-full border-0 rounded-lg mb-6 calendar-container"
+              formatShortWeekday={(locale, date) => {
+                // Use English weekday names for consistency
+                const day = date.toLocaleDateString('en-US', { weekday: 'short' });
+                return day.substring(0, 3);
+              }}
+              locale="en-US"
+              calendarType="gregory"
+              nextLabel="→"
+              prevLabel="←"
+              next2Label={null}
+              prev2Label={null}
+              tileDisabled={tileDisabled}
+            />
+          )}
           
           {selectedDate && (
             <div className="mt-6">
@@ -289,20 +490,26 @@ export function PaymentSection({ totalAmount, itemDetails, onComplete, pageId }:
                 </div>
               ) : (
                 <div className="grid grid-cols-3 gap-2 dark:text-white text-gray-600">
-                  {availableHours.map((time) => (
-                    <button
-                      key={time}
-                      type="button"
-                      onClick={() => setSelectedTime(time)}
-                      className={`p-3 text-sm rounded-lg transition-colors ${
-                        selectedTime === time 
-                          ? 'bg-purple-100 dark:bg-purple-900 border-2 border-purple-500' 
-                          : 'bg-gray-50 dark:bg-gray-700 hover:shadow-md transition-all hover:scale-105 dark:hover:bg-purple-600'
-                      }`}
-                    >
-                      {time}
-                    </button>
-                  ))}
+                  {getFilteredHours().length > 0 ? (
+                    getFilteredHours().map((time) => (
+                      <button
+                        key={time}
+                        type="button"
+                        onClick={() => setSelectedTime(time)}
+                        className={`p-3 text-sm rounded-lg transition-colors ${
+                          selectedTime === time 
+                            ? 'bg-purple-100 dark:bg-purple-900 border-2 border-purple-500' 
+                            : 'bg-gray-50 dark:bg-gray-700 hover:shadow-md transition-all hover:scale-105 dark:hover:bg-purple-600'
+                        }`}
+                      >
+                        {time}
+                      </button>
+                    ))
+                  ) : (
+                    <div className="col-span-3 text-center py-4 text-yellow-600 dark:text-yellow-400">
+                      Δεν υπάρχουν διαθέσιμες ώρες για την επιλεγμένη ημερομηνία.
+                    </div>
+                  )}
                 </div>
               )}
             </div>

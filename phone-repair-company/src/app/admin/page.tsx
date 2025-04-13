@@ -4,6 +4,18 @@ import React, { useState, useEffect, useCallback } from "react";
 import { getAllImagesFromString, imagesToJsonString } from "@/lib/imageUtils";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
+import 'react-calendar/dist/Calendar.css';
+
+// Define the AvailableDay interface
+interface AvailableDay {
+  id: string;
+  date: string;
+  isactive?: boolean;
+  isActive?: boolean;
+  fullday?: boolean;
+  fullDay?: boolean;
+  note?: string;
+}
 
 interface Booking {
   id: string;
@@ -120,6 +132,13 @@ export default function AdminDashboard() {
   // Add state variables for edit phone image uploads
   const [editPhoneImages, setEditPhoneImages] = useState<string[]>([]);
   const [isUploadingEditPhoneImages, setIsUploadingEditPhoneImages] = useState(false);
+
+  // Add new state for available days
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [fullDay, setFullDay] = useState(true);
+  const [note, setNote] = useState('');
+  const [availableDays, setAvailableDays] = useState<AvailableDay[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Add function to handle image file uploads
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1008,6 +1027,143 @@ export default function AdminDashboard() {
       setEditPhoneImages([]);
     }
   }, [editingPhone]);
+
+  // Function to fetch available days
+  const fetchAvailableDays = async () => {
+    try {
+      console.log('Fetching available days for admin...');
+      setIsLoading(true);
+      const response = await fetch('/api/admin/available-days?adminKey=admin123');
+      const data = await response.json();
+      
+      if (data.success) {
+        console.log('Available days fetched:', data.availableDays);
+        // Normalize the isActive property to ensure consistent use
+        const normalizedDays = data.availableDays.map((day: AvailableDay) => ({
+          ...day,
+          id: day.id,
+          date: day.date,
+          isactive: day.isactive !== undefined ? day.isactive : day.isActive,
+          fullday: day.fullday !== undefined ? day.fullday : day.fullDay,
+          note: day.note
+        }));
+        setAvailableDays(normalizedDays);
+      } else {
+        console.error('Failed to fetch available days:', data.error);
+      }
+    } catch (error) {
+      console.error('Error fetching available days:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Function to add/update an available day
+  const addAvailableDay = async () => {
+    if (!selectedDate) return;
+    
+    try {
+      // Format the date as YYYY-MM-DD string to avoid timezone issues
+      const dateString = selectedDate.toISOString().split('T')[0];
+      
+      console.log('Adding available day:', {
+        date: dateString,
+        fullday: fullDay,
+        note,
+        isActive: true
+      });
+      
+      setIsLoading(true);
+      const response = await fetch('/api/admin/available-days?adminKey=admin123', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          date: dateString,
+          fullday: fullDay,
+          note,
+          isActive: true
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        console.log('Day added successfully:', data.day);
+        fetchAvailableDays();
+        setSelectedDate(null);
+        setFullDay(true);
+        setNote('');
+      } else {
+        console.error('Failed to add day:', data.error);
+      }
+    } catch (error) {
+      console.error('Error adding available day:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Function to delete an available day
+  const deleteAvailableDay = async (id: string | undefined) => {
+    if (!id) {
+      toast.error("Cannot delete day: missing ID");
+      return;
+    }
+    
+    try {
+      const response = await fetch(
+        `/api/admin/available-days?adminKey=admin123&id=${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (response.ok) {
+        toast.success("Day deleted successfully");
+        fetchAvailableDays();
+      } else {
+        const errorData = await response.json();
+        toast.error(errorData.error || "Failed to delete day");
+      }
+    } catch (error) {
+      console.error("Error deleting available day:", error);
+      toast.error("Failed to delete day");
+    }
+  };
+
+  // Function to toggle day status (active/inactive)
+  const toggleDayStatus = async (day: AvailableDay) => {
+    try {
+      console.log('Toggling day status:', day);
+      setIsLoading(true);
+      
+      const response = await fetch('/api/admin/available-days?adminKey=admin123', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...day,
+          isActive: !day.isactive
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        console.log('Day status toggled successfully:', data.day);
+        fetchAvailableDays();
+      } else {
+        console.error('Failed to toggle day status:', data.error);
+      }
+    } catch (error) {
+      console.error('Error toggling day status:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   if (!isAuthenticated) {
     return (
@@ -3089,6 +3245,150 @@ export default function AdminDashboard() {
                       )}
                     </>
                   )}
+                </div>
+                
+                {/* Available Days Section */}
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-600 dark:text-white mb-4">
+                    Available Days
+                  </h3>
+                  
+                  {/* Add new day form */}
+                  <div className="mb-6 bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                    <h4 className="text-md font-medium text-gray-600 dark:text-white mb-3">
+                      Add New Available Day
+                    </h4>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-600 dark:text-white mb-1">
+                          Date
+                        </label>
+                        <input
+                          type="date"
+                          value={selectedDate ? selectedDate.toISOString().split('T')[0] : ''}
+                          onChange={(e) => setSelectedDate(e.target.value ? new Date(e.target.value) : null)}
+                          className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-white text-gray-600"
+                          min={new Date().toISOString().split('T')[0]}
+                          required
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-600 dark:text-white mb-1">
+                          Full Day
+                        </label>
+                        <select
+                          value={fullDay ? "true" : "false"}
+                          onChange={(e) => setFullDay(e.target.value === "true")}
+                          className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-white text-gray-600"
+                        >
+                          <option value="true">Yes</option>
+                          <option value="false">No</option>
+                        </select>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-600 dark:text-white mb-1">
+                          Note (Optional)
+                        </label>
+                        <input
+                          type="text"
+                          value={note}
+                          onChange={(e) => setNote(e.target.value)}
+                          className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-white text-gray-600"
+                          placeholder="e.g. Holiday, Special Hours"
+                        />
+                      </div>
+                    </div>
+                    
+                    <button
+                      onClick={addAvailableDay}
+                      className="mt-4 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? "Adding..." : "Add Day"}
+                    </button>
+                  </div>
+                  
+                  {/* Days list */}
+                  <div className="overflow-x-auto">
+                    {isLoading ? (
+                      <div className="flex justify-center py-8">
+                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500"></div>
+                      </div>
+                    ) : availableDays.length > 0 ? (
+                      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead className="bg-gray-50 dark:bg-gray-700">
+                          <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                              Date
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                              Full Day
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                              Note
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                              Status
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                              Actions
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                          {availableDays.map((day) => (
+                            <tr key={day.id} className={!day.isactive ? "opacity-60" : ""}>
+                              <td className="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-white">
+                                {new Date(day.date).toLocaleDateString()}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-white">
+                                {day.fullday ? "Yes" : "No"}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-white">
+                                {day.note || "-"}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span
+                                  className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                    day.isactive
+                                      ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                                      : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                                  }`}
+                                >
+                                  {day.isactive ? "Active" : "Inactive"}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button
+                                  onClick={() => toggleDayStatus(day)}
+                                  className={`mr-2 px-3 py-1 rounded ${
+                                    day.isactive
+                                      ? "bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900 dark:text-red-200"
+                                      : "bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900 dark:text-green-200"
+                                  }`}
+                                >
+                                  {day.isactive ? "Deactivate" : "Activate"}
+                                </button>
+                                <button
+                                  onClick={() => deleteAvailableDay(day.id)}
+                                  className="px-3 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200 dark:bg-red-900 dark:text-red-200"
+                                >
+                                  Delete
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    ) : (
+                      <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                        No available days configured. Add some days to get started.
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
