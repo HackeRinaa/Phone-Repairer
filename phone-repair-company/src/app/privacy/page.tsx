@@ -69,7 +69,7 @@ export default function PrivacyPolicyPage() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <a 
-              href="/documents/ΣυμμόρφωσηΕΝ.ΠροστασίαΔεδομένων.ΠολιτικήCookies.ΕΝΟΜΙΚΟΣΥΜΒΟΥΛΟ.pdf" 
+              href="/documents/ΠροστασίαΔεδομένωνκαιCookies.pdf" 
               target="_blank"
               className="flex items-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors"
             >
@@ -83,7 +83,7 @@ export default function PrivacyPolicyPage() {
 
 
             <a 
-              href="/documents/ΑναφοράΠροβλήματοςΠαράδοσηςΣυσκευής.pdf" 
+              href="/documents/ΠολιτικήΕγγυήσεωνΚΕΠΙΣΤΡΟΦΩΝ.pdf" 
               target="_blank"
               className="flex items-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors"
             >
@@ -92,11 +92,11 @@ export default function PrivacyPolicyPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
-              <span className="dark:text-white text-gray-600">Αναφορά προβλήματος παράδοσης</span>
+              <span className="dark:text-white text-gray-600">Πολιτική Εγγυήσεων και Επιστροφών</span>
             </a>
             
             <a 
-              href="/documents/ΌροικΠροϋποθέσειςΥπηρεσίαςΠαραλαβήςκΕπιστροφήςΣυσκευών.pdf" 
+              href="/documents/ΌροιΠαραλαβήςκαιΕπιστροφής.pdf" 
               target="_blank"
               className="flex items-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors"
             >
@@ -109,7 +109,7 @@ export default function PrivacyPolicyPage() {
             </a>
             
             <a 
-              href="/documents/ΌροικΠροϋποθέσειςΥπηρεσίαςΠαράδοσηςΜεταχειρισμένωνΣυσκευών.pdf" 
+              href="/documents/ΌροιΠαράδωσηςΣυσκευής.pdf" 
               target="_blank"
               className="flex items-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors"
             >

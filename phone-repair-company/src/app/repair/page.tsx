@@ -8,102 +8,147 @@ import Link from "next/link";
 
 const phoneOptions = {
   Apple: [
-    "iPhone 16 Pro Max",
-    "iPhone 16 Pro",
-    "iPhone 16 Plus",
-    "iPhone 16",
-    "iPhone 15 Pro Max",
-    "iPhone 15 Pro",
-    "iPhone 15",
-    "iPhone 15 Plus",
-    "iPhone 14 Pro Max",
-    "iPhone 14 Pro",
-    "iPhone 14",
-    "iPhone 14 Plus",
-    "iPhone 13 Pro Max",
-    "iPhone 13 Pro",
-    "iPhone 13",
-    "iPhone 13 mini",
-    "iPhone 12 Pro Max",
-    "iPhone 12 Pro",
-    "iPhone 12",
-    "iPhone 12 mini",
-    "iPhone 11 Pro Max",
-    "iPhone 11 Pro",
-    "iPhone 11",
-    "iPhone SE (2022)",
-    "iPhone SE (2020)",
+    'iphone 15 pro',
+    'iphone 15 pro max',
+    'iphone 15',
+    'iphone 15 plus',
+    'iphone 14 pro',
+    'iphone 14 pro max',
+    'iphone 14',
+    'iphone 14 plus',
+    'iphone 13 pro',
+    'iphone 13 pro max',
+    'iphone 13',
+    'iphone 13 mini',
+    'iphone 12 pro',
+    'iphone 12 pro max',
+    'iphone 12',
+    'iphone 12 mini',
+    'iphone 11 pro',
+    'iphone 11 pro max',
+    'iphone 11',
+    'iphone XR',
+    'iphone X',
+    'iphone XS',
+    'iphone XS max',
+    'iphone 8',
+    'iphone 8 plus',
+    'iphone 7',
+    'iphone 7 plus',
+    'iphone 6',
+    'iphone 6 plus',
+    'iphone 6s',
+    'iphone 6s plus',
+    'iphone SE 2020',
+    'iphone SE 2022'
   ],
   Samsung: [
-    "Galaxy S24 Ultra",
-    "Galaxy S24+",
-    "Galaxy S24",
-    "Galaxy S23 Ultra",
-    "Galaxy S23+",
-    "Galaxy S23",
-    "Galaxy S22 Ultra",
-    "Galaxy S22+",
-    "Galaxy S22",
-    "Galaxy S21 Ultra",
-    "Galaxy S21+",
-    "Galaxy S21",
-    "Galaxy Z Fold 5",
-    "Galaxy Z Flip 5",
-    "Galaxy Z Fold 4",
-    "Galaxy Z Flip 4",
-    "Galaxy A54",
-    "Galaxy A34",
-    "Galaxy A14",
-    "Galaxy M54",
-    "Galaxy M34",
+    'S24 Ultra',
+    'S24 Plus',
+    'S24',
+    'S23 Ultra',
+    'S23 Plus',
+    'S23',
+    'S22 Ultra',
+    'S22 Plus',
+    'S22',
+    'S21 Ultra',
+    'S21 Plus',
+    'S21',
+    'S21 FE',
+    'S20 Ultra',
+    'S20 Plus',
+    'S20',
+    'S20 FE 4G',
+    'S20 FE 5G',
+    'S10',
+    'S10 5G',
+    'S10 Plus',
+    'S10 Lite',
+    'S10 e',
+    'S9',
+    'S9 Plus',
+    'S8',
+    'S8 Plus',
+    'Note 20 Ultra',
+    'Note20',
+    'Note 10 lite',
+    'Note 10 Plus',
+    'Note 10',
+    'Note 9',
+    'Note 8',
+    'Galaxy A(2015)',
+    'Galaxy A(2016)',
+    'Galaxy A(2017)',
+    'Galaxy A(2018)',
+    'Ax0',
+    'Ax1',
+    'Ax2',
+    'Ax3',
+    'Ax4',
+    'Ax5',
+    'Ax6',
+    'Z Flip 4',
+    'Z Flip 5',
+    'Z Fold 4',
+    'Z Fold 5'
   ],
   Google: [
-    "Pixel 8 Pro",
-    "Pixel 8",
-    "Pixel 7 Pro",
-    "Pixel 7",
-    "Pixel 6 Pro",
-    "Pixel 6",
-    "Pixel 5",
-    "Pixel 4a",
-    "Pixel 4 XL",
-    "Pixel 4",
+    'Pixel 8 Pro',
+    'Pixel 8',
+    'Pixel 7 Pro',
+    'Pixel 7',
+    'Pixel 6 Pro',
+    'Pixel 6',
+    'Pixel 5',
+    'Pixel 4a',
+    'Pixel 4 XL',
+    'Pixel 4'
   ],
   Huawei: [
-    "Mate 60 Pro",
-    "Mate 50 Pro",
-    "Mate 40 Pro",
-    "P60 Pro",
-    "P50 Pro",
-    "P40 Pro",
-    "Nova 11",
-    "Nova 10",
-    "Nova 9",
+    'Mate 60 Pro',
+    'Mate 50 Pro',
+    'Mate 40 Pro',
+    'P60 Pro',
+    'P50 Pro',
+    'P40 Pro',
+    'Nova 11',
+    'Nova 10',
+    'Nova 9'
   ],
   Xiaomi: [
-    "Mi 13 Pro",
-    "Mi 13",
-    "Mi 12 Pro",
-    "Mi 12",
-    "Redmi Note 12 Pro",
-    "Redmi Note 12",
-    "Redmi Note 11",
-    "Poco F5",
-    "Poco X5 Pro",
-    "Poco X5",
+    'Redmi Note 8 Pro',
+    'Redmi Note 9 Pro',
+    'Redmi Note 9',
+    'Redmi Note 10 Pro 5G',
+    'Redmi Note 10 5G',
+    'Redmi Note 11 Pro 5G',
+    'Redmi Note 11 4G',
+    'Redmi Note 11s 4G',
+    'Redmi Note 12 Pro 5G',
+    'Redmi Note 13 5G',
+    'Redmi Note 13 Pro 5G',
+    'Redmi Note 14 Pro+',
+    'Poco C65',
+    'Poco F5 5G',
+    'Poco X6 5G',
+    'Poco X6 Pro 5G',
+    'Poco M6 Pro 5G',
+    'Poco X5 Pro 5G',
+    'Poco M5s'
   ],
   OnePlus: [
-    "11 5G",
-    "10 Pro",
-    "10T",
-    "Nord 3",
-    "Nord CE 3",
-    "Nord N30",
-    "Nord N20",
+    '11 5G',
+    '10 Pro',
+    '10T',
+    'Nord 3',
+    'Nord CE 3',
+    'Nord N30',
+    'Nord N20'
   ],
   Αλλο: [
     
-  ],
+  ]
 };
 
 // Pricing data structure
@@ -129,110 +174,231 @@ type BrandPricing = {
 };
 
 
-// Google Pricing Structure
-const googlePricing: BrandPricing = {
-  "Pixel 8 Pro": {
-    screenRepair: {
-      original: { part: 228, price: 265.2 }
-    },
-    battery: { part: 30.48, price: 67.68 },
-    chargingPort: { part: 28.76, price: 65.96 },
-    backCover: { part: 37.85, price: 75.05 },
-    camera: { part: 58, price: 95.2 }
-  },
-  "Pixel 8": {
-    screenRepair: {
-      original: { part: 198, price: 235.2 }
-    },
-    battery: { part: 28.48, price: 65.68 },
-    chargingPort: { part: 26.76, price: 63.96 },
-    backCover: { part: 35.85, price: 73.05 },
-    camera: { part: 53, price: 90.2 }
-  }
-};
-
-// Huawei Pricing Structure
-const huaweiPricing: BrandPricing = {
-  "Mate 60 Pro": {
-    screenRepair: {
-      original: { part: 218, price: 255.2 }
-    },
-    battery: { part: 29.48, price: 66.68 },
-    chargingPort: { part: 27.76, price: 64.96 },
-    backCover: { part: 36.85, price: 74.05 },
-    camera: { part: 56, price: 93.2 }
-  }
-};
-
 // Xiaomi Pricing Structure
 const xiaomiPricing: BrandPricing = {
+  // Redmi Note Series
+  "Redmi Note 8 Pro": {
+    screenRepair: {
+      original: { part: 79, price: 79 }
+    },
+    battery: { part: 59, price: 59 },
+    chargingPort: { part: 0, price: 0 },
+    backCover: { part: 0, price: 0 },
+    camera: { part: 0, price: 0 }
+  },
+  "Redmi Note 9 Pro": {
+    screenRepair: {
+      original: { part: 79, price: 79 }
+    },
+    battery: { part: 49, price: 49 },
+    chargingPort: { part: 0, price: 0 },
+    backCover: { part: 0, price: 0 },
+    camera: { part: 0, price: 0 }
+  },
+  "Redmi Note 9": {
+    screenRepair: {
+      original: { part: 79, price: 79 }
+    },
+    battery: { part: 49, price: 49 },
+    chargingPort: { part: 0, price: 0 },
+    backCover: { part: 0, price: 0 },
+    camera: { part: 0, price: 0 }
+  },
+  "Redmi Note 10 Pro 5G": {
+    screenRepair: {
+      original: { part: 110, price: 110 }
+    },
+    battery: { part: 49, price: 49 },
+    chargingPort: { part: 0, price: 0 },
+    backCover: { part: 0, price: 0 },
+    camera: { part: 0, price: 0 }
+  },
+  "Redmi Note 10 5G": {
+    screenRepair: {
+      original: { part: 89, price: 89 }
+    },
+    battery: { part: 69, price: 69 },
+    chargingPort: { part: 0, price: 0 },
+    backCover: { part: 0, price: 0 },
+    camera: { part: 0, price: 0 }
+  },
+  "Redmi Note 11 Pro 5G": {
+    screenRepair: {
+      original: { part: 105, price: 105 }
+    },
+    battery: { part: 69, price: 69 },
+    chargingPort: { part: 0, price: 0 },
+    backCover: { part: 0, price: 0 },
+    camera: { part: 0, price: 0 }
+  },
+  "Redmi Note 11 4G": {
+    screenRepair: {
+      original: { part: 89, price: 89 }
+    },
+    battery: { part: 59, price: 59 },
+    chargingPort: { part: 0, price: 0 },
+    backCover: { part: 0, price: 0 },
+    camera: { part: 0, price: 0 }
+  },
+  "Redmi Note 11s 4G": {
+    screenRepair: {
+      original: { part: 110, price: 110 }
+    },
+    battery: { part: 59, price: 59 },
+    chargingPort: { part: 0, price: 0 },
+    backCover: { part: 0, price: 0 },
+    camera: { part: 0, price: 0 }
+  },
+  "Redmi Note 12 Pro 5G": {
+    screenRepair: {
+      original: { part: 89, price: 89 }
+    },
+    battery: { part: 59, price: 59 },
+    chargingPort: { part: 0, price: 0 },
+    backCover: { part: 0, price: 0 },
+    camera: { part: 0, price: 0 }
+  },
+  "Redmi Note 13 5G": {
+    screenRepair: {
+      original: { part: 89, price: 89 }
+    },
+    battery: { part: 49, price: 49 },
+    chargingPort: { part: 0, price: 0 },
+    backCover: { part: 0, price: 0 },
+    camera: { part: 0, price: 0 }
+  },
+  "Redmi Note 13 Pro 5G": {
+    screenRepair: {
+      original: { part: 110, price: 110 }
+    },
+    battery: { part: 69, price: 69 },
+    chargingPort: { part: 0, price: 0 },
+    backCover: { part: 0, price: 0 },
+    camera: { part: 0, price: 0 }
+  },
+  "Redmi Note 14 Pro+": {
+    screenRepair: {
+      original: { part: 129, price: 129 }
+    },
+    battery: { part: 69, price: 69 },
+    chargingPort: { part: 0, price: 0 },
+    backCover: { part: 0, price: 0 },
+    camera: { part: 0, price: 0 }
+  },
+
+  // Poco Series
+  "Poco C65": {
+    screenRepair: {
+      original: { part: 69, price: 69 }
+    },
+    battery: { part: 55, price: 55 },
+    chargingPort: { part: 0, price: 0 },
+    backCover: { part: 0, price: 0 },
+    camera: { part: 0, price: 0 }
+  },
+  "Poco F5 5G": {
+    screenRepair: {
+      original: { part: 99, price: 99 }
+    },
+    battery: { part: 59, price: 59 },
+    chargingPort: { part: 0, price: 0 },
+    backCover: { part: 0, price: 0 },
+    camera: { part: 0, price: 0 }
+  },
+  "Poco X6 5G": {
+    screenRepair: {
+      original: { part: 159, price: 159 }
+    },
+    battery: { part: 59, price: 59 },
+    chargingPort: { part: 0, price: 0 },
+    backCover: { part: 0, price: 0 },
+    camera: { part: 0, price: 0 }
+  },
+  "Poco X6 Pro 5G": {
+    screenRepair: {
+      original: { part: 129, price: 129 }
+    },
+    battery: { part: 69, price: 69 },
+    chargingPort: { part: 0, price: 0 },
+    backCover: { part: 0, price: 0 },
+    camera: { part: 0, price: 0 }
+  },
+  "Poco M6 Pro 5G": {
+    screenRepair: {
+      original: { part: 119, price: 119 }
+    },
+    battery: { part: 69, price: 69 },
+    chargingPort: { part: 0, price: 0 },
+    backCover: { part: 0, price: 0 },
+    camera: { part: 0, price: 0 }
+  },
+  "Poco X5 Pro 5G": {
+    screenRepair: {
+      original: { part: 119, price: 119 }
+    },
+    battery: { part: 59, price: 59 },
+    chargingPort: { part: 0, price: 0 },
+    backCover: { part: 0, price: 0 },
+    camera: { part: 0, price: 0 }
+  },
+  "Poco M5s": {
+    screenRepair: {
+      original: { part: 99, price: 99 }
+    },
+    battery: { part: 59, price: 59 },
+    chargingPort: { part: 0, price: 0 },
+    backCover: { part: 0, price: 0 },
+    camera: { part: 0, price: 0 }
+  },
+
+  // Other Xiaomi Models
   "Mi 13 Pro": {
     screenRepair: {
-      original: { part: 208, price: 245.2 }
+      original: { part: 0, price: 0 }
     },
-    battery: { part: 27.48, price: 64.68 },
-    chargingPort: { part: 25.76, price: 62.96 },
-    backCover: { part: 34.85, price: 72.05 },
-    camera: { part: 52, price: 89.2 }
+    battery: { part: 0, price: 0 },
+    chargingPort: { part: 0, price: 0 },
+    backCover: { part: 0, price: 0 },
+    camera: { part: 0, price: 0 }
   }
 };
-
 // OnePlus Pricing Structure
-const oneplusPricing: BrandPricing = {
-  "11 5G": {
-    screenRepair: {
-      original: { part: 198, price: 235.2 }
-    },
-    battery: { part: 28.48, price: 65.68 },
-    chargingPort: { part: 26.76, price: 63.96 },
-    backCover: { part: 35.85, price: 73.05 },
-    camera: { part: 51, price: 88.2 }
-  }
-};
+
 
 // iPhone Pricing Structure
 const iphonePricing: BrandPricing = {
-  "iPhone 16 Pro Max": {
+  // iPhone 15 Series
+  "iphone 15": {
     screenRepair: {
-      hq: { part: 419, price: 419 },
-      standard: { part: 419, price: 419 }
+      hq: { part: 249, price: 249 },
+      standard: { part: 249, price: 249 }
     },
-    battery: { part: 89, price: 89 },
-    chargingPort: { part: 199, price: 199 },
-    camera: { part: 189, price: 189 },
-    backCover: { part: 189, price: 189 }
+    battery: { part: 79, price: 79 },
+    chargingPort: { part: 159, price: 159 },
+    camera: { part: 149, price: 149 },
+    backCover: { part: 149, price: 149 }
   },
-  "iPhone 16 Pro": {
+  "iphone 15 plus": {
     screenRepair: {
-      hq: { part: 389, price: 389 },
-      standard: { part: 389, price: 389 }
+      hq: { part: 279, price: 279 },
+      standard: { part: 279, price: 279 }
     },
-    battery: { part: 89, price: 89 },
-    chargingPort: { part: 189, price: 189 },
-    camera: { part: 189, price: 189 },
-    backCover: { part: 179, price: 179 }
-  },
-  "iPhone 16 Plus": {
-    screenRepair: {
-      hq: { part: 299, price: 299 },
-      standard: { part: 299, price: 299 }
-    },
-    battery: { part: 89, price: 89 },
-    chargingPort: { part: 179, price: 179 },
-    camera: { part: 159, price: 159 },
-    backCover: { part: 169, price: 169 }
-  },
-  "iPhone 16": {
-    screenRepair: {
-      hq: { part: 269, price: 269 },
-      standard: { part: 269, price: 269 }
-    },
-    battery: { part: 89, price: 89 },
+    battery: { part: 79, price: 79 },
     chargingPort: { part: 169, price: 169 },
-    camera: { part: 159, price: 159 },
+    camera: { part: 149, price: 149 },
     backCover: { part: 159, price: 159 }
   },
-  "iPhone 15 Pro Max": {
+  "iphone 15 pro": {
+    screenRepair: {
+      hq: { part: 319, price: 319 },
+      standard: { part: 319, price: 319 }
+    },
+    battery: { part: 79, price: 79 },
+    chargingPort: { part: 179, price: 179 },
+    camera: { part: 179, price: 179 },
+    backCover: { part: 169, price: 169 }
+  },
+  "iphone 15 pro max": {
     screenRepair: {
       hq: { part: 369, price: 369 },
       standard: { part: 369, price: 369 }
@@ -242,177 +408,135 @@ const iphonePricing: BrandPricing = {
     camera: { part: 179, price: 179 },
     backCover: { part: 179, price: 179 }
   },
-  "iPhone 15 Pro": {
+
+  // iPhone 14 Series
+  "iphone 14": {
     screenRepair: {
-      hq: { part: 329, price: 329 },
-      standard: { part: 329, price: 329 }
-    },
-    battery: { part: 79, price: 79 },
-    chargingPort: { part: 179, price: 179 },
-    camera: { part: 169, price: 169 },
-    backCover: { part: 169, price: 169 }
-  },
-  "iPhone 15": {
-    screenRepair: {
-      hq: { part: 209, price: 209 },
-      standard: { part: 209, price: 209 }
-    },
-    battery: { part: 79, price: 79 },
-    chargingPort: { part: 169, price: 169 },
-    camera: { part: 149, price: 149 },
-    backCover: { part: 149, price: 149 }
-  },
-  "iPhone 15 Plus": {
-    screenRepair: {
-      hq: { part: 249, price: 249 },
-      standard: { part: 249, price: 249 }
-    },
-    battery: { part: 79, price: 79 },
-    chargingPort: { part: 169, price: 169 },
-    camera: { part: 149, price: 149 },
-    backCover: { part: 159, price: 159 }
-  },
-  "iPhone 14 Pro Max": {
-    screenRepair: {
-      hq: { part: 289, price: 289 },
-      standard: { part: 289, price: 289 }
+      hq: { part: 199, price: 199 },
+      standard: { part: 199, price: 199 }
     },
     battery: { part: 69, price: 69 },
-    chargingPort: { part: 169, price: 169 },
-    camera: { part: 159, price: 159 },
-    backCover: { part: 169, price: 169 }
-  },
-  "iPhone 14 Pro": {
-    screenRepair: {
-      hq: { part: 269, price: 269 },
-      standard: { part: 269, price: 269 }
-    },
-    battery: { part: 69, price: 69 },
-    chargingPort: { part: 159, price: 159 },
-    camera: { part: 159, price: 159 },
-    backCover: { part: 159, price: 159 }
-  },
-  "iPhone 14": {
-    screenRepair: {
-      hq: { part: 189, price: 189 },
-      standard: { part: 189, price: 189 }
-    },
-    battery: { part: 69, price: 69 },
-    chargingPort: { part: 149, price: 149 },
-    camera: { part: 139, price: 139 },
+    chargingPort: { part: 89, price: 89 },
+    camera: { part: 249, price: 249 },
     backCover: { part: 139, price: 139 }
   },
-  "iPhone 14 Plus": {
-    screenRepair: {
-      hq: { part: 229, price: 229 },
-      standard: { part: 229, price: 229 }
-    },
-    battery: { part: 69, price: 69 },
-    chargingPort: { part: 149, price: 149 },
-    camera: { part: 139, price: 139 },
-    backCover: { part: 149, price: 149 }
-  },
-  "iPhone 13 Pro Max": {
-    screenRepair: {
-      hq: { part: 249, price: 249 },
-      standard: { part: 249, price: 249 }
-    },
-    battery: { part: 69, price: 69 },
-    chargingPort: { part: 149, price: 149 },
-    camera: { part: 149, price: 149 },
-    backCover: { part: 159, price: 159 }
-  },
-  "iPhone 13 Pro": {
+  "iphone 14 plus": {
     screenRepair: {
       hq: { part: 219, price: 219 },
       standard: { part: 219, price: 219 }
     },
     battery: { part: 69, price: 69 },
-    chargingPort: { part: 139, price: 139 },
-    camera: { part: 139, price: 139 },
-    backCover: { part: 139, price: 139 }
-  },
-  "iPhone 13": {
-    screenRepair: {
-      hq: { part: 169, price: 169 },
-      standard: { part: 169, price: 169 }
-    },
-    battery: { part: 69, price: 69 },
-    chargingPort: { part: 129, price: 129 },
-    camera: { part: 129, price: 129 },
+    chargingPort: { part: 79, price: 79 },
+    camera: { part: 249, price: 249 },
     backCover: { part: 129, price: 129 }
   },
-  "iPhone 13 mini": {
+  "iphone 14 pro": {
     screenRepair: {
-      hq: { part: 149, price: 149 },
-      standard: { part: 149, price: 149 }
+      hq: { part: 299, price: 299 },
+      standard: { part: 299, price: 299 }
     },
     battery: { part: 69, price: 69 },
-    chargingPort: { part: 119, price: 119 },
-    camera: { part: 119, price: 119 },
-    backCover: { part: 119, price: 119 }
+    chargingPort: { part: 85, price: 85 },
+    camera: { part: 259, price: 259 },
+    backCover: { part: 299, price: 299 }
   },
-  "iPhone 12 Pro Max": {
+  "iphone 14 pro max": {
     screenRepair: {
-      hq: { part: 199, price: 199 },
-      standard: { part: 199, price: 199 }
+      hq: { part: 339, price: 339 },
+      standard: { part: 339, price: 339 }
     },
-    battery: { part: 59, price: 59 },
-    chargingPort: { part: 139, price: 139 },
-    camera: { part: 129, price: 129 },
-    backCover: { part: 139, price: 139 }
+    battery: { part: 69, price: 69 },
+    chargingPort: { part: 85, price: 85 },
+    camera: { part: 259, price: 259 },
+    backCover: { part: 319, price: 319 }
   },
-  "iPhone 12 Pro": {
+
+  // iPhone 13 Series
+  "iphone 13": {
     screenRepair: {
       hq: { part: 179, price: 179 },
       standard: { part: 179, price: 179 }
     },
-    battery: { part: 59, price: 59 },
-    chargingPort: { part: 119, price: 119 },
+    battery: { part: 55, price: 55 },
+    chargingPort: { part: 79, price: 79 },
+    camera: { part: 239, price: 239 },
+    backCover: { part: 199, price: 199 }
+  },
+  "iphone 13 mini": {
+    screenRepair: {
+      hq: { part: 169, price: 169 },
+      standard: { part: 169, price: 169 }
+    },
+    battery: { part: 55, price: 55 },
+    chargingPort: { part: 79, price: 79 },
     camera: { part: 119, price: 119 },
-    backCover: { part: 119, price: 119 }
+    backCover: { part: 149, price: 149 }
   },
-  "iPhone 12": {
+  "iphone 13 pro": {
     screenRepair: {
-      hq: { part: 139, price: 139 },
-      standard: { part: 139, price: 139 }
+      hq: { part: 249, price: 249 },
+      standard: { part: 249, price: 249 }
     },
-    battery: { part: 59, price: 59 },
-    chargingPort: { part: 99, price: 99 },
-    camera: { part: 99, price: 99 },
-    backCover: { part: 99, price: 99 }
+    battery: { part: 55, price: 55 },
+    chargingPort: { part: 89, price: 89 },
+    camera: { part: 219, price: 219 },
+    backCover: { part: 219, price: 219 }
   },
-  "iPhone 12 mini": {
+  "iphone 13 pro max": {
     screenRepair: {
-      hq: { part: 119, price: 119 },
-      standard: { part: 119, price: 119 }
+      hq: { part: 279, price: 279 },
+      standard: { part: 279, price: 279 }
     },
-    battery: { part: 59, price: 59 },
-    chargingPort: { part: 99, price: 99 },
-    camera: { part: 99, price: 99 },
-    backCover: { part: 99, price: 99 }
+    battery: { part: 55, price: 55 },
+    chargingPort: { part: 89, price: 89 },
+    camera: { part: 169, price: 169 },
+    backCover: { part: 179, price: 179 }
   },
-  "iPhone 11 Pro Max": {
+
+  // iPhone 12 Series
+  "iphone 12": {
     screenRepair: {
-      hq: { part: 159, price: 159 },
-      standard: { part: 159, price: 159 }
+      hq: { part: 189, price: 189 },
+      standard: { part: 189, price: 189 }
+    },
+    battery: { part: 49, price: 49 },
+    chargingPort: { part: 69, price: 69 },
+    camera: { part: 99, price: 99 },
+    backCover: { part: 149, price: 149 }
+  },
+  "iphone 12 pro": {
+    screenRepair: {
+      hq: { part: 189, price: 189 },
+      standard: { part: 189, price: 189 }
+    },
+    battery: { part: 49, price: 49 },
+    chargingPort: { part: 69, price: 69 },
+    camera: { part: 99, price: 99 },
+    backCover: { part: 159, price: 159 }
+  },
+  "iphone 12 pro max": {
+    screenRepair: {
+      hq: { part: 219, price: 219 },
+      standard: { part: 219, price: 219 }
     },
     battery: { part: 55, price: 55 },
     chargingPort: { part: 69, price: 69 },
-    camera: { part: 109, price: 109 },
-    backCover: { part: 139, price: 139 },
+    camera: { part: 159, price: 159 },
+    backCover: { part: 179, price: 179 }
   },
-  "iPhone 11 Pro": {
+  "iphone 12 mini": {
     screenRepair: {
-      hq: { part: 129, price: 129 },
-      standard: { part: 129, price: 129 }
+      hq: { part: 149, price: 149 },
+      standard: { part: 149, price: 149 }
     },
-    battery: { part: 55, price: 55 },
+    battery: { part: 49, price: 49 },
     chargingPort: { part: 69, price: 69 },
-    camera: { part: 109, price: 109 },
-    backCover: { part: 119, price: 119 },
+    camera: { part: 159, price: 159 },
+    backCover: { part: 139, price: 139 }
   },
-  "iPhone 11": {
+
+  // iPhone 11 Series
+  "iphone 11": {
     screenRepair: {
       hq: { part: 69, price: 69 },
       standard: { part: 69, price: 69 }
@@ -420,221 +544,621 @@ const iphonePricing: BrandPricing = {
     battery: { part: 49, price: 49 },
     chargingPort: { part: 49, price: 49 },
     camera: { part: 69, price: 69 },
-    backCover: { part: 99, price: 99 },
+    backCover: { part: 99, price: 99 }
   },
-  "iPhone SE (2022)": {
+  "iphone 11 pro": {
+    screenRepair: {
+      hq: { part: 129, price: 129 },
+      standard: { part: 129, price: 129 }
+    },
+    battery: { part: 55, price: 55 },
+    chargingPort: { part: 69, price: 69 },
+    camera: { part: 109, price: 109 },
+    backCover: { part: 119, price: 119 }
+  },
+  "iphone 11 pro max": {
+    screenRepair: {
+      hq: { part: 159, price: 159 },
+      standard: { part: 159, price: 159 }
+    },
+    battery: { part: 55, price: 55 },
+    chargingPort: { part: 69, price: 69 },
+    camera: { part: 109, price: 109 },
+    backCover: { part: 139, price: 139 }
+  },
+
+  // Older Models
+  "iphone XR": {
+    screenRepair: {
+      hq: { part: 79, price: 79 },
+      standard: { part: 79, price: 79 }
+    },
+    battery: { part: 49, price: 49 },
+    chargingPort: { part: 49, price: 49 },
+    camera: { part: 69, price: 69 }
+  },
+  "iphone X": {
+    screenRepair: {
+      hq: { part: 99, price: 99 },
+      standard: { part: 99, price: 99 }
+    },
+    battery: { part: 49, price: 49 },
+    chargingPort: { part: 49, price: 49 },
+    camera: { part: 69, price: 69 }
+  },
+  "iphone XS": {
+    screenRepair: {
+      hq: { part: 109, price: 109 },
+      standard: { part: 109, price: 109 }
+    },
+    battery: { part: 49, price: 49 },
+    chargingPort: { part: 49, price: 49 },
+    camera: { part: 79, price: 79 }
+  },
+  "iphone XS max": {
+    screenRepair: {
+      hq: { part: 119, price: 119 },
+      standard: { part: 119, price: 119 }
+    },
+    battery: { part: 49, price: 49 },
+    chargingPort: { part: 49, price: 49 },
+    camera: { part: 79, price: 79 }
+  },
+  "iphone 8": {
+    screenRepair: {
+      hq: { part: 59, price: 59 },
+      standard: { part: 59, price: 59 }
+    },
+    battery: { part: 39, price: 39 },
+    chargingPort: { part: 49, price: 49 },
+    camera: { part: 59, price: 59 }
+  },
+  "iphone 8 plus": {
+    screenRepair: {
+      hq: { part: 59, price: 59 },
+      standard: { part: 59, price: 59 }
+    },
+    battery: { part: 39, price: 39 },
+    chargingPort: { part: 49, price: 49 },
+    camera: { part: 69, price: 69 }
+  },
+  "iphone 7": {
+    screenRepair: {
+      hq: { part: 49, price: 49 },
+      standard: { part: 49, price: 49 }
+    },
+    battery: { part: 39, price: 39 },
+    chargingPort: { part: 49, price: 49 },
+    camera: { part: 59, price: 59 }
+  },
+  "iphone 7 plus": {
+    screenRepair: {
+      hq: { part: 59, price: 59 },
+      standard: { part: 59, price: 59 }
+    },
+    battery: { part: 39, price: 39 },
+    chargingPort: { part: 49, price: 49 },
+    camera: { part: 79, price: 79 }
+  },
+  "iphone 6": {
+    screenRepair: {
+      hq: { part: 49, price: 49 },
+      standard: { part: 49, price: 49 }
+    },
+    battery: { part: 39, price: 39 },
+    chargingPort: { part: 39, price: 39 },
+    camera: { part: 39, price: 39 }
+  },
+  "iphone 6 plus": {
+    screenRepair: {
+      hq: { part: 55, price: 55 },
+      standard: { part: 55, price: 55 }
+    },
+    battery: { part: 39, price: 39 },
+    chargingPort: { part: 39, price: 39 },
+    camera: { part: 39, price: 39 }
+  },
+  "iphone 6s": {
+    screenRepair: {
+      hq: { part: 59, price: 59 },
+      standard: { part: 59, price: 59 }
+    },
+    battery: { part: 39, price: 39 },
+    chargingPort: { part: 39, price: 39 },
+    camera: { part: 39, price: 39 }
+  },
+  "iphone 6s plus": {
+    screenRepair: {
+      hq: { part: 59, price: 59 },
+      standard: { part: 59, price: 59 }
+    },
+    battery: { part: 39, price: 39 },
+    chargingPort: { part: 39, price: 39 },
+    camera: { part: 39, price: 39 }
+  },
+  "iphone SE 2020": {
     screenRepair: {
       hq: { part: 59, price: 59 },
       standard: { part: 59, price: 59 }
     },
     battery: { part: 59, price: 59 },
     chargingPort: { part: 69, price: 69 },
-    camera: { part: 69, price: 69 },
-    backCover: { part: 69, price: 69 },
+    camera: { part: 69, price: 69 }
   },
-  "iPhone SE (2020)": {
+  "iphone SE 2022": {
     screenRepair: {
       hq: { part: 59, price: 59 },
       standard: { part: 59, price: 59 }
     },
     battery: { part: 59, price: 59 },
     chargingPort: { part: 69, price: 69 },
-    camera: { part: 69, price: 69 },
-    backCover: { part: 69, price: 69 },
+    camera: { part: 69, price: 69 }
   }
 };
 
 // Samsung Pricing Structure
 const samsungPricing: BrandPricing = {
-  "Galaxy S24 Ultra": {
+  // S24 Series
+  "S24 Ultra": {
     screenRepair: {
-      original: { part: 489, price: 489 },
-      withFrame: { part: 489, price: 489 }
-    },
-    battery: { part: 99, price: 99 },
-    chargingPort: { part: 89, price: 89 },
-    backCover: { part: 89, price: 89 },
-    camera: { part: 45, price: 53.1 }
-  },
-  "Galaxy S24+": {
-    screenRepair: {
-      original: { part: 339, price: 339 },
-      withFrame: { part: 339, price: 339 }
-    },
-    battery: { part: 89, price: 89 },
-    chargingPort: { part: 85, price: 85 },
-    backCover: { part: 79, price: 79 },
-    camera: { part: 45, price: 53.1 }
-  },
-  "Galaxy S24": {
-    screenRepair: {
-      original: { part: 289, price: 289 },
-      withFrame: { part: 289, price: 289 }
+      original: { part: 420, price: 420 },
+      withFrame: { part: 420, price: 420 }
     },
     battery: { part: 89, price: 89 },
     chargingPort: { part: 79, price: 79 },
-    backCover: { part: 79, price: 79 },
-    camera: { part: 45, price: 53.1 }
+    backCover: { part: 75, price: 75 }
   },
-  "Galaxy S23 Ultra": {
+  "S24 Plus": {
+    screenRepair: {
+      original: { part: 259, price: 259 },
+      withFrame: { part: 259, price: 259 }
+    },
+    battery: { part: 79, price: 79 },
+    chargingPort: { part: 79, price: 79 },
+    backCover: { part: 70, price: 70 }
+  },
+  "S24": {
+    screenRepair: {
+      original: { part: 229, price: 229 },
+      withFrame: { part: 229, price: 229 }
+    },
+    battery: { part: 79, price: 79 },
+    chargingPort: { part: 79, price: 79 },
+    backCover: { part: 70, price: 70 }
+  },
+
+  // S23 Series
+  "S23 Ultra": {
     screenRepair: {
       original: { part: 439, price: 439 },
       withFrame: { part: 439, price: 439 }
     },
     battery: { part: 89, price: 89 },
     chargingPort: { part: 79, price: 79 },
-    backCover: { part: 79, price: 79 },
-    camera: { part: 40, price: 47.2 }
+    backCover: { part: 79, price: 79 }
   },
-  "Galaxy S23+": {
+  "S23 Plus": {
     screenRepair: {
       original: { part: 239, price: 239 },
       withFrame: { part: 239, price: 239 }
     },
     battery: { part: 79, price: 79 },
     chargingPort: { part: 75, price: 75 },
-    backCover: { part: 69, price: 69 },
-    camera: { part: 40, price: 47.2 }
+    backCover: { part: 69, price: 69 }
   },
-  "Galaxy S23": {
+  "S23": {
     screenRepair: {
       original: { part: 229, price: 229 },
       withFrame: { part: 229, price: 229 }
     },
     battery: { part: 79, price: 79 },
     chargingPort: { part: 69, price: 69 },
-    backCover: { part: 69, price: 69 },
-    camera: { part: 40, price: 47.2 }
+    backCover: { part: 69, price: 69 }
   },
-  "Galaxy S22 Ultra": {
+
+  // S22 Series
+  "S22 Ultra": {
     screenRepair: {
       original: { part: 310, price: 310 },
       withFrame: { part: 310, price: 310 }
     },
     battery: { part: 79, price: 79 },
     chargingPort: { part: 69, price: 69 },
-    backCover: { part: 79, price: 79 },
-    camera: { part: 40, price: 47.2 }
+    backCover: { part: 79, price: 79 }
   },
-  "Galaxy S22+": {
+  "S22 Plus": {
     screenRepair: {
       original: { part: 215, price: 215 },
       withFrame: { part: 215, price: 215 }
     },
     battery: { part: 69, price: 69 },
     chargingPort: { part: 69, price: 69 },
-    backCover: { part: 69, price: 69 },
-    camera: { part: 40, price: 47.2 }
+    backCover: { part: 69, price: 69 }
   },
-  "Galaxy S22": {
+  "S22": {
     screenRepair: {
       original: { part: 209, price: 209 },
       withFrame: { part: 209, price: 209 }
     },
     battery: { part: 69, price: 69 },
     chargingPort: { part: 65, price: 65 },
-    backCover: { part: 69, price: 69 },
-    camera: { part: 40, price: 47.2 }
+    backCover: { part: 69, price: 69 }
   },
-  "Galaxy S21 Ultra": {
+
+  // S21 Series
+  "S21 Ultra": {
     screenRepair: {
       original: { part: 349, price: 349 },
       withFrame: { part: 349, price: 349 }
     },
     battery: { part: 69, price: 69 },
     chargingPort: { part: 65, price: 65 },
-    backCover: { part: 79, price: 79 },
-    camera: { part: 40, price: 47.2 }
+    backCover: { part: 79, price: 79 }
   },
-  "Galaxy S21+": {
+  "S21 Plus": {
     screenRepair: {
       original: { part: 229, price: 229 },
       withFrame: { part: 229, price: 229 }
     },
     battery: { part: 69, price: 69 },
     chargingPort: { part: 60, price: 60 },
-    backCover: { part: 59, price: 59 },
-    camera: { part: 40, price: 47.2 }
+    backCover: { part: 59, price: 59 }
   },
-  "Galaxy S21": {
+  "S21": {
     screenRepair: {
       original: { part: 219, price: 219 },
       withFrame: { part: 219, price: 219 }
     },
     battery: { part: 65, price: 65 },
     chargingPort: { part: 60, price: 60 },
-    backCover: { part: 69, price: 69 },
-    camera: { part: 40, price: 47.2 }
+    backCover: { part: 69, price: 69 }
   },
-  "Galaxy Z Fold 5": {
+  "S21 FE": {
     screenRepair: {
-      original: { part: 669, price: 669 }, // inner screen
-      withFrame: { part: 180, price: 180 } // outer screen
+      original: { part: 179, price: 179 },
+      withFrame: { part: 179, price: 179 }
     },
-    battery: { part: 89, price: 89 },
-    chargingPort: { part: 79, price: 79 },
-    backCover: { part: 79, price: 79 },
-    camera: { part: 40, price: 47.2 }
+    battery: { part: 69, price: 69 },
+    chargingPort: { part: 60, price: 60 },
+    backCover: { part: 59, price: 59 }
   },
-  "Galaxy Z Flip 5": {
+
+  // S20 Series
+  "S20 Ultra": {
+    screenRepair: {
+      original: { part: 269, price: 269 },
+      withFrame: { part: 269, price: 269 }
+    },
+    battery: { part: 69, price: 69 },
+    chargingPort: { part: 65, price: 65 },
+    backCover: { part: 69, price: 69 }
+  },
+  "S20 Plus": {
+    screenRepair: {
+      original: { part: 249, price: 249 },
+      withFrame: { part: 249, price: 249 }
+    },
+    battery: { part: 69, price: 69 },
+    chargingPort: { part: 65, price: 65 },
+    backCover: { part: 69, price: 69 }
+  },
+  "S20": {
+    screenRepair: {
+      original: { part: 249, price: 249 },
+      withFrame: { part: 249, price: 249 }
+    },
+    battery: { part: 69, price: 69 },
+    chargingPort: { part: 59, price: 59 },
+    backCover: { part: 65, price: 65 }
+  },
+  "S20 FE 4G": {
+    screenRepair: {
+      original: { part: 149, price: 149 },
+      withFrame: { part: 149, price: 149 }
+    },
+    battery: { part: 59, price: 59 },
+    chargingPort: { part: 59, price: 59 },
+    backCover: { part: 65, price: 65 }
+  },
+  "S20 FE 5G": {
+    screenRepair: {
+      original: { part: 149, price: 149 },
+      withFrame: { part: 149, price: 149 }
+    },
+    battery: { part: 59, price: 59 },
+    chargingPort: { part: 59, price: 59 },
+    backCover: { part: 65, price: 65 }
+  },
+
+  // S10 Series
+  "S10": {
+    screenRepair: {
+      original: { part: 219, price: 219 },
+      withFrame: { part: 219, price: 219 }
+    },
+    battery: { part: 60, price: 60 },
+    chargingPort: { part: 69, price: 69 },
+    backCover: { part: 49, price: 49 }
+  },
+  "S10 5G": {
+    screenRepair: {
+      original: { part: 249, price: 249 },
+      withFrame: { part: 249, price: 249 }
+    },
+    battery: { part: 65, price: 65 },
+    chargingPort: { part: 69, price: 69 },
+    backCover: { part: 49, price: 49 }
+  },
+  "S10 Plus": {
+    screenRepair: {
+      original: { part: 259, price: 259 },
+      withFrame: { part: 259, price: 259 }
+    },
+    battery: { part: 69, price: 69 },
+    chargingPort: { part: 79, price: 79 },
+    backCover: { part: 59, price: 59 }
+  },
+  "S10 Lite": {
+    screenRepair: {
+      original: { part: 169, price: 169 },
+      withFrame: { part: 169, price: 169 }
+    },
+    battery: { part: 65, price: 65 },
+    chargingPort: { part: 69, price: 69 },
+    backCover: { part: 59, price: 59 }
+  },
+  "S10 e": {
+    screenRepair: {
+      original: { part: 189, price: 189 },
+      withFrame: { part: 189, price: 189 }
+    },
+    battery: { part: 65, price: 65 },
+    chargingPort: { part: 69, price: 69 },
+    backCover: { part: 59, price: 59 }
+  },
+
+  // S9 Series
+  "S9": {
+    screenRepair: {
+      original: { part: 200, price: 200 },
+      withFrame: { part: 200, price: 200 }
+    },
+    battery: { part: 59, price: 59 },
+    chargingPort: { part: 69, price: 69 },
+    backCover: { part: 59, price: 59 }
+  },
+  "S9 Plus": {
+    screenRepair: {
+      original: { part: 219, price: 219 },
+      withFrame: { part: 219, price: 219 }
+    },
+    battery: { part: 59, price: 59 },
+    chargingPort: { part: 79, price: 79 },
+    backCover: { part: 59, price: 59 }
+  },
+
+  // S8 Series
+  "S8": {
+    screenRepair: {
+      original: { part: 189, price: 189 },
+      withFrame: { part: 189, price: 189 }
+    },
+    battery: { part: 59, price: 59 },
+    chargingPort: { part: 59, price: 59 },
+    backCover: { part: 59, price: 59 }
+  },
+  "S8 Plus": {
+    screenRepair: {
+      original: { part: 209, price: 209 },
+      withFrame: { part: 209, price: 209 }
+    },
+    battery: { part: 59, price: 59 },
+    chargingPort: { part: 59, price: 59 },
+    backCover: { part: 59, price: 59 }
+  },
+
+  // Note Series
+  "Note 20 Ultra": {
+    screenRepair: {
+      original: { part: 339, price: 339 },
+      withFrame: { part: 339, price: 339 }
+    },
+    battery: { part: 69, price: 69 },
+    chargingPort: { part: 55, price: 55 },
+    backCover: { part: 59, price: 59 }
+  },
+  "Note20": {
+    screenRepair: {
+      original: { part: 229, price: 229 },
+      withFrame: { part: 229, price: 229 }
+    },
+    battery: { part: 69, price: 69 },
+    chargingPort: { part: 55, price: 55 },
+    backCover: { part: 59, price: 59 }
+  },
+  "Note 10 lite": {
+    screenRepair: {
+      original: { part: 200, price: 200 },
+      withFrame: { part: 200, price: 200 }
+    },
+    battery: { part: 65, price: 65 },
+    chargingPort: { part: 55, price: 55 },
+    backCover: { part: 59, price: 59 }
+  },
+  "Note 10 Plus": {
+    screenRepair: {
+      original: { part: 310, price: 310 },
+      withFrame: { part: 310, price: 310 }
+    },
+    battery: { part: 65, price: 65 },
+    chargingPort: { part: 55, price: 55 },
+    backCover: { part: 59, price: 59 }
+  },
+  "Note 10": {
+    screenRepair: {
+      original: { part: 259, price: 259 },
+      withFrame: { part: 259, price: 259 }
+    },
+    battery: { part: 60, price: 60 },
+    chargingPort: { part: 55, price: 55 },
+    backCover: { part: 59, price: 59 }
+  },
+  "Note 9": {
+    screenRepair: {
+      original: { part: 249, price: 249 },
+      withFrame: { part: 249, price: 249 }
+    },
+    battery: { part: 60, price: 60 },
+    chargingPort: { part: 59, price: 59 },
+    backCover: { part: 49, price: 49 }
+  },
+  "Note 8": {
+    screenRepair: {
+      original: { part: 239, price: 239 },
+      withFrame: { part: 239, price: 239 }
+    },
+    battery: { part: 60, price: 60 },
+    chargingPort: { part: 69, price: 69 },
+    backCover: { part: 49, price: 49 }
+  },
+
+  // A Series (using mid-range values from the ranges provided)
+  "Galaxy A(2015)": {
+    screenRepair: {
+      original: { part: 160, price: 160 },
+      withFrame: { part: 160, price: 160 }
+    },
+    battery: { part: 70, price: 70 },
+    chargingPort: { part: 70, price: 70 },
+    backCover: { part: 70, price: 70 }
+  },
+  "Galaxy A(2016)": {
+    screenRepair: {
+      original: { part: 160, price: 160 },
+      withFrame: { part: 160, price: 160 }
+    },
+    battery: { part: 70, price: 70 },
+    chargingPort: { part: 70, price: 70 },
+    backCover: { part: 70, price: 70 }
+  },
+  "Galaxy A(2017)": {
+    screenRepair: {
+      original: { part: 160, price: 160 },
+      withFrame: { part: 160, price: 160 }
+    },
+    battery: { part: 70, price: 70 },
+    chargingPort: { part: 70, price: 70 },
+    backCover: { part: 70, price: 70 }
+  },
+  "Galaxy A(2018)": {
+    screenRepair: {
+      original: { part: 160, price: 160 },
+      withFrame: { part: 160, price: 160 }
+    },
+    battery: { part: 70, price: 70 },
+    chargingPort: { part: 70, price: 70 },
+    backCover: { part: 70, price: 70 }
+  },
+  "Ax0": {
+    screenRepair: {
+      original: { part: 160, price: 160 },
+      withFrame: { part: 160, price: 160 }
+    },
+    battery: { part: 70, price: 70 },
+    chargingPort: { part: 70, price: 70 },
+    backCover: { part: 70, price: 70 }
+  },
+  "Ax1": {
+    screenRepair: {
+      original: { part: 160, price: 160 },
+      withFrame: { part: 160, price: 160 }
+    },
+    battery: { part: 70, price: 70 },
+    chargingPort: { part: 70, price: 70 },
+    backCover: { part: 70, price: 70 }
+  },
+  "Ax2": {
+    screenRepair: {
+      original: { part: 160, price: 160 },
+      withFrame: { part: 160, price: 160 }
+    },
+    battery: { part: 70, price: 70 },
+    chargingPort: { part: 70, price: 70 },
+    backCover: { part: 70, price: 70 }
+  },
+  "Ax3": {
+    screenRepair: {
+      original: { part: 160, price: 160 },
+      withFrame: { part: 160, price: 160 }
+    },
+    battery: { part: 70, price: 70 },
+    chargingPort: { part: 70, price: 70 },
+    backCover: { part: 70, price: 70 }
+  },
+  "Ax4": {
+    screenRepair: {
+      original: { part: 160, price: 160 },
+      withFrame: { part: 160, price: 160 }
+    },
+    battery: { part: 70, price: 70 },
+    chargingPort: { part: 70, price: 70 },
+    backCover: { part: 70, price: 70 }
+  },
+  "Ax5": {
+    screenRepair: {
+      original: { part: 160, price: 160 },
+      withFrame: { part: 160, price: 160 }
+    },
+    battery: { part: 70, price: 70 },
+    chargingPort: { part: 70, price: 70 },
+    backCover: { part: 70, price: 70 }
+  },
+  "Ax6": {
+    screenRepair: {
+      original: { part: 160, price: 160 },
+      withFrame: { part: 160, price: 160 }
+    },
+    battery: { part: 70, price: 70 },
+    chargingPort: { part: 70, price: 70 },
+    backCover: { part: 70, price: 70 }
+  },
+
+  // Fold/Flip Series (keeping original prices as no iRescue data was provided)
+  "Z Flip 4": {
     screenRepair: {
       original: { part: 480, price: 480 },
       withFrame: { part: 480, price: 480 }
     },
     battery: { part: 89, price: 89 },
     chargingPort: { part: 79, price: 79 },
-    backCover: { part: 79, price: 79 },
-    camera: { part: 40, price: 47.2 }
+    backCover: { part: 79, price: 79 }
   },
-  "Galaxy Z Fold 4": {
-    screenRepair: {
-      original: { part: 699, price: 699 }, // inner screen
-      withFrame: { part: 210, price: 210 } // outer screen
-    },
-    battery: { part: 89, price: 89 },
-    chargingPort: { part: 79, price: 79 },
-    backCover: { part: 79, price: 79 },
-    camera: { part: 40, price: 47.2 }
-  },
-  "Galaxy Z Flip 4": {
+  "Z Flip 5": {
     screenRepair: {
       original: { part: 480, price: 480 },
       withFrame: { part: 480, price: 480 }
     },
     battery: { part: 89, price: 89 },
     chargingPort: { part: 79, price: 79 },
-    backCover: { part: 79, price: 79 },
-    camera: { part: 40, price: 47.2 }
+    backCover: { part: 79, price: 79 }
   },
-  "Galaxy A54": {
+  "Z Fold 4": {
     screenRepair: {
-      original: { part: 150, price: 150 }, // Average from "120 έως 200"
-      withFrame: { part: 150, price: 150 }
+      original: { part: 699, price: 699 },
+      withFrame: { part: 210, price: 210 }
     },
-    battery: { part: 70, price: 70 }, // Average from "60 έως 80"
-    chargingPort: { part: 70, price: 70 }, // Average from "60 έως 80"
-    backCover: { part: 70, price: 70 }, // Average from "60 έως 80"
-    camera: { part: 40, price: 47.2 }
+    battery: { part: 89, price: 89 },
+    chargingPort: { part: 79, price: 79 },
+    backCover: { part: 79, price: 79 }
   },
-  "Galaxy A34": {
+  "Z Fold 5": {
     screenRepair: {
-      original: { part: 150, price: 150 },
-      withFrame: { part: 150, price: 150 }
+      original: { part: 669, price: 669 },
+      withFrame: { part: 180, price: 180 }
     },
-    battery: { part: 70, price: 70 },
-    chargingPort: { part: 70, price: 70 },
-    backCover: { part: 70, price: 70 },
-    camera: { part: 40, price: 47.2 }
-  },
-  "Galaxy A14": {
-    screenRepair: {
-      original: { part: 150, price: 150 },
-      withFrame: { part: 150, price: 150 }
-    },
-    battery: { part: 70, price: 70 },
-    chargingPort: { part: 70, price: 70 },
-    backCover: { part: 70, price: 70 },
-    camera: { part: 40, price: 47.2 }
+    battery: { part: 89, price: 89 },
+    chargingPort: { part: 79, price: 79 },
+    backCover: { part: 79, price: 79 }
   }
 };
 
@@ -642,10 +1166,7 @@ const samsungPricing: BrandPricing = {
 const pricingData = {
   Apple: iphonePricing,
   Samsung: samsungPricing,
-  Google: googlePricing,
-  Huawei: huaweiPricing,
   Xiaomi: xiaomiPricing,
-  OnePlus: oneplusPricing
 };
 
 // Issue-to-property mapping
@@ -772,13 +1293,13 @@ export default function RepairPage() {
   // Default price fallback for issues
   const getDefaultPriceForIssue = (issue: string): number => {
     const defaultPrices: Record<string, number> = {
-      "Επισκευή Οθόνης": 150,
-      "Αντικατάσταση Μπαταρίας": 80,
-      "Επισκευή Κάμερας": 90,
-      "Επισκευή Θύρας Φόρτισης": 85,
-      "Πίσω καπάκι / πλαίσιο": 90
+      "Επισκευή Οθόνης": 0,
+      "Αντικατάσταση Μπαταρίας": 0,
+      "Επισκευή Κάμερας": 0,
+      "Επισκευή Θύρας Φόρτισης": 0,
+      "Πίσω καπάκι / πλαίσιο": 0
     };
-    return defaultPrices[issue] || 100; // Return 100 as default if the issue is not found
+    return defaultPrices[issue] || 0; // Return 100 as default if the issue is not found
   };
 
   // Get price display for an issue
