@@ -838,7 +838,7 @@ const SellPhonePage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col overflow-hidden min-h-[100dvh]bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-100">
+    <div className="flex flex-col overflow-hidden min-h-[100dvh] bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-100">
       <Navbar />
 
       <main className="flex-grow w-full mx-auto px-4 py-12">
